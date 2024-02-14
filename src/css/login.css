@@ -1,0 +1,53 @@
+* {
+    box-sizing: border-box;
+}
+
+h1 {
+    width: 100%;
+    display: block;
+    background: #395D93;
+    padding: .75em 1em .75em 1.5em;
+    margin: 0;
+    color: #EBEBEB;
+}
+
+input {
+    display: block;
+    margin: auto;
+    width: 100%;
+    margin-bottom: 2em;
+    padding: .5em 0;
+    border: none;
+    border-bottom: 1px solid #282C34;
+    background: #EBEBEB;
+}
+
+form {
+    display: block;
+    width: 100%;
+    padding: 2em;
+}
+
+.Button {
+    display: inline-block;
+    background-color: #51E181;
+}
+
+.Login-Form {
+    width: 40%;
+    min-width: 320px;
+    max-width: 475px;
+    background: #EBEBEB;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    box-shadow: 0px 2px 5px rgba(0,0,0,.25);
+
+}
+
+.Login-Background {
+    background-color: #6A758A;
+    min-height: 100vh;
+}
