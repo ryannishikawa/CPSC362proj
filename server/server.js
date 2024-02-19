@@ -1,9 +1,13 @@
 import express from 'express';
 import sqlite3 from 'sqlite3';
+import cors from 'cors';
 
 const server = express();
 const PORT = process.env.PORT || 5000;
 const db = new sqlite3.Database('./data/credentials.db');
+
+// Allow Cross Origin Resource Sharing for the server.
+server.use(cors());
 
 // Handle get request from the server here.
 server.get('/api/data', (req, res) => {

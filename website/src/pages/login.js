@@ -48,7 +48,9 @@
 //===== Begin code area ================================================================================================
 
 import '../css/login.css';
-
+import React, {useState} from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 function LoginButton() {
     return(
@@ -57,12 +59,30 @@ function LoginButton() {
 }
 
 function LoginForm() {
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const navigate = useNavigate();
+
+    const handleSubmit = async(e) => {
+        e.preventDefault();
+
+        try {
+            const response = await axios.get('http://localhost:5000/api/data', {email, password});
+            alert(response.data);
+
+            navigate('/home');
+        } catch (err) {
+
+            alert(err);
+        }
+    }
+
     return(
         <div class="Login-Form">
             <h1>Welcome</h1>
-            <form>
-                <input type="text" title="email address" placeholder='you@email.domain' />
-                <input type="password" title="password" placeholder='password' />
+            <form onSubmit={handleSubmit}>
+                <input type="text" title="email address" value={email} onChange={e => setEmail(e.target.value)}placeholder='you@email.domain' />
+                <input type="password" title="password" value={password} onChange={e => setPassword(e.target.value)} placeholder='password' />
                 <LoginButton />
             </form>
         </div>
