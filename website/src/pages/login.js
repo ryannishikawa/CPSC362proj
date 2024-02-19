@@ -60,15 +60,15 @@ function LoginButton() {
 
 function LoginForm() {
     const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+    const [pass, setPassword] = useState('');
     const navigate = useNavigate();
 
     const handleSubmit = async(e) => {
         e.preventDefault();
 
         try {
-            const response = await axios.post('http://localhost:5000/api/users', {email, password});
-            alert(`Welcome! Logging you in...`);
+            const response = await axios.post('http://localhost:5000/api/users', {email, pass});
+            alert(`Welcome back ${response.data.name}! Logging you in...`);
 
             navigate('/home');
         } catch (err) {
@@ -82,7 +82,7 @@ function LoginForm() {
             <h1>Welcome</h1>
             <form onSubmit={handleSubmit}>
                 <input type="text" title="email address" value={email} onChange={e => setEmail(e.target.value)}placeholder='you@email.domain' />
-                <input type="password" title="password" value={password} onChange={e => setPassword(e.target.value)} placeholder='password' />
+                <input type="password" title="password" value={pass} onChange={e => setPassword(e.target.value)} placeholder='password' />
                 <LoginButton />
             </form>
         </div>

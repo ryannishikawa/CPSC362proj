@@ -6,9 +6,8 @@ const server = express();
 const PORT = process.env.PORT || 5000;
 const db = new sqlite3.Database('./data/credentials.db');
 
-// Allow Cross Origin Resource Sharing for the server.
-server.use(cors());
-server.use(express.json());
+server.use(cors());             // Allow Cross Origin Resource Sharing (CORS)
+server.use(express.json());     // Responses must be in JSON to post anything from the server.
 
 // Handle get request from the server here.
 server.get('/api/data', (req, res) => {
@@ -25,7 +24,7 @@ server.get('/api/data', (req, res) => {
 /**
  * The /users endpoint takes in an EMAIL and PASSWORD in plaintext.
  * 
- * Returns 500, 404 or 200 with appropriate json responses.
+ * Returns 500 (interal server error), 404 (user not found), or a 200 (user found with response)
  */
 server.post('/api/users', (req, res) => {
     const {email, password} = req.body;
@@ -41,24 +40,25 @@ server.post('/api/users', (req, res) => {
         }
 
         // 
-        res.json(user);
+        res.status(200).json(user);
     });
 })
 
-// Handle post request to the server here for registration.
+/**
+ * The /register endpoint takes in a name, email, and password in plaintext.
+ * 
+ * Returns 500 (interal server error) or a 200 (user successfully created within the database).
+ */
 server.post('/api/register', (req, res) => {
+    const { name, email, pass } = req.body;
 
-    const { email, pass } = req.body;
-    const query = `INSERT INTO user_data (email, pass) VALUES (?, ?)`;
-
-    db.run(query, [email, pass], function (err) {
+    db.run(`INSERT INTO user_data (name, email, pass) VALUES (?, ?, ?)`, [name, email, pass], function (err) {
 
         // Handle database query.
         if (err) {
-            console.err(err.message);
-            res.status(500).json({ error: 'Failed to insert data into database' });
+            return res.status(500).json({ error: 'Internal server error' });
         } else {
-            res.json({ message: 'Data inserted successfully', rowId: this.lastID });
+            return res.json({ message: `${name} was successfully added to the database`});
         }
     });
 

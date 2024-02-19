@@ -55,7 +55,7 @@ import axios from 'axios';
 const Register = () => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+    const [pass, setPassword] = useState('');
 
     const navigate = useNavigate();
 
@@ -66,12 +66,12 @@ const Register = () => {
 
         // Attempt to send a register request to the Express server.
         try {
-            const response = await axios.post('api/register', {email, password});
-            console.log(response.data);             // Response from the server.
+            const response = await axios.post('http://localhost:5000/api/register', {name, email, pass});
+            alert(`Welcome to our app ${name}! Logging you in...`);
 
             navigate("/home");
         } catch (err) {
-            console.error(err);
+            alert(err);
         }
     };
 
@@ -90,7 +90,7 @@ const Register = () => {
                <form onSubmit={handleSubmit}>
                     <input type="text" title="name" value={name} onChange={e => setName(e.target.value)} placeholder='first last' />
                     <input type="text" title="email" value={email} onChange={e => setEmail(e.target.value)} placeholder='you@email.domain' />
-                    <input type="password" title="password" value={password} onChange={e => setPassword(e.target.value)} placeholder='password' />
+                    <input type="password" title="password" value={pass} onChange={e => setPassword(e.target.value)} placeholder='password' />
                    <RegisterButton />
                 </form>
             </div>

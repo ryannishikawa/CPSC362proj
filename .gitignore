@@ -1,1 +1,24 @@
+# dependencies
 /node_modules
+/server/node_modules
+/server/data/credentials.db
+/website/node_modules
+/website/.pnp
+/website/.pnp.js
+
+# testing
+/website/coverage
+
+# production
+/website/build
+
+# misc
+/website/.DS_Store
+/website/.env.local
+/website/.env.development.local
+/website/.env.test.local
+/website/.env.production.local
+
+/website/npm-debug.log*
+/website/yarn-debug.log*
+/website/yarn-error.log*
