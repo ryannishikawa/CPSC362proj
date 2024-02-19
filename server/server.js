@@ -8,6 +8,7 @@ const db = new sqlite3.Database('./data/credentials.db');
 
 // Allow Cross Origin Resource Sharing for the server.
 server.use(cors());
+server.use(express.json());
 
 // Handle get request from the server here.
 server.get('/api/data', (req, res) => {
@@ -20,6 +21,29 @@ server.get('/api/data', (req, res) => {
         }
     });
 });
+
+/**
+ * The /users endpoint takes in an EMAIL and PASSWORD in plaintext.
+ * 
+ * Returns 500, 404 or 200 with appropriate json responses.
+ */
+server.post('/api/users', (req, res) => {
+    const {email, password} = req.body;
+
+    db.get('SELECT * FROM user_data WHERE email = ? AND pass = ?', [email, password], (err, user) => {
+
+        if (err) {
+            return res.status(500).json({ error: 'Internal server error' });
+        }
+
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        // 
+        res.json(user);
+    });
+})
 
 // Handle post request to the server here for registration.
 server.post('/api/register', (req, res) => {

@@ -67,13 +67,13 @@ function LoginForm() {
         e.preventDefault();
 
         try {
-            const response = await axios.get('http://localhost:5000/api/data', {email, password});
-            alert(response.data);
+            const response = await axios.post('http://localhost:5000/api/users', {email, password});
+            alert(`Welcome! Logging you in...`);
 
             navigate('/home');
         } catch (err) {
 
-            alert(err);
+            alert(`Incorrect email and/or password`);
         }
     }
 
