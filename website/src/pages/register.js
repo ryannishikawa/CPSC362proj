@@ -50,28 +50,35 @@
 import React, {useState} from 'react';
 import '../css/login.css';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const Register = () => {
-    const [input, setInput] = useState({
-        name: "",
-        email: "",
-        password: ""
-    });
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
 
     const navigate = useNavigate();
 
-    //to store user info? idk how to do that yet
     //sends user to home page on submit
-    const handleSubmit = (e) => {
+    const handleSubmit = async(e) => {
         e.preventDefault();
-        localStorage.setItem("user", JSON.stringify(input));
-        navigate("/home");
+        // ]localStorage.setItem("user", JSON.stringify(input));
+
+        // Attempt to send a register request to the Express server.
+        try {
+            const response = await axios.post('api/register', {email, password});
+            console.log(response.data);             // Response from the server.
+
+            navigate("/home");
+        } catch (err) {
+            console.error(err);
+        }
     };
 
     //button
     function RegisterButton() {
         return(
-            <button type='submit' class='Button'>Create Account</button>
+            <button type='submit' className='Button'>Create Account</button>
         );
     }
 
@@ -81,9 +88,9 @@ const Register = () => {
             <div className="Register-Form">
                 <h1>Welcome</h1>
                <form onSubmit={handleSubmit}>
-                    <input type="text" title="name" placeholder='first last' />
-                    <input type="text" title="email address" placeholder='you@email.domain' />
-                    <input type="password" title="password" placeholder='password' />
+                    <input type="text" title="name" value={name} onChange={(e) => setName(e.target.value)} placeholder='first last' />
+                    <input type="text" title="email address" value={email} onChange={(e) => setEmail(e.target.value)} placeholder='you@email.domain' />
+                    <input type="password" title="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder='password' />
                    <RegisterButton />
                 </form>
             </div>
