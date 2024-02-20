@@ -27,9 +27,9 @@ server.get('/api/data', (req, res) => {
  * Returns 500 (interal server error), 404 (user not found), or a 200 (user found with response)
  */
 server.post('/api/users', (req, res) => {
-    const {email, password} = req.body;
+    const {email, pass} = req.body;
 
-    db.get('SELECT * FROM user_data WHERE email = ? AND pass = ?', [email, password], (err, user) => {
+    db.get('SELECT * FROM user_data WHERE email = ? AND pass = ?', [email, pass], (err, user) => {
 
         if (err) {
             return res.status(500).json({ error: 'Internal server error' });
