@@ -5,11 +5,23 @@ import Todo from "../components/todo";
 import Form from '../components/Form';
 import FilterButton from '../components/FilterButton';
 
+const FILTER_MAP = {
+  // functions to be used for filtering tasks
+  All: () => true,
+  Active: (task) => !task.completed,
+  Completed: (task) => task.completed
+}
+const FILTER_NAMES = Object.keys(FILTER_MAP);
+
 function ToDoListPage(props) {
 
+  const [filter, setFilter] = useState("All");
+
   function addTask(name) {
-    const newTask = { id: `todo-${nanoid()}`, name, completed: false }; // Create task object
-    setTasks([...tasks, newTask]); //  Add the new task to the list of tasks
+    // Create task object
+    const newTask = { id: `todo-${nanoid()}`, name, completed: false };
+    //  Add the new task to the list of tasks
+    setTasks([...tasks, newTask]);
   }
 
   function editTask(id, newName) {
@@ -39,12 +51,15 @@ function ToDoListPage(props) {
   }
 
   function deleteTask(id) {
+    // get all tasks other than this task
     const remainingTasks = tasks.filter((task) => id !== task.id);
     setTasks(remainingTasks);
   }
 
   const [tasks, setTasks] = useState(props.tasks);
-  const taskList = tasks?.map((task) => (
+  const taskList = tasks
+    .filter(FILTER_MAP[filter])
+    .map((task) => (
     <Todo
       id={task.id}
       name={task.name}
@@ -56,6 +71,15 @@ function ToDoListPage(props) {
     />
   ));
 
+  const filterList = FILTER_NAMES.map((name) => (
+    <FilterButton
+      key={name}
+      name={name}
+      isPressed={name === filter}
+      setFilter={setFilter}
+    />
+  ))
+
   const tasksNoun = taskList.length !== 1 ? "tasks" : "task";
   const headingText = `${taskList.length} ${tasksNoun} remaining`;
 
@@ -64,9 +88,7 @@ function ToDoListPage(props) {
       <h1>TodoMatic</h1>
       <Form addTask={addTask} />
       <div className="filters btn-group stack-exception">
-        <FilterButton />
-        <FilterButton />
-        <FilterButton />
+        {filterList}
       </div>
       <h2 id="list-heading">{headingText}</h2>
       <ul

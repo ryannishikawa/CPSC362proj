@@ -5,13 +5,17 @@ function Form(props) {
   const [name, setName] = useState("");
 
   function handleChange(event) {
+    // Change text inside the task creation
     setName(event.target.value);
   }
 
   function handleSubmit(event) {
+    // Creates a new task with the given text
     event.preventDefault();
+    // Makes sure task text is not empty
     if (name !== "") {
       props.addTask(name);
+      // Clears input after adding task
       setName("");
     }
   }
