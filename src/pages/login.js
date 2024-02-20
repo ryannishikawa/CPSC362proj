@@ -47,16 +47,36 @@
 //
 //===== Begin code area ================================================================================================
 
+import React, {useState} from 'react';
 import '../css/login.css';
+import { useNavigate } from 'react-router-dom';
 
+const Login = () => {
+    const [input, setInput] = useState({
+        email: "",
+        password: ""
+    });
 
-function LoginButton() {
-    return(
-        <button type='submit' class='Button'>Login</button>
-    );
-}
+    const navigate = useNavigate();
+    const ToSignupPage = (e) => {
+        e.preventDefault();
+        navigate("/register");
+    };
 
-function LoginForm() {
+    function LoginButton() {
+        return(
+            <button type='submit' class='Button'>Login</button>
+        );
+    }
+
+    function ToRegister() {
+        return(
+            <p>
+                Don't have an account? <button type='submit' onClick={ToSignupPage}><b><i><u>Sign up here!</u></i></b></button>
+            </p>
+        );
+    }
+    
     return(
         <div class="Login-Form">
             <h1>Welcome</h1>
@@ -64,15 +84,22 @@ function LoginForm() {
                 <input type="text" title="email address" placeholder='you@email.domain' />
                 <input type="password" title="password" placeholder='password' />
                 <LoginButton />
+                <ToRegister />
             </form>
         </div>
     );
 }
 
+
+
+
+
+
+
 export default function LoginPage() {
     return (
         <div className='Login-Background'>
-            <LoginForm />
+            <Login />
         </div>
     );
 }
