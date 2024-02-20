@@ -75,10 +75,23 @@ const Register = () => {
         }
     };
 
+    const ToSignIn = (e) => {
+        e.preventDefault();
+        navigate("/login");
+    };
+
     //button
     function RegisterButton() {
         return(
             <button type='submit' className='Button'>Create Account</button>
+        );
+    }
+
+    function ToLogin() {
+        return(
+            <p>
+                Already have an account? <button type='submit' onClick={ToSignIn}><b><i><u>Sign in here!</u></i></b></button>
+            </p>
         );
     }
 
@@ -92,6 +105,7 @@ const Register = () => {
                     <input type="text" title="email" value={email} onChange={e => setEmail(e.target.value)} placeholder='you@email.domain' />
                     <input type="password" title="password" value={pass} onChange={e => setPassword(e.target.value)} placeholder='password' />
                    <RegisterButton />
+                   <ToLogin />
                 </form>
             </div>
         );
