@@ -1,5 +1,5 @@
 //****************************************************************************************************************************
-//Program name: "App.js".  This program is the main part of our web app. Copyright (C)  *
+//Program name: "register.js".  This program controls the sign up page of our web app. Copyright (C)  *
 //2024 Ryan Nishikawa                                                                                                        *
 //This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License  *
 //version 3 as published by the Free Software Foundation.                                                                    *
@@ -12,8 +12,8 @@
 //=======1=========2=========3=========4=========5=========6=========7=========8=========9=========0=========1=========2=========3**
 //
 //Author information
-//  Author names: Ryan Nishikawa,
-//  Author emails: ryannishikawa48@csu.fullerton.edu,
+//  Author names: Ryan Nishikawa, 
+//  Author emails: ryannishikawa48@csu.fullerton.edu, 
 //  Course ID: CPSC362
 //
 //Program information
@@ -21,7 +21,7 @@
 //  Date of last update: February 15, 2024
 //  Programming language(s): JavaScript, HTML, CSS
 //  Files in this program: App.js, login.js, register.js, home.js, etc...
-//
+//  
 //  OS of the computer where the program was developed: Ubuntu 22.04.3 LTS
 //  OS of the computer where the program was tested: Ubuntu 22.04.3 LTS
 //  Status: WIP
@@ -30,10 +30,10 @@
 //  https://www.youtube.com/watch?v=psU13XU1gDY&list=LL&index=3&t=796s&ab_channel=CodeWithViju
 //
 //Purpose
-//  The hub of everything
+//  Allow users to create an account for the website
 //
 //This file
-//   File name: App.js
+//   File name: register.js
 //   Date of last update: February 15, 2024
 //   Languages: JavaScript, HTML, CSS
 //
@@ -47,27 +47,57 @@
 //
 //===== Begin code area ================================================================================================
 
-import React from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import LoginPage from "./pages/login";
-import Register from "./pages/register";
-import Home from "./pages/home";
-import ToDoListPage from './pages/todo-list.jsx';
+import React, {useState} from 'react';
+import '../css/login.css';
+import { useNavigate } from 'react-router-dom';
 
-const App = () => {
-  return(
-    <>
-      <BrowserRouter>
-        <Routes>
-          <Route path ="/tasks" element={<ToDoListPage />} />
-          <Route path ="/login" element ={<LoginPage />} />
-          <Route path ="/register" element ={<Register />} />
-          <Route path ="/home" element ={<Home />} />
-          <Route path ="/" element ={<LoginPage />} />
-        </Routes>
-      </BrowserRouter>
-    </>
-  );
-}
+const Register = () => {
+    const [input, setInput] = useState({
+        name: "",
+        email: "",
+        password: ""
+    });
 
-export default App;
+    const navigate = useNavigate();
+
+    //to store user info? idk how to do that yet
+    //sends user to home page on submit
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        localStorage.setItem("user", JSON.stringify(input));
+        navigate("/home");
+    };
+
+    //button
+    function RegisterButton() {
+        return(
+            <button type='submit' class='Button'>Create Account</button>
+        );
+    }
+
+    //form
+    function RegisterForm() {
+        return(
+            <div className="Register-Form">
+                <h1>Welcome</h1>
+               <form onSubmit={handleSubmit}>
+                    <input type="text" title="name" placeholder='first last' />
+                    <input type="text" title="email address" placeholder='you@email.domain' />
+                    <input type="password" title="password" placeholder='password' />
+                   <RegisterButton />
+                </form>
+            </div>
+        );
+    }
+    return <RegisterForm />
+};
+
+const RegisterPage = () => {
+    return (
+        <div className='Register-Background'>
+            <Register />
+        </div>
+    );
+};
+
+export default RegisterPage;

@@ -1,5 +1,5 @@
 //****************************************************************************************************************************
-//Program name: "App.js".  This program is the main part of our web app. Copyright (C)  *
+//Program name: "home.js".  This program controls the home page of our web app. Copyright (C)  *
 //2024 Ryan Nishikawa                                                                                                        *
 //This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License  *
 //version 3 as published by the Free Software Foundation.                                                                    *
@@ -12,8 +12,8 @@
 //=======1=========2=========3=========4=========5=========6=========7=========8=========9=========0=========1=========2=========3**
 //
 //Author information
-//  Author names: Ryan Nishikawa,
-//  Author emails: ryannishikawa48@csu.fullerton.edu,
+//  Author names: Ryan Nishikawa, 
+//  Author emails: ryannishikawa48@csu.fullerton.edu, 
 //  Course ID: CPSC362
 //
 //Program information
@@ -21,7 +21,7 @@
 //  Date of last update: February 15, 2024
 //  Programming language(s): JavaScript, HTML, CSS
 //  Files in this program: App.js, login.js, register.js, home.js, etc...
-//
+//  
 //  OS of the computer where the program was developed: Ubuntu 22.04.3 LTS
 //  OS of the computer where the program was tested: Ubuntu 22.04.3 LTS
 //  Status: WIP
@@ -30,10 +30,10 @@
 //  https://www.youtube.com/watch?v=psU13XU1gDY&list=LL&index=3&t=796s&ab_channel=CodeWithViju
 //
 //Purpose
-//  The hub of everything
+//  Control the home page
 //
 //This file
-//   File name: App.js
+//   File name: home.js
 //   Date of last update: February 15, 2024
 //   Languages: JavaScript, HTML, CSS
 //
@@ -47,27 +47,16 @@
 //
 //===== Begin code area ================================================================================================
 
-import React from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import LoginPage from "./pages/login";
-import Register from "./pages/register";
-import Home from "./pages/home";
-import ToDoListPage from './pages/todo-list.jsx';
+import React from 'react';
+import coconut from './coconut.jpg'; // Import the image file
 
-const App = () => {
-  return(
-    <>
-      <BrowserRouter>
-        <Routes>
-          <Route path ="/tasks" element={<ToDoListPage />} />
-          <Route path ="/login" element ={<LoginPage />} />
-          <Route path ="/register" element ={<Register />} />
-          <Route path ="/home" element ={<Home />} />
-          <Route path ="/" element ={<LoginPage />} />
-        </Routes>
-      </BrowserRouter>
-    </>
+const Home = () => {
+  return (
+    <div>
+      <h1>Welcome !</h1>
+      <img src={coconut} alt="My Image" style={{ width: '100%', height: 'auto' }} />{}
+    </div>
   );
-}
+};
 
-export default App;
+export default Home;
