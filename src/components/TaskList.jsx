@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { nanoid } from "nanoid";
 import '../css/todo-list.css';
-import Todo from "../components/ToDo";
-import Form from '../components/Form';
-import FilterButton from '../components/FilterButton';
+import Todo from "./ToDo";
+import Form from './Form';
+import FilterButton from './FilterButton';
 
 const FILTER_MAP = {
   // functions to be used for filtering tasks
