@@ -10,23 +10,23 @@ server.use(cors());             // Allow Cross Origin Resource Sharing (CORS)
 server.use(express.json());     // Responses must be in JSON to post anything from the server.
 
 // Handle get request from the server here.
-server.get('/api/data', (req, res) => {
-    db.all('SELECT * FROM user_data', (err, rows) => {
-        if (err) {
-            console.error(err);
-            res.status(500).json({ error: 'Internal server error' });
-        } else {
-            res.json(rows);
-        }
-    });
-});
+// server.get('/api/data', (req, res) => {
+//     db.all('SELECT * FROM user_data', (err, rows) => {
+//         if (err) {
+//             console.error(err);
+//             res.status(500).json({ error: 'Internal server error' });
+//         } else {
+//             res.json(rows);
+//         }
+//     });
+// });
 
 /**
- * The /users endpoint takes in an EMAIL and PASSWORD in plaintext.
+ * The /users/find endpoint takes in an EMAIL and PASSWORD in plaintext.
  * 
  * Returns 500 (interal server error), 404 (user not found), or a 200 (user found with response)
  */
-server.post('/api/users', (req, res) => {
+server.post('/api/users/find', (req, res) => {
     const {email, pass} = req.body;
 
     db.get('SELECT * FROM user_data WHERE email = ? AND pass = ?', [email, pass], (err, user) => {
@@ -45,11 +45,11 @@ server.post('/api/users', (req, res) => {
 })
 
 /**
- * The /register endpoint takes in a name, email, and password in plaintext.
+ * The /users/register endpoint takes in a name, email, and password in plaintext.
  * 
  * Returns 500 (interal server error) or a 200 (user successfully created within the database).
  */
-server.post('/api/register', (req, res) => {
+server.post('/api/users/register', (req, res) => {
     const { name, email, pass } = req.body;
 
     db.run(`INSERT INTO user_data (name, email, pass) VALUES (?, ?, ?)`, [name, email, pass], function (err) {

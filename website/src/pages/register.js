@@ -66,7 +66,7 @@ const Register = () => {
 
         // Attempt to send a register request to the Express server.
         try {
-            const response = await axios.post('http://localhost:5000/api/register', {name, email, pass});
+            const response = await axios.post('http://localhost:5000/api/users/register', {name, email, pass});
             alert(`Welcome to our app ${name}! Logging you in...`);
 
             navigate("/home");

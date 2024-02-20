@@ -67,7 +67,7 @@ function LoginForm() {
         e.preventDefault();
 
         try {
-            const response = await axios.post('http://localhost:5000/api/users', {email, pass});
+            const response = await axios.post('http://localhost:5000/api/users/find', {email, pass});
             alert(`Welcome back ${response.data.name}! Logging you in...`);
 
             navigate('/home');
