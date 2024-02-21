@@ -58,6 +58,22 @@ function LoginButton() {
     );
 }
 
+function ToRegister() {
+
+    const navigate = useNavigate();
+
+    const ToSignupPage = (e) => {
+        e.preventDefault();
+        navigate("/register");
+    };
+
+    return(
+        <p>
+            Don't have an account? <button type='submit' onClick={ToSignupPage}><b><i><u>Sign up here!</u></i></b></button>
+        </p>
+    );
+}
+
 function LoginForm() {
     const [email, setEmail] = useState('');
     const [pass, setPassword] = useState('');
@@ -84,6 +100,7 @@ function LoginForm() {
                 <input type="text" title="email address" value={email} onChange={e => setEmail(e.target.value)}placeholder='you@email.domain' />
                 <input type="password" title="password" value={pass} onChange={e => setPassword(e.target.value)} placeholder='password' />
                 <LoginButton />
+                <ToRegister />
             </form>
         </div>
     );
