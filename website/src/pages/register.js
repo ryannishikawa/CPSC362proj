@@ -52,7 +52,31 @@ import '../css/login.css';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-const Register = () => {
+function RegisterButton() {
+    return(
+        <button type='submit' className='Button'>Create Account</button>
+    );
+}
+
+function ToLogin() {
+
+    const navigate = useNavigate();
+    
+    // Take to login page if user already has an account.
+    const ToSignIn = (e) => {
+        e.preventDefault();
+        navigate("/login");
+    };
+
+    // Component returned here.
+    return(
+        <p>
+            Already have an account? <button type='submit' onClick={ToSignIn}><b><i><u>Sign in here!</u></i></b></button>
+        </p>
+    );
+}
+
+function RegisterForm() {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [pass, setPassword] = useState('');
@@ -75,50 +99,25 @@ const Register = () => {
         }
     };
 
-    const ToSignIn = (e) => {
-        e.preventDefault();
-        navigate("/login");
-    };
-
-    //button
-    function RegisterButton() {
-        return(
-            <button type='submit' className='Button'>Create Account</button>
-        );
-    }
-
-    function ToLogin() {
-        return(
-            <p>
-                Already have an account? <button type='submit' onClick={ToSignIn}><b><i><u>Sign in here!</u></i></b></button>
-            </p>
-        );
-    }
-
-    //form
-    function RegisterForm() {
-        return(
-            <div className="Register-Form">
-                <h1>Welcome</h1>
-               <form onSubmit={handleSubmit}>
-                    <input type="text" title="name" value={name} onChange={e => setName(e.target.value)} placeholder='first last' />
-                    <input type="text" title="email" value={email} onChange={e => setEmail(e.target.value)} placeholder='you@email.domain' />
-                    <input type="password" title="password" value={pass} onChange={e => setPassword(e.target.value)} placeholder='password' />
-                   <RegisterButton />
-                   <ToLogin />
-                </form>
-            </div>
-        );
-    }
-    return <RegisterForm />
-};
-
-const RegisterPage = () => {
-    return (
-        <div className='Register-Background'>
-            <Register />
+    // Returns the register form component here.
+    return(
+        <div className="Register-Form">
+            <h1>Welcome</h1>
+           <form onSubmit={handleSubmit}>
+                <input type="text" title="name" value={name} onChange={e => setName(e.target.value)} placeholder='first last' />
+                <input type="text" title="email" value={email} onChange={e => setEmail(e.target.value)} placeholder='you@email.domain' />
+                <input type="password" title="password" value={pass} onChange={e => setPassword(e.target.value)} placeholder='password' />
+               <RegisterButton />
+               <ToLogin />
+            </form>
         </div>
     );
-};
+}
 
-export default RegisterPage;
+export default function RegisterPage() {
+    return (
+        <div className='Register-Background'>
+            <RegisterForm />
+        </div>
+    );
+}
