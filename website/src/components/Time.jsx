@@ -1,6 +1,6 @@
 //****************************************************************************************************************************
-//Program name: "todo-list.jsx".  This program is the main part of our web app. Copyright (C)  *
-//2024 Kyle Ho                                                                                                        *
+//Program name: "Time.jsx".  This program is to display time. Copyright (C)  *
+//2024 Ryan Nishikawa                                                                                                        *
 //This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License  *
 //version 3 as published by the Free Software Foundation.                                                                    *
 //This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied         *
@@ -12,13 +12,13 @@
 //=======1=========2=========3=========4=========5=========6=========7=========8=========9=========0=========1=========2=========3**
 //
 //Author information
-//  Author names: Kyle Ho,
-//  Author emails: kyleho@csu.fullerton.edu,
+//  Author names: Ryan Nishikawa,
+//  Author emails: ryannishikawa48@csu.fullerton.edu,
 //  Course ID: CPSC362
 //
 //Program information
 //  Program name: Task manager
-//  Date of last update: February 19, 2024
+//  Date of last update: February 22, 2024
 //  Programming language(s): JavaScript, HTML, CSS
 //  Files in this program: App.js, login.js, register.js, home.js, etc...
 //
@@ -31,16 +31,16 @@
 //  https://developer.mozilla.org/en-US/docs/Learn/Tools_and_testing/Client-side_JavaScript_frameworks/React_getting_started
 //
 //Purpose
-//  The main page for viewing tasks
+//  to display/get time
 //
 //This file
-//   File name: todo-list.jsx
-//   Date of last update: February 19, 2024
-//   Languages: JavaScript, HTML, CSS
+//   File name: Time.jsx
+//   Date of last update: February 22, 2024
+//   Languages: JavaScript, HTML
 //
 //References for this file
-//   https://developer.mozilla.org/en-US/docs/Learn/Tools_and_testing/Client-side_JavaScript_frameworks/React_getting_started
-//
+//   https://medium.com/create-a-clocking-in-system-on-react/create-a-react-app-displaying-the-current-date-and-time-using-hooks-21d946971556
+//   https://www.w3schools.com/jsref/jsref_getday.asp
 //=======1=========2=========3=========4=========5=========6=========7=========8=========9=========0=========1=========2**
 //
 //
@@ -48,22 +48,29 @@
 //
 //===== Begin code area ================================================================================================
 
-import TaskList from "../components/TaskList";
+import React, { useState, useEffect } from 'react'
 
-// Placeholder for initial tasks
-// TODO: Take tasks from database associated with a specific user and use them here
-const DATA = [
-  { id: "todo-0", name: "Eat", completed: true },
-  { id: "todo-1", name: "Sleep", completed: false },
-  { id: "todo-2", name: "Repeat", completed: false },
-];
+const month = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+const weekday = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+export const DateTime = () => {
+    var [date,setDate] = useState(new Date());
+
+    useEffect(() => {
+        var timer = setInterval(() => setDate(new Date()), 1000)
+        return function cleanup() {
+            clearInterval(timer)
+        }
+    });
 
 
-
-function ToDoListPage() {
-  return (
-    <TaskList tasks={DATA} />
-  );
+    return(
+        <div className = "display-date">
+            <p>{weekday[date.getDay()]}, {month[date.getMonth()]} {date.getDate()} <br></br>
+            {date.toLocaleTimeString()}</p>
+        </div>
+    )
 }
 
-export default ToDoListPage;
+export default DateTime
