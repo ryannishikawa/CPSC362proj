@@ -88,7 +88,7 @@ function LoginForm() {
 
             navigate('/home');
         } catch (err) {
-
+            
             alert(`Incorrect email and/or password`);
         }
     }

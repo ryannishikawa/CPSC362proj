@@ -11,7 +11,7 @@ This endpoint category manages users within the database.
 Add a user to the database.\
 **POST**: `/api/users/add`
 
-**Parameters**\
+**Request Body**\
 `name`: The first and last name for this new user.\
 `email`: The email address for this new user.\
 `pass`: The password for this account.\
@@ -22,14 +22,17 @@ Find a user in the database given email and password.
 
 **POST**: `/api/users/find`
 
-**Parameters**\
+**Request Body**\
 `email`: The email for this user.\
-`pass`: The password for this user.\
+`pass`: The password for this user.
+
+**Response Body**
+`uid`: A unique integer representing the user
 
 
 
 ## Task (WIP!)
-This endpoint category manages tasks of a user.\
+This endpoint category manages tasks of a user.
 
 ### Add
 Add a task given a user.
@@ -39,3 +42,6 @@ Remove a task given a user.
 
 ### Update
 Update a task given a user.
+
+### List
+Returns a list of tasks
