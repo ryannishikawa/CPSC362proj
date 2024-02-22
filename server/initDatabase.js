@@ -1,3 +1,9 @@
+/**
+ * @file initDatabase.js
+ * @author Matt De Binion <mattdb@csu.fullerton.edu>
+ * @description This file creates the database for the app since the database is not pushed to the github repository (for security reasons)
+ * In the root folder, type in the terminal: [npm run dbinit]
+ */
 import fs from 'fs';
 import sqlite3 from 'sqlite3';
 
