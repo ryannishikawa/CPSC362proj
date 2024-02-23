@@ -1,5 +1,5 @@
 //****************************************************************************************************************************
-//Program name: "register.js".  This program controls the sign up page of our web app. Copyright (C)  *
+//Program name: "login.js".  This program controls the login page of our web app. Copyright (C)  *
 //2024 Ryan Nishikawa                                                                                                        *
 //This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License  *
 //version 3 as published by the Free Software Foundation.                                                                    *
@@ -30,10 +30,10 @@
 //  https://www.youtube.com/watch?v=psU13XU1gDY&list=LL&index=3&t=796s&ab_channel=CodeWithViju
 //
 //Purpose
-//  Allow users to create an account for the website
+//  Allow users to login to an exiting account and access the app
 //
 //This file
-//   File name: register.js
+//   File name: login.js
 //   Date of last update: February 15, 2024
 //   Languages: JavaScript, HTML, CSS
 //
@@ -47,71 +47,70 @@
 //
 //===== Begin code area ================================================================================================
 
-import React, {useState} from 'react';
 import '../css/login.css';
+import React, {useState} from 'react';
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-const Register = () => {
-    const [input, setInput] = useState({
-        name: "",
-        email: "",
-        password: ""
-    });
+function LoginButton() {
+    return(
+        <button type='submit' class='Button'>Login</button>
+    );
+}
+
+function ToRegister() {
 
     const navigate = useNavigate();
 
-    //to store user info? idk how to do that yet
-    //sends user to home page on submit
-    const handleSubmit = (e) => {
+    const ToSignupPage = (e) => {
         e.preventDefault();
-        localStorage.setItem("user", JSON.stringify(input));
-        navigate("/home");
+        navigate("/register");
     };
 
-    const ToSignIn = (e) => {
+    return(
+        <p>
+            Don't have an account? <button type='submit' onClick={ToSignupPage}><b><i><u>Sign up here!</u></i></b></button>
+        </p>
+    );
+}
+
+function LoginForm() {
+    const [email, setEmail] = useState('');
+    const [pass, setPassword] = useState('');
+    const navigate = useNavigate();
+
+    const handleSubmit = async(e) => {
         e.preventDefault();
-        navigate("/login");
-    };
 
-    //button
-    function RegisterButton() {
-        return(
-            <button type='submit' class='Button'>Create Account</button>
-        );
+        try {
+            const response = await axios.post('http://localhost:5000/api/users/find', {email, pass});
+            alert(`Welcome back ${response.data.name}! Logging you in...`);
+
+            navigate('/home');
+        } catch (err) {
+            
+            alert(`Incorrect email and/or password`);
+        }
     }
 
-    function ToLogin() {
-        return(
-            <p>
-                Already have an account? <button type='submit' onClick={ToSignIn}><b><i><u>Sign in here!</u></i></b></button>
-            </p>
-        );
-    }
-
-    //form
-    function RegisterForm() {
-        return(
-            <div className="Register-Form">
-                <h1>Welcome</h1>
-               <form onSubmit={handleSubmit}>
-                    <input type="text" title="name" placeholder='first last' />
-                    <input type="text" title="email address" placeholder='you@email.domain' />
-                    <input type="password" title="password" placeholder='password' />
-                   <RegisterButton />
-                   <ToLogin />
-                </form>
-            </div>
-        );
-    }
-    return <RegisterForm />
-};
-
-const RegisterPage = () => {
-    return (
-        <div className='Register-Background'>
-            <Register />
+    return(
+        <div class="Login-Form">
+            <h1>Welcome</h1>
+            <form onSubmit={handleSubmit}>
+                <input type="text" title="email address" value={email} onChange={e => setEmail(e.target.value)}placeholder='you@email.domain' />
+                <input type="password" title="password" value={pass} onChange={e => setPassword(e.target.value)} placeholder='password' />
+                <LoginButton />
+                <ToRegister />
+            </form>
         </div>
     );
-};
+}
 
-export default RegisterPage;
+export default function LoginPage() {
+    return (
+        <div className='Login-Background'>
+            <LoginForm />
+        </div>
+    );
+}
+

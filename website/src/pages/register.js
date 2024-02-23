@@ -1,5 +1,5 @@
 //****************************************************************************************************************************
-//Program name: "login.js".  This program controls the login page of our web app. Copyright (C)  *
+//Program name: "register.js".  This program controls the sign up page of our web app. Copyright (C)  *
 //2024 Ryan Nishikawa                                                                                                        *
 //This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License  *
 //version 3 as published by the Free Software Foundation.                                                                    *
@@ -30,10 +30,10 @@
 //  https://www.youtube.com/watch?v=psU13XU1gDY&list=LL&index=3&t=796s&ab_channel=CodeWithViju
 //
 //Purpose
-//  Allow users to login to an exiting account and access the app
+//  Allow users to create an account for the website
 //
 //This file
-//   File name: login.js
+//   File name: register.js
 //   Date of last update: February 15, 2024
 //   Languages: JavaScript, HTML, CSS
 //
@@ -50,57 +50,74 @@
 import React, {useState} from 'react';
 import '../css/login.css';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
-const Login = () => {
-    const [input, setInput] = useState({
-        email: "",
-        password: ""
-    });
+function RegisterButton() {
+    return(
+        <button type='submit' className='Button'>Create Account</button>
+    );
+}
+
+function ToLogin() {
 
     const navigate = useNavigate();
-    const ToSignupPage = (e) => {
+    
+    // Take to login page if user already has an account.
+    const ToSignIn = (e) => {
         e.preventDefault();
-        navigate("/register");
+        navigate("/login");
     };
 
-    function LoginButton() {
-        return(
-            <button type='submit' class='Button'>Login</button>
-        );
-    }
-
-    function ToRegister() {
-        return(
-            <p>
-                Don't have an account? <button type='submit' onClick={ToSignupPage}><b><i><u>Sign up here!</u></i></b></button>
-            </p>
-        );
-    }
-    
+    // Component returned here.
     return(
-        <div class="Login-Form">
+        <p>
+            Already have an account? <button type='submit' onClick={ToSignIn}><b><i><u>Sign in here!</u></i></b></button>
+        </p>
+    );
+}
+
+function RegisterForm() {
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [pass, setPassword] = useState('');
+
+    const navigate = useNavigate();
+
+    //sends user to home page on submit
+    const handleSubmit = async(e) => {
+        e.preventDefault();
+        // ]localStorage.setItem("user", JSON.stringify(input));
+
+        // Attempt to send a register request to the Express server.
+        try {
+            const response = await axios.post('http://localhost:5000/api/users/register', {name, email, pass});
+            alert(`Welcome to our app ${name}! Logging you in...`);
+
+            navigate("/home");
+        } catch (err) {
+            alert(err);
+        }
+    };
+
+    // Returns the register form component here.
+    return(
+        <div className="Register-Form">
             <h1>Welcome</h1>
-            <form>
-                <input type="text" title="email address" placeholder='you@email.domain' />
-                <input type="password" title="password" placeholder='password' />
-                <LoginButton />
-                <ToRegister />
+           <form onSubmit={handleSubmit}>
+                <input type="text" title="name" value={name} onChange={e => setName(e.target.value)} placeholder='first last' />
+                <input type="text" title="email" value={email} onChange={e => setEmail(e.target.value)} placeholder='you@email.domain' />
+                <input type="password" title="password" value={pass} onChange={e => setPassword(e.target.value)} placeholder='password' />
+               <RegisterButton />
+               <ToLogin />
             </form>
         </div>
     );
 }
 
-
-
-
-
-
-
-export default function LoginPage() {
+export default function RegisterPage() {
     return (
-        <div className='Login-Background'>
-            <Login />
+        <div className='Register-Background'>
+            <RegisterForm />
         </div>
     );
 }
-
