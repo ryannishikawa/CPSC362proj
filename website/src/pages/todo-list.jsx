@@ -58,8 +58,6 @@ const DATA = [
   { id: "todo-2", name: "Repeat", completed: false },
 ];
 
-
-
 function ToDoListPage() {
   return (
     <TaskList tasks={DATA} />

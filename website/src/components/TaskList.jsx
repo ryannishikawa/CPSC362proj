@@ -54,14 +54,17 @@ function TaskList(props) {
   function deleteTask(id) {
     // get all tasks other than this task
     const remainingTasks = tasks.filter((task) => id !== task.id);
+    // set tasks to be all other tasks
     setTasks(remainingTasks);
   }
 
   const [tasks, setTasks] = useState(props.tasks);
+  // TODO: Make setTasks update the database
   const taskList = tasks
     .filter(FILTER_MAP[filter])
     .map((task) => (
       <Todo
+        // Attributes of tasks
         id={task.id}
         name={task.name}
         completed={task.completed}
@@ -74,6 +77,7 @@ function TaskList(props) {
 
   const filterList = FILTER_NAMES.map((name) => (
     <FilterButton
+      // Button for choosing what filter to use
       key={name}
       name={name}
       isPressed={name === filter}
@@ -81,8 +85,8 @@ function TaskList(props) {
     />
   ))
 
-  const tasksNoun = taskList.length !== 1 ? "tasks" : "task";
-  const headingText = `${taskList.length} ${tasksNoun} remaining`;
+  const tasksNoun = taskList.length !== 1 ? "tasks" : "task"; // Determines whether to use "task" singular or "tasks" plural
+  const headingText = `${taskList.length} ${tasksNoun} remaining`; // Text saying how many tasks are left
 
   return (
     <div className="todoapp stack-large">
