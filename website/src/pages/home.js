@@ -12,8 +12,8 @@
 //=======1=========2=========3=========4=========5=========6=========7=========8=========9=========0=========1=========2=========3**
 //
 //Author information
-//  Author names: Ryan Nishikawa, 
-//  Author emails: ryannishikawa48@csu.fullerton.edu, 
+//  Author names: Ryan Nishikawa,
+//  Author emails: ryannishikawa48@csu.fullerton.edu,
 //  Course ID: CPSC362
 //
 //Program information
@@ -21,7 +21,7 @@
 //  Date of last update: February 15, 2024
 //  Programming language(s): JavaScript, HTML, CSS
 //  Files in this program: App.js, login.js, register.js, home.js, etc...
-//  
+//
 //  OS of the computer where the program was developed: Ubuntu 22.04.3 LTS
 //  OS of the computer where the program was tested: Ubuntu 22.04.3 LTS
 //  Status: WIP
@@ -48,13 +48,33 @@
 //===== Begin code area ================================================================================================
 
 import React from 'react';
-import coconut from './coconut.jpg'; // Import the image file
+import { useNavigate } from 'react-router-dom';
+import '../css/login.css';
+import coconut from '../assets/coconut.jpg'; // Import the image file
+
+function ToTasks() {
+
+  const navigate = useNavigate();
+
+  const ToTasks = (e) => {
+      e.preventDefault();
+      navigate("/tasks");
+  };
+
+  return(
+      <p>
+          <button type='submit' onClick={ToTasks}><b><i><u>View your tasks</u></i></b></button>
+      </p>
+  );
+}
+
 
 const Home = () => {
   return (
     <div>
       <h1>Welcome !</h1>
       <img src={coconut} alt="My Image" style={{ width: '100%', height: 'auto' }} />{}
+      <ToTasks />
     </div>
   );
 };

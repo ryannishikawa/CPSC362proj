@@ -1,5 +1,5 @@
 //****************************************************************************************************************************
-//Program name: "App.js".  This program is the main part of our web app. Copyright (C)  *
+//Program name: "login.js".  This program controls the login page of our web app. Copyright (C)  *
 //2024 Ryan Nishikawa                                                                                                        *
 //This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License  *
 //version 3 as published by the Free Software Foundation.                                                                    *
@@ -12,8 +12,8 @@
 //=======1=========2=========3=========4=========5=========6=========7=========8=========9=========0=========1=========2=========3**
 //
 //Author information
-//  Author names: Ryan Nishikawa,
-//  Author emails: ryannishikawa48@csu.fullerton.edu,
+//  Author names: Ryan Nishikawa, 
+//  Author emails: ryannishikawa48@csu.fullerton.edu, 
 //  Course ID: CPSC362
 //
 //Program information
@@ -21,7 +21,7 @@
 //  Date of last update: February 15, 2024
 //  Programming language(s): JavaScript, HTML, CSS
 //  Files in this program: App.js, login.js, register.js, home.js, etc...
-//
+//  
 //  OS of the computer where the program was developed: Ubuntu 22.04.3 LTS
 //  OS of the computer where the program was tested: Ubuntu 22.04.3 LTS
 //  Status: WIP
@@ -30,10 +30,10 @@
 //  https://www.youtube.com/watch?v=psU13XU1gDY&list=LL&index=3&t=796s&ab_channel=CodeWithViju
 //
 //Purpose
-//  The hub of everything
+//  Allow users to login to an exiting account and access the app
 //
 //This file
-//   File name: App.js
+//   File name: login.js
 //   Date of last update: February 15, 2024
 //   Languages: JavaScript, HTML, CSS
 //
@@ -47,27 +47,70 @@
 //
 //===== Begin code area ================================================================================================
 
-import React from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import LoginPage from "./pages/login";
-import Register from "./pages/register";
-import Home from "./pages/home";
-import ToDoListPage from './pages/todo-list.jsx';
+import '../css/login.css';
+import React, {useState} from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
-const App = () => {
-  return(
-    <>
-      <BrowserRouter>
-        <Routes>
-          <Route path ="/tasks" element={<ToDoListPage />} />
-          <Route path ="/login" element ={<LoginPage />} />
-          <Route path ="/register" element ={<Register />} />
-          <Route path ="/home" element ={<Home />} />
-          <Route path ="/" element ={<LoginPage />} />
-        </Routes>
-      </BrowserRouter>
-    </>
-  );
+function LoginButton() {
+    return(
+        <button type='submit' class='Button'>Login</button>
+    );
 }
 
-export default App;
+function ToRegister() {
+
+    const navigate = useNavigate();
+
+    const ToSignupPage = (e) => {
+        e.preventDefault();
+        navigate("/register");
+    };
+
+    return(
+        <p>
+            Don't have an account? <button type='submit' onClick={ToSignupPage}><b><i><u>Sign up here!</u></i></b></button>
+        </p>
+    );
+}
+
+function LoginForm() {
+    const [email, setEmail] = useState('');
+    const [pass, setPassword] = useState('');
+    const navigate = useNavigate();
+
+    const handleSubmit = async(e) => {
+        e.preventDefault();
+
+        try {
+            const response = await axios.post('http://localhost:5000/api/users/find', {email, pass});
+            alert(`Welcome back ${response.data.name}! Logging you in...`);
+
+            navigate('/home');
+        } catch (err) {
+            
+            alert(`Incorrect email and/or password`);
+        }
+    }
+
+    return(
+        <div class="Login-Form">
+            <h1>Welcome</h1>
+            <form onSubmit={handleSubmit}>
+                <input type="text" title="email address" value={email} onChange={e => setEmail(e.target.value)}placeholder='you@email.domain' />
+                <input type="password" title="password" value={pass} onChange={e => setPassword(e.target.value)} placeholder='password' />
+                <LoginButton />
+                <ToRegister />
+            </form>
+        </div>
+    );
+}
+
+export default function LoginPage() {
+    return (
+        <div className='Login-Background'>
+            <LoginForm />
+        </div>
+    );
+}
+

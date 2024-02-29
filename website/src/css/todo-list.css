@@ -176,6 +176,16 @@ body {
   margin-top: 1.2rem;
 }
 
+.display-date {
+  /*display: inline-block;*/
+  text-align: right;
+  margin-bottom: 10px;
+  font-size: 1.6rem;
+  font-weight: 600;
+}
+
+
+
 /* End global styles */
 /* General app styles */
 .todoapp {
@@ -205,9 +215,9 @@ body {
 }
 
 .todoapp>h1 {
-  display: block;
-  margin: 0;
+  display: flex;
   margin-bottom: 1rem;
+  padding-right: 100px;
   max-width: 100%;
   text-align: center;
 }
