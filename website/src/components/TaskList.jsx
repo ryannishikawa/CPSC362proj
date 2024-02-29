@@ -4,7 +4,7 @@ import '../css/todo-list.css';
 import Todo from "./ToDo";
 import Form from './Form';
 import FilterButton from './FilterButton';
-import DateTime from "./Time";
+import {DateTime, DateTimeFormat} from "./Time";
 
 const FILTER_MAP = {
   // functions to be used for filtering tasks
@@ -86,7 +86,7 @@ function TaskList(props) {
 
   return (
     <div className="todoapp stack-large">
-    <DateTime></DateTime>
+    <DateTimeFormat></DateTimeFormat>
       <h1>Task List</h1>
       <Form addTask={addTask} />
       <div className="filters btn-group stack-exception">

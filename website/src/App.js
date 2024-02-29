@@ -60,10 +60,10 @@ const App = () => {
       <BrowserRouter>
         <Routes>
           <Route path ="/" element ={<LoginPage />} />
-          <Route path ="/tasks" element={<ToDoListPage />} />
           <Route path ="/login" element ={<LoginPage />} />
           <Route path ="/register" element ={<Register />} />
           <Route path ="/home" element ={<Home />} />
+          <Route path ="/tasks" element={<ToDoListPage />} />
         </Routes>
       </BrowserRouter>
     </>
