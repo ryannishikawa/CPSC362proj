@@ -18,19 +18,19 @@ function TaskList(props) {
 
   const [filter, setFilter] = useState("All");
 
-  function addTask(name) {
+  function addTask(name, dueDate) {
     // Create task object
-    const newTask = { id: `todo-${nanoid()}`, name, completed: false };
+    const newTask = { id: `todo-${nanoid()}`, name, dueDate, completed: false };
     //  Add the new task to the list of tasks
     setTasks([...tasks, newTask]);
   }
 
-  function editTask(id, newName) {
+  function editTask(id, newName, newDueDate) {
     const editedTaskList = tasks.map((task) => {
       // if this task has the same ID as the edited task
       if (id === task.id) {
         // Copy the task and update its name
-        return { ...task, name: newName };
+        return { ...task, name: newName, dueDate: newDueDate };
       }
       // Return the original task if it's not the edited task
       return task;
@@ -64,6 +64,7 @@ function TaskList(props) {
       <Todo
         id={task.id}
         name={task.name}
+        dueDate={task.dueDate}
         completed={task.completed}
         key={task.id}
         toggleTaskCompleted={toggleTaskCompleted}
