@@ -1,8 +1,10 @@
-import { useState } from "react";
+import React, { useState } from "react";
+import { HoursDropdown, MinsDropdown, AMPMdropdown, MonthDropdown, DateDropdown, YearDropdown } from "./Time";
 
 function Form(props) {
 
   const [name, setName] = useState("");
+  const [dueDate, setDueDate] = useState("");
 
   function handleChange(event) {
     // Change text inside the task creation
@@ -14,11 +16,24 @@ function Form(props) {
     event.preventDefault();
     // Makes sure task text is not empty
     if (name !== "") {
-      props.addTask(name);
+      props.addTask(name, dueDate);
       // Clears input after adding task
       setName("");
+      setDueDate("");
     }
   }
+
+  function SelectDueDate() {
+    const [selectedMonth, setSelectedMonth] = useState("");
+
+    return (
+        <div>
+            Due Date: <MonthDropdown setSelectedMonth={setSelectedMonth} /> <DateDropdown selectedMonth={selectedMonth} /> <YearDropdown /> <br />
+            Due Time: <HoursDropdown />:<MinsDropdown /> <AMPMdropdown /> 
+        </div>
+    );
+}
+
 
   return (
     <form onSubmit={handleSubmit}>
@@ -36,6 +51,10 @@ function Form(props) {
         value={name}
         onChange={handleChange}
       />
+      <p id="new-todo-duedate"
+         defaultValue={""}>
+        <SelectDueDate />
+      </p>
       <button type="submit" className="btn btn__primary btn__lg">
         Add
       </button>

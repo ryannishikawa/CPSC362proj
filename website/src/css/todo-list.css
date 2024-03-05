@@ -17,6 +17,7 @@ html {
 h1,
 h2 {
   margin-bottom: 0;
+  border: #000;
 }
 
 ul {
@@ -137,6 +138,7 @@ body {
   flex: 0 0 100%;
   margin: 0;
   text-align: center;
+  border: #000;
 }
 
 .visually-hidden {
@@ -215,7 +217,6 @@ body {
 }
 
 .todoapp>h1 {
-  display: flex;
   margin-bottom: 1rem;
   padding-right: 100px;
   max-width: 100%;

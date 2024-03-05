@@ -48,20 +48,35 @@
 //
 //===== Begin code area ================================================================================================
 
-import TaskList from "../components/TaskList";
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import '../css/login.css';
+import coconut from '../assets/coconut.jpg'; // Import the image file
 
-// Placeholder for initial tasks
-// TODO: Take tasks from database associated with a specific user and use them here
-const DATA = [
-  { id: "todo-0", name: "Eat", completed: true },
-  { id: "todo-1", name: "Sleep", completed: false },
-  { id: "todo-2", name: "Repeat", completed: false },
-];
-//let response = axios.post('http://localhost:5000/api/tasks/find', {uid});
+function ToTasks() {
 
-function ToDoListPage() {
+  const navigate = useNavigate();
+
+  const ToTasks = (e) => {
+      e.preventDefault();
+      navigate("/tasks");
+  };
+
+  return(
+      <p>
+          <button type='submit' onClick={ToTasks}><b><i><u>View your tasks</u></i></b></button>
+      </p>
+  );
+}
+
+
+const Home = () => {
   return (
-    <TaskList tasks={DATA} />
+    <div>
+      <h1>Welcome !</h1>
+      <img src={coconut} alt="My Image" style={{ width: '100%', height: 'auto' }} />{}
+      <ToTasks />
+    </div>
   );
 }
 
