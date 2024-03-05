@@ -48,7 +48,7 @@
 //===== Begin code area ================================================================================================
 
 import React from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import AuthProvider from "./hooks/AuthProvider";
 import PrivateRoute from "./components/privateRoute";
 
@@ -62,12 +62,13 @@ const App = () => {
       <BrowserRouter>
         <AuthProvider>
           <Routes>
-            <Route path="/" element={<LoginPage />}/>
             <Route path="/login" element={<LoginPage />}/>
             <Route path="/register" element={<RegisterPage />}/>
             <Route element={<PrivateRoute />}>
+              <Route path="/" element={<Home />} />
               <Route path="/home" element={<Home />} />
             </Route>
+            <Route path="*" element={<Navigate to="/" />}/>
           </Routes>
         </AuthProvider>
       </BrowserRouter>
