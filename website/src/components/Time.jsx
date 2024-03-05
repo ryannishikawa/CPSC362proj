@@ -89,15 +89,6 @@ export const DateTimeFormat = () => {
 //function that creates a dropdown menu to select *hour* for dueDate
 // import {HoursDropdown} from "./Time"
 export const HoursDropdown = () => {
-    var [hours,setHours] = useState(new Date());
-
-    useEffect(() => {
-        var timer = setInterval(() => setHours(new Date().getHours()), 1000)
-        return function cleanup() {
-            clearInterval(timer)
-        }
-    });
-
     var hoursNow = DateTime().getHours();
     var hoursNowReal = (hoursNow + 1) > 12 ? (hoursNow - 11) : (hoursNow + 1)
     return (
@@ -170,7 +161,7 @@ export const MonthDropdown = ({setSelectedMonth}) => {
 // import {DateDropdown} from "./Time"
 export const DateDropdown = ({selectedMonth}) => {
     var date = DateTime().getDate();
-    const [selectedDate, setSelectedDate] = useState("");
+    const [setSelectedDate] = useState("");
 
     const getDaysInMonth = () => {
         switch (selectedMonth) {
