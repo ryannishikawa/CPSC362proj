@@ -8,7 +8,7 @@ function TaskListHeader(props) {
 
   return (
     <div>
-      <DateTimeFormat></DateTimeFormat>
+      <DateTimeFormat />
       <h1>Task List</h1>
       <Form addTask={props.addTask} />
       <div className="filters btn-group stack-exception">
