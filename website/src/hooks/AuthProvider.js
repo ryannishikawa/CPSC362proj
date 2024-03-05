@@ -36,7 +36,6 @@ const AuthProvider = ({children}) => {
                 localStorage.setItem("userkey", response.data.user.user_key);
 
                 alert(`Welcome ${response.data.user.name}! Logging you in...`);
-                alert(localStorage.getItem("userkey"));
                 navigate("/home");
                 return;
             } else {

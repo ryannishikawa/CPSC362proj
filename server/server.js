@@ -161,7 +161,14 @@ server.post('/api/users/find', (req, res) => {
                 const decryptedPass = decryptData(userPasswordObject, decryptedUserKey);
 
                 if(pass == decryptedPass) {
-                    return res.status(200).json({user: user});
+
+                    // Ensure the returned user object is decrypted.
+                    const decryptUserObj = {
+                        name: user.name,
+                        user_key: decryptedUserKey,
+                        uid: user.uid
+                    }
+                    return res.status(200).json({user: decryptUserObj});
                 } else {
                     return res.status(404).json({error: 'User not found'});
                 }
