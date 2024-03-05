@@ -52,7 +52,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import LoginPage from "./pages/login";
 import Register from "./pages/register";
 import Home from "./pages/home";
-import ToDoListPage from './pages/todo-list.jsx';
 
 const App = () => {
   return(
@@ -60,10 +59,9 @@ const App = () => {
       <BrowserRouter>
         <Routes>
           <Route path ="/" element ={<LoginPage />} />
-          <Route path ="/tasks" element={<ToDoListPage />} />
+          <Route path ="/home" element={<Home />} />
           <Route path ="/login" element ={<LoginPage />} />
           <Route path ="/register" element ={<Register />} />
-          <Route path ="/home" element ={<Home />} />
         </Routes>
       </BrowserRouter>
     </>
