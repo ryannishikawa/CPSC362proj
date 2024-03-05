@@ -51,6 +51,7 @@ import React, {useState} from 'react';
 import '../css/login.css';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useAuth } from '../hooks/AuthProvider';
 
 function RegisterButton() {
     return(
@@ -81,7 +82,7 @@ function RegisterForm() {
     const [email, setEmail] = useState('');
     const [pass, setPassword] = useState('');
 
-    const navigate = useNavigate();
+    const auth = useAuth();
 
     //sends user to home page on submit
     const handleSubmit = async(e) => {
@@ -100,9 +101,9 @@ function RegisterForm() {
             // Add the welcome task
             const description = 'Welcome to our app! Time to get productive and start adding tasks!';
             const newTaskRes = await axios.post('http://localhost:5000/api/tasks/add', {uid, description});
+
             // Login
-            alert(`Welcome to our app ${name}! Logging you in...`);
-            navigate("/home");
+            auth.loginAction(email, pass);
 
         } catch (err) {
             alert(err);
