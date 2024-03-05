@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { HoursDropdown, MinsDropdown, AMPMdropdown } from "./Time";
+import React, { useState } from "react";
+import { HoursDropdown, MinsDropdown, AMPMdropdown, MonthDropdown, DateDropdown, YearDropdown } from "./Time";
 
 function Form(props) {
 
@@ -23,6 +23,18 @@ function Form(props) {
     }
   }
 
+  function SelectDueDate() {
+    const [selectedMonth, setSelectedMonth] = useState("");
+
+    return (
+        <div>
+            Due Date: <MonthDropdown setSelectedMonth={setSelectedMonth} /> <DateDropdown selectedMonth={selectedMonth} /> <YearDropdown /> <br />
+            Due Time: <HoursDropdown />:<MinsDropdown /> <AMPMdropdown /> 
+        </div>
+    );
+}
+
+
   return (
     <form onSubmit={handleSubmit}>
       <h2 className="label-wrapper">
@@ -41,9 +53,7 @@ function Form(props) {
       />
       <p id="new-todo-duedate"
          defaultValue={""}>
-        Set Due Date: 
-        <br />
-        Set Due Time: <HoursDropdown />:<MinsDropdown /> <AMPMdropdown />
+        <SelectDueDate />
       </p>
       <button type="submit" className="btn btn__primary btn__lg">
         Add
