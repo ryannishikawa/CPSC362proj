@@ -49,22 +49,29 @@
 
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import AuthProvider from "./hooks/AuthProvider";
+import PrivateRoute from "./components/privateRoute";
+
 import LoginPage from "./pages/login";
-import Register from "./pages/register";
 import Home from "./pages/home";
+import RegisterPage from "./pages/register";
 
 const App = () => {
-  return(
-    <>
+  return (
+    <div className="App">
       <BrowserRouter>
-        <Routes>
-          <Route path ="/" element ={<LoginPage />} />
-          <Route path ="/home" element={<Home />} />
-          <Route path ="/login" element ={<LoginPage />} />
-          <Route path ="/register" element ={<Register />} />
-        </Routes>
+        <AuthProvider>
+          <Routes>
+            <Route path="/" element={<LoginPage />}/>
+            <Route path="/login" element={<LoginPage />}/>
+            <Route path="/register" element={<RegisterPage />}/>
+            <Route element={<PrivateRoute />}>
+              <Route path="/home" element={<Home />} />
+            </Route>
+          </Routes>
+        </AuthProvider>
       </BrowserRouter>
-    </>
+    </div>
   );
 }
 

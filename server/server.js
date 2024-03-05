@@ -248,9 +248,18 @@ server.post('/api/tasks/add', (req, res) => {
 
 /**
  * The /api/tasks/find endpoint takes in a User ID (uid) and returns an array of tasks.
- * Optionally, you may specify a Task ID (tid) to retrieve a specific task associated with a User ID.
  */
 server.post('/api/tasks/find', (req, res) => {
     const {uid} = req.body;
 
+    let fetchQuery = `SELECT * FROM \`u_${uid}\` ORDER BY tid`;
+
+    taskDB.all(fetchQuery, [], (err, rows) => {
+
+        if(err) {
+            return res.status(500).json({ error: 'Internal server error' }); 
+        }
+
+            return res.status(200).json(rows);
+    });
 });
