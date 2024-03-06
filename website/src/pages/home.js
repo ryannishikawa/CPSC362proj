@@ -78,6 +78,6 @@ const Home = () => {
       <ToTasks />
     </div>
   );
-}
+};
 
-export default ToDoListPage;
+export default Home;

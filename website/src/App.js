@@ -55,6 +55,7 @@ import PrivateRoute from "./components/privateRoute";
 import LoginPage from "./pages/login";
 import Home from "./pages/home";
 import RegisterPage from "./pages/register";
+import ToDoListPage from "./pages/todo-list";
 
 const App = () => {
   return (
@@ -62,11 +63,11 @@ const App = () => {
       <BrowserRouter>
         <AuthProvider>
           <Routes>
+            <Route path="/" element={<Home />} />
             <Route path="/login" element={<LoginPage />}/>
             <Route path="/register" element={<RegisterPage />}/>
             <Route element={<PrivateRoute />}>
-              <Route path="/" element={<Home />} />
-              <Route path="/home" element={<Home />} />
+              <Route path="/tasks" element={<ToDoListPage />} />
             </Route>
             <Route path="*" element={<Navigate to="/" />}/>
           </Routes>
