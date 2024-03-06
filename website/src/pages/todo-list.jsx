@@ -146,6 +146,7 @@ function ToDoListPage() {
       <TaskListHeader
         taskList={taskList}
         filterList={filterList}
+        filter={filter}
         addTask={addTask}
       />
       <TaskList taskList={taskList} />
