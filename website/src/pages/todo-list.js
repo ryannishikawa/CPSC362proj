@@ -71,7 +71,7 @@ function ToDoListPage() {
           let mappedTaskObj = taskObject.map(task => ({
             id: task.tid.toString(),
             name: task.description,
-            completed: task.completed
+            completed: JSON.parse(task.completed.toLowerCase())
           }));
 
           setTasks(mappedTaskObj);
