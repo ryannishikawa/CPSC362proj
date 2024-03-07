@@ -22,7 +22,6 @@ function TaskList(props) {
   // Ensure updates to tasks are pushed to local storage
   useEffect(() => {
     localStorage.setItem("usertasks", JSON.stringify(tasks));
-    console.log(JSON.stringify(tasks));
   }, [tasks]);
 
   function addTask(name, dueDate) {

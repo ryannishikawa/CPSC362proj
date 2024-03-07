@@ -53,8 +53,9 @@ import TaskList from "../components/TaskList";
 import axios from "axios";
 
 function ToDoListPage() {
-  const [tasks, setTasks] = useState([]);
-  const [loading, isLoading] = useState(true);
+  const [tasks, setTasks] = useState([]);                         // Set initial state blank
+  const [loading, isLoading] = useState(true);                    // Set loading state for database queries to true
+  const [isInitialRender, setIsInitialRender] = useState(true);   // Set initial render flag to prevent tasks updating to database after page load.
 
   /**
    * This effect handles pulling database information before the page is loaded.
@@ -68,6 +69,7 @@ function ToDoListPage() {
         const uid = localStorage.getItem("userid");
         const response = await axios.post('http://localhost:5000/api/tasks/find', {uid});
 
+        console.log(`POST to database with status ` + response.status);
         if(response.status === 200) {
           let taskObject = response.data.taskObject;
       
@@ -85,7 +87,7 @@ function ToDoListPage() {
           isLoading(false);
         }
       } catch (err) {
-        console.err(err);
+        console.log(err);
       }
     };
 
@@ -98,7 +100,7 @@ function ToDoListPage() {
     };
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, []);   // Empty dependency array intentional, do not remove as this effect must run only once.
 
   /**
    * This effect saves tasks to the database when a user leaves the page (by navigation or closing window)
@@ -106,18 +108,24 @@ function ToDoListPage() {
   useEffect(() => {
     return async () => {
 
-        // Save tasks
-        try {
-          const uid = localStorage.getItem("userid");
-          const taskObject = JSON.parse(localStorage.getItem("usertasks"));
+      if(isInitialRender) {
+        setIsInitialRender(false);
+        return;
+      }
 
-          const response = await axios.post('http://localhost:5000/api/tasks/update', {uid, taskObject});
+      // Save tasks
+      try {
+        const uid = localStorage.getItem("userid");
+        const taskObject = JSON.parse(localStorage.getItem("usertasks"));
 
-        } catch (err) {
-          console.log(err);
-        }
+        const response = await axios.post('http://localhost:5000/api/tasks/update', { uid, taskObject });
+        console.log('POST to database with response ' + response.status);
+
+      } catch (err) {
+        console.log(err);
+      }
     }
-  }, [tasks]);
+  }, [isInitialRender, tasks]);
 
   /**
    * Prompts user if they really want to leave.
