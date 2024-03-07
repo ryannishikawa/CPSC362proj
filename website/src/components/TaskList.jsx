@@ -58,13 +58,20 @@ function TaskList(props) {
   }
 
   function deleteTask(id) {
+    
     // get all tasks other than this task
-    const remainingTasks = tasks.filter((task) => id !== task.id);
+    const remainingTasks = tasks.map((task) => {
+      if(id === task.id) {
+        return { ...task, status: 'deleted'};
+      }
+      return task;
+    });
+
     setTasks(remainingTasks);
   }
   
   const taskList = tasks
-    .filter(FILTER_MAP[filter])
+    .filter(task => task.status !== 'deleted' && FILTER_MAP[filter](task))
     .map((task) => (
       <Todo
         id={task.id}

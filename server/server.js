@@ -295,7 +295,6 @@ server.post('/api/tasks/update', (req, res) => {
 
             taskDB.run('BEGIN TRANSACTION');    // Start chain of queries
 
-            console.log('prepped task object is: ' + JSON.stringify(preppedTaskObject));
             // Prepare a query to update every task object if it was changed by the user.
             preppedTaskObject.forEach(task => {
                 
