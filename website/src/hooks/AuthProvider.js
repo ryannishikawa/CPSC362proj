@@ -39,9 +39,10 @@ const AuthProvider = ({children}) => {
                 setUser(response.data.user.name);
                 setToken(response.data.user.user_key)
 
-                // Store the user key and the user ID in the session
+                // Store the user key, user ID, and tasks that will be modified in the session
                 localStorage.setItem("userkey", response.data.user.user_key);
                 localStorage.setItem("userid", response.data.user.uid);
+                localStorage.setItem("usertasks", []);
 
                 alert(`Welcome ${response.data.user.name}! Logging you in...`);
                 navigate("/home");
@@ -65,6 +66,7 @@ const AuthProvider = ({children}) => {
 
         localStorage.removeItem("userkey");
         localStorage.removeItem("userid");
+        localStorage.removeItem("usertasks");
         navigate("/login")
     };
 

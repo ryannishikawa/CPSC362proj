@@ -56,8 +56,12 @@ function ToDoListPage() {
   const [tasks, setTasks] = useState([]);
   const [loading, isLoading] = useState(true);
 
+  /**
+   * This effect handles pulling database information before the page is loaded.
+   */
   useEffect(() => {
 
+    // Fetch data from the database
     const fetchData = async () => {
       
       try {
@@ -71,10 +75,13 @@ function ToDoListPage() {
           let mappedTaskObj = taskObject.map(task => ({
             id: task.tid.toString(),
             name: task.description,
-            completed: JSON.parse(task.completed.toLowerCase())
-          }));
+            completed: JSON.parse(task.completed.toLowerCase()),
+            status: "none"        // The status must be 'none' (no action on this record), 'updated' (updated value on this record),
+          }));                    // OR 'deleted' (this record was deleted). Otherwise, the database will not accept this record.
 
           setTasks(mappedTaskObj);
+          localStorage.setItem("usertasks", JSON.stringify(tasks));   // Store the pulled tasks locally for modification.
+
           isLoading(false);
         }
       } catch (err) {
@@ -83,7 +90,42 @@ function ToDoListPage() {
     };
 
     fetchData();
+
+    // Add event listener and cleanup for when user leaves the page.
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  /**
+   * This effect saves tasks to the database when a user leaves the page (by navigation or closing window)
+   */
+  useEffect(() => {
+    return async () => {
+
+        // Save tasks
+        try {
+          const uid = localStorage.getItem("userid");
+          const taskObject = JSON.parse(localStorage.getItem("usertasks"));
+
+          const response = await axios.post('http://localhost:5000/api/tasks/update', {uid, taskObject});
+
+        } catch (err) {
+          console.log(err);
+        }
+    }
+  }, [tasks]);
+
+  /**
+   * Prompts user if they really want to leave.
+   */
+  const handleBeforeUnload = (event) => {
+    event.preventDefault();
+    event.returnValue = '';
+  };
 
   // Wait until the task list is retrieved from the database.
   if(loading) {

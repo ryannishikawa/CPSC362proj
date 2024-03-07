@@ -270,3 +270,50 @@ server.post('/api/tasks/find', (req, res) => {
             return res.status(200).json({ taskObject: rows });
     });
 });
+
+
+
+/**
+ * The /api/tasks/update endpoint takes in a User ID (uid) and a TaskObject and updates the corresponding user record
+ * in the database with the provided TaskObject
+ */
+server.post('/api/tasks/update', (req, res) => {
+    const {uid, taskObject} = req.body;
+
+    // Begin updating the tasks in this try block
+    try {
+
+        // Change the mapping between the given taskObject to the database taskObject with appended property
+        let preppedTaskObject = taskObject.map(task => ({
+            tid: taskObject.id,
+            description: taskObject.name,
+            completed: taskObject.completed,
+            status: taskObject.status
+        }));
+
+        taskDB.serialize(() => {
+
+            // Prepare a query to update every task object if it was changed by the user.
+            preppedTaskObject.forEach(task => {
+
+                // Handle updated record
+                if(task.status === "updated") {
+
+                    taskDB.run(`DELETE FROM u_${uid} WHERE tid = ?`, [task.tid]);
+
+                    // Handle deleted record
+                } else if (task.status === "deleted") {
+                    const completedVal = task.completed ? "TRUE" : "FALSE";
+
+                    taskDB.run(`UPDATE u_${uid} SET description = ?, completed = ? WHERE tid = ?`, [task.description, completedVal, task.tid]);
+
+                }
+            });
+        });
+
+        return res.status(200).json({ message: "Tasks have been updated successfully!"});
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({ message: "Internal server error"});
+    }
+});
