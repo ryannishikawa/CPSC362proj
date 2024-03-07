@@ -115,6 +115,7 @@ function ToDoListPage() {
         const response = await axios.post('http://localhost:5000/api/tasks/update', { uid, taskObject });
         console.log('POST to database with status ' + JSON.stringify(response.data));
 
+        localStorage.removeItem("usertasks");
       } catch (err) {
         console.log(err);
       }
