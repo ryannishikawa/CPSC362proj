@@ -47,7 +47,7 @@
 //
 //===== Begin code area ================================================================================================
 
-import React from 'react';
+import { React } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../css/login.css';
 import coconut from '../assets/coconut.jpg'; // Import the image file
@@ -70,6 +70,8 @@ function ToTasks() {
 
 
 const Home = () => {
+  
+
   return (
     <div>
       <h1>Welcome !</h1>

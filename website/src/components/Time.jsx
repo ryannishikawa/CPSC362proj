@@ -18,7 +18,7 @@
 //
 //Program information
 //  Program name: Task manager
-//  Date of last update: February 22, 2024
+//  Date of last update: March 5, 2024
 //  Programming language(s): JavaScript, HTML, CSS
 //  Files in this program: App.js, login.js, register.js, home.js, etc...
 //
@@ -42,6 +42,7 @@
 //   https://medium.com/create-a-clocking-in-system-on-react/create-a-react-app-displaying-the-current-date-and-time-using-hooks-21d946971556
 //   https://www.w3schools.com/jsref/jsref_getday.asp
 //   https://react-bootstrap.netlify.app/docs/components/dropdowns/
+//   https://www.npmjs.com/package/react-datepicker
 //=======1=========2=========3=========4=========5=========6=========7=========8=========9=========0=========1=========2**
 //
 //
@@ -50,9 +51,18 @@
 //===== Begin code area ================================================================================================
 
 import React, { useState, useEffect } from 'react'
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+
 
 const month = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 const weekday = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+
+
+//**********************************************************************************************************************
+//===== Begin Time area ================================================================================================
+//**********************************************************************************************************************
 
 //function that returns the current date
 // import {DateTime} from "./Time";
@@ -82,18 +92,26 @@ export const DateTimeFormat = () => {
     );
 }
 
+//**********************************************************************************************************************
+//===== End Time area ================================================================================================
+//**********************************************************************************************************************
 
-//===== Begin Time area ================================================================================================
-
+//**********************************************************************************************************************
+//===== Begin Dropdown Menu area ================================================================================================
+//**********************************************************************************************************************
 
 //function that creates a dropdown menu to select *hour* for dueDate
 // import {HoursDropdown} from "./Time"
-export const HoursDropdown = () => {
+export const HoursDropdown = ({setSelectedHours}) => {
     var hoursNow = DateTime().getHours();
     var hoursNowReal = (hoursNow + 1) > 12 ? (hoursNow - 11) : (hoursNow + 1)
+
+    const handleHoursChange = (e) => {
+        setSelectedHours(e.target.value);
+    }
+
     return (
-        <select id="dropdown-button" title="Hour" defaultValue={hoursNowReal}>
-          <option value="">hour</option>
+        <select id="dropdown-button" title="Hour" onChange={handleHoursChange} defaultValue={hoursNowReal}>
           {[...Array(12)].map((_, index) => (
             <option value={index+1}>
               {index + 1}
@@ -105,9 +123,13 @@ export const HoursDropdown = () => {
 
 //function that creates a dropdown menu to select *minutes* for dueDate
 // import {MinsDropdown} from "./Time"
-export const MinsDropdown = () => {
+export const MinsDropdown = ({setSelectedMins}) => {
+    const handleMinsChange = (e) => {
+        setSelectedMins(e.target.value);
+    }
+
     return (
-        <select id="dropdown-button" title="Mins">
+        <select id="dropdown-button" title="Mins" onChange={handleMinsChange}>
           {[...Array(10)].map((_, index) => (
             <option value={index}>
                 0{index}
@@ -124,23 +146,26 @@ export const MinsDropdown = () => {
 
 //function that creates a dropdown menu to select *AM/PM* for dueDate
 // import {AMPMDropdown} from "./Time"
-export const AMPMdropdown = () => {
+export const AMPMdropdown = ({setSelectedAMPM}) => {
     var AMorPM = DateTime().getHours() >= 12 ? "PM" : "AM";
+
+    const handleAMPMChange = (e) => {
+        setSelectedAMPM(e.target.value);
+    }
+
     return (
-        <select id="dropdown-button" title="AMPM" defaultValue={AMorPM}>
+        <select id="dropdown-button" title="AMPM" onChange={handleAMPMChange} defaultValue={AMorPM}>
             <option value="AM">AM</option>
             <option value="PM">PM</option>
         </select>
     );
 }
 
-
-//===== Begin Date area ================================================================================================
-
 //function that creates a dropdown menu to select *month* for dueDate
 // import {MonthDropdown} from "./Time"
 export const MonthDropdown = ({setSelectedMonth}) => {
     var month12 = DateTime().getMonth();
+
     const handleMonthChange = (e) => {
         setSelectedMonth(e.target.value);
     }
@@ -159,9 +184,12 @@ export const MonthDropdown = ({setSelectedMonth}) => {
 
 //function that gets month from MonthDropdown to create a dropdown menu to select *date* for dueDate
 // import {DateDropdown} from "./Time"
-export const DateDropdown = ({selectedMonth}) => {
+export const DateDropdown = ({selectedMonth, selectedYear, setSelectedDate}) => {
     var date = DateTime().getDate();
-    const [setSelectedDate] = useState("");
+
+    const handleDateChange = (e) => {
+        setSelectedDate(e.target.value);
+    }
 
     const getDaysInMonth = () => {
         switch (selectedMonth) {
@@ -171,15 +199,10 @@ export const DateDropdown = ({selectedMonth}) => {
             case "November":
                 return 30;
             case "February":
-                const year = new Date().getFullYear();
-                return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0 ? 29 : 28;
+                return (selectedYear % 4 === 0 && selectedYear % 100 !== 0) || selectedYear % 400 === 0 ? 29 : 28;
             default:
                 return 31;
         }
-    }
-
-    const handleDateChange = (e) => {
-        setSelectedDate(e.target.value);
     }
 
     return (
@@ -196,10 +219,15 @@ export const DateDropdown = ({selectedMonth}) => {
 
 //function that creates a dropdown menu to select *year* for dueDate
 // import {YearDropdown} from "./Time"
-export const YearDropdown = () => {
+export const YearDropdown = ({setSelectedYear}) => {
     var thisYear = DateTime().getFullYear();
+
+    const handleYearChange = (e) => {
+        setSelectedYear(e.target.value);
+    }
+
     return (
-        <select id="dropdown-button" title="Year" defaultValue={thisYear}>
+        <select id="dropdown-button" title="Year" onChange={handleYearChange} defaultValue={thisYear}>
           {[...Array(25)].map((_, index) => (
             <option value={index + thisYear - 12}>
                 {index + thisYear - 12}
@@ -208,5 +236,42 @@ export const YearDropdown = () => {
         </select>
       );
 }
+
+//*******
+//funtion to return the selected dueDate
+// import {getSelctedDueDate} from "./Time"
+export const getSelctedDueTime = ({selectedHours, selectedMins, selectedAMPM}) => {
+    if (selectedAMPM === "PM") {
+        selectedHours += 12;
+    }
+    var dueDate = new Date(selectedHours, selectedMins);
+    
+    return dueDate;
+}
+//**********************************************************************************************************************
+//===== End Dropdown Menu area ================================================================================================
+//**********************************************************************************************************************
+
+
+//datepicker function
+// import {Example} from "./Time"
+export const Example = () => {
+    const [startDate, setStartDate] = useState(new Date());
+    return (
+      <DatePicker selected={startDate} onChange={(date) => setStartDate(date)} />
+    );
+  };
+
+export const Example2 = () => {
+    const [startDate, setStartDate] = useState(new Date());
+    return (
+        <DatePicker
+        selected={startDate} 
+        onChange={(date) => setStartDate(date)}
+        showTimeSelect
+        dateFormat="Pp"
+      />
+    );
+  };
 
 export default DateTime
