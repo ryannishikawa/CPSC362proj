@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { HoursDropdown, MinsDropdown, AMPMdropdown, MonthDropdown, DateDropdown, YearDropdown } from "./Time";
+import { HoursDropdown, MinsDropdown, AMPMdropdown, Example} from "./Time";
+
 
 function Form(props) {
 
@@ -24,13 +25,15 @@ function Form(props) {
   }
 
   function SelectDueDate() {
-    const [selectedMonth, setSelectedMonth] = useState("");
+    const [selectedHours, setSelectedHours] = useState("");
+    const [selectedMins, setSelectedMins] = useState("");
+    const [selectedAMPM, setSelectedAMPM] = useState("");
 
     return (
-        <div>
-            Due Date: <MonthDropdown setSelectedMonth={setSelectedMonth} /> <DateDropdown selectedMonth={selectedMonth} /> <YearDropdown /> <br />
-            Due Time: <HoursDropdown />:<MinsDropdown /> <AMPMdropdown /> 
-        </div>
+      <div>
+        Due Date: <Example /> <br/>
+        Due Time: <HoursDropdown setSelectedHours={setSelectedHours}/>:<MinsDropdown setSelectedMins={setSelectedMins}/> <AMPMdropdown setSelectedAMPM={setSelectedAMPM}/> 
+      </div>
     );
 }
 
