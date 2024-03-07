@@ -48,21 +48,50 @@
 //
 //===== Begin code area ================================================================================================
 
+import { useEffect, useState } from "react";
 import TaskList from "../components/TaskList";
-
-// Placeholder for initial tasks
-// TODO: Take tasks from database associated with a specific user and use them here
-const DATA = [
-  { id: "todo-0", name: "Eat", completed: true },
-  { id: "todo-1", name: "Sleep", completed: false },
-  { id: "todo-2", name: "Repeat", completed: false },
-];
-
-
+import axios from "axios";
 
 function ToDoListPage() {
+  const [tasks, setTasks] = useState([]);
+  const [loading, isLoading] = useState(true);
+
+  useEffect(() => {
+
+    const fetchData = async () => {
+      
+      try {
+        const uid = localStorage.getItem("userid");
+        const response = await axios.post('http://localhost:5000/api/tasks/find', {uid});
+
+        if(response.status === 200) {
+          let taskObject = response.data.taskObject;
+      
+          // Map database response to object property names in TaskList.jsx
+          let mappedTaskObj = taskObject.map(task => ({
+            id: task.tid.toString(),
+            name: task.description,
+            completed: task.completed
+          }));
+
+          setTasks(mappedTaskObj);
+          isLoading(false);
+        }
+      } catch (err) {
+        console.err(err);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  // Wait until the task list is retrieved from the database.
+  if(loading) {
+    return <div>Loading...</div>;
+  }
+
   return (
-    <TaskList tasks={DATA} />
+    <TaskList tasks={tasks} />
   );
 }
 

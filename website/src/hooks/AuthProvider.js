@@ -24,7 +24,12 @@ const AuthProvider = ({children}) => {
     const [token, setToken] = useState(localStorage.getItem("userkey") || "");
     const navigate = useNavigate();
 
-    // Call the server to see if a given email and password match a database record.
+    /**
+     * Allows sessions to persist upon exiting website assuming valid credentials are provided
+     * @param {string} email 
+     * @param {string} pass 
+     * @returns void, saves user key and user ID to the session.
+     */
     const loginAction = async (email, pass) => {
 
         try {
@@ -33,7 +38,10 @@ const AuthProvider = ({children}) => {
             if(response.data.user) {
                 setUser(response.data.user.name);
                 setToken(response.data.user.user_key)
+
+                // Store the user key and the user ID in the session
                 localStorage.setItem("userkey", response.data.user.user_key);
+                localStorage.setItem("userid", response.data.user.uid);
 
                 alert(`Welcome ${response.data.user.name}! Logging you in...`);
                 navigate("/home");
@@ -48,10 +56,15 @@ const AuthProvider = ({children}) => {
         }
     };
 
+    /**
+     * Removes the user, token, and associated information in the account from the session.
+     */
     const logoutAction = () => {
         setUser(null);
         setToken("");
+
         localStorage.removeItem("userkey");
+        localStorage.removeItem("userid");
         navigate("/login")
     };
 
