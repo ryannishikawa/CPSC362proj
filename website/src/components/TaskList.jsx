@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { nanoid } from "nanoid";
 import '../css/todo-list.css';
 import Todo from "./ToDo";
 import Form from './Form';
@@ -26,7 +25,7 @@ function TaskList(props) {
 
   function addTask(name, dueDate) {
     // Create task object
-    const newTask = { id: nanoid(), name, dueDate, completed: false, status: 'added' };
+    const newTask = { id: -1, name, dueDate, completed: false, status: 'added' };
     //  Add the new task to the list of tasks
     setTasks([...tasks, newTask]);
   }
@@ -37,7 +36,7 @@ function TaskList(props) {
       // if this task has the same ID as the edited task
       if (id === task.id) {
         // Copy the task and update its name
-        return { ...task, name: newName, dueDate: newDueDate, status: 'updated' };
+        return { ...task, name: newName, dueDate: newDueDate, status: task.status === 'added' ? 'added' : 'updated' };
       }
       // Return the original task if it's not the edited task
       return task;
@@ -51,7 +50,7 @@ function TaskList(props) {
       if (id === task.id) {
         // use object spread to make a new object
         // whose `completed` prop has been inverted
-        return { ...task, completed: !task.completed, status: 'updated' };
+        return { ...task, completed: !task.completed, status: task.status === 'added' ? 'added' : 'updated' };
       }
       return task;
     });
@@ -59,20 +58,11 @@ function TaskList(props) {
   }
 
   function deleteTask(id) {
-
-    // Update the status label for the task to be removed
-    tasks.map((task) => {
-      if (id === task.id) {
-        return { ...task, status: 'deleted'};
-      }
-
-      return false;
-    });
-
     // get all tasks other than this task
     const remainingTasks = tasks.filter((task) => id !== task.id);
     setTasks(remainingTasks);
   }
+  
   const taskList = tasks
     .filter(FILTER_MAP[filter])
     .map((task) => (

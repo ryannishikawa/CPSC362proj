@@ -55,7 +55,6 @@ import axios from "axios";
 function ToDoListPage() {
   const [tasks, setTasks] = useState([]);                         // Set initial state blank
   const [loading, isLoading] = useState(true);                    // Set loading state for database queries to true
-  const [isInitialRender, setIsInitialRender] = useState(true);   // Set initial render flag to prevent tasks updating to database after page load.
 
   /**
    * This effect handles pulling database information before the page is loaded.
@@ -108,24 +107,19 @@ function ToDoListPage() {
   useEffect(() => {
     return async () => {
 
-      if(isInitialRender) {
-        setIsInitialRender(false);
-        return;
-      }
-
       // Save tasks
       try {
         const uid = localStorage.getItem("userid");
         const taskObject = JSON.parse(localStorage.getItem("usertasks"));
 
         const response = await axios.post('http://localhost:5000/api/tasks/update', { uid, taskObject });
-        console.log('POST to database with response ' + response.status);
+        console.log('POST to database with status ' + JSON.stringify(response.data));
 
       } catch (err) {
         console.log(err);
       }
     }
-  }, [isInitialRender, tasks]);
+  }, [tasks]);
 
   /**
    * Prompts user if they really want to leave.

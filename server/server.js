@@ -225,8 +225,8 @@ server.post('/api/users/register', (req, res) => {
 server.post('/api/tasks/add', (req, res) => {
     const {uid, description} = req.body;
 
-    let tableQuery = `CREATE TABLE IF NOT EXISTS \`u_${uid}\` (\`tid\` INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL, \`description\` TEXT NOT NULL, \`completed\` TEXT NOT NULL DEFAULT 'FALSE') STRICT`;
-    let newTaskQuery = `INSERT INTO \`u_${uid}\` (\`description\`) VALUES (?)`;
+    let tableQuery = `CREATE TABLE IF NOT EXISTS u_${uid} (tid INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL, description TEXT NOT NULL, completed TEXT NOT NULL DEFAULT 'FALSE') STRICT`;
+    let newTaskQuery = `INSERT INTO u_${uid} (description) VALUES (?)`;
 
     // If the table does not exist, create a new table with the first task to the database.
     taskDB.run(tableQuery, function (ctErr) {
@@ -259,7 +259,7 @@ server.post('/api/tasks/add', (req, res) => {
 server.post('/api/tasks/find', (req, res) => {
     const {uid} = req.body;
 
-    let fetchQuery = `SELECT * FROM \`u_${uid}\` ORDER BY tid`;
+    let fetchQuery = `SELECT * FROM u_${uid} ORDER BY tid`;
 
     taskDB.all(fetchQuery, [], (err, rows) => {
 
@@ -285,33 +285,62 @@ server.post('/api/tasks/update', (req, res) => {
 
         // Change the mapping between the given taskObject to the database taskObject with appended property
         let preppedTaskObject = taskObject.map(task => ({
-            tid: taskObject.id,
-            description: taskObject.name,
-            completed: taskObject.completed,
-            status: taskObject.status
+            tid: task.id,
+            description: task.name,
+            completed: task.completed,
+            status: task.status
         }));
 
         taskDB.serialize(() => {
 
+            taskDB.run('BEGIN TRANSACTION');    // Start chain of queries
+
+            console.log('prepped task object is: ' + JSON.stringify(preppedTaskObject));
             // Prepare a query to update every task object if it was changed by the user.
             preppedTaskObject.forEach(task => {
-
+                
                 // Handle updated record
-                if(task.status === "updated") {
+                if(task.status === "deleted") {
 
-                    taskDB.run(`DELETE FROM u_${uid} WHERE tid = ?`, [task.tid]);
+                    taskDB.run(`DELETE FROM u_${uid} WHERE tid = ?`, [task.tid], (err) => {
+                        if(err) {
+                            taskDB.run('ROLLBACK');
+                            return res.status(500).json({ message: "Internal server error: a record could not be deleted"});
+                        }
+                    });
 
                     // Handle deleted record
-                } else if (task.status === "deleted") {
+                } else if (task.status === "updated") {
                     const completedVal = task.completed ? "TRUE" : "FALSE";
 
-                    taskDB.run(`UPDATE u_${uid} SET description = ?, completed = ? WHERE tid = ?`, [task.description, completedVal, task.tid]);
+                    taskDB.run(`UPDATE u_${uid} SET description = ?, completed = ? WHERE tid = ?`, [task.description, completedVal, task.tid], (err) => {
+                        if(err) {
+                            taskDB.run('ROLLBACK');
+                            return res.status(500).json({ message: "Internal server error: a record could not be updated"});
+                        }
+                    });
 
+                    // Handle added record
+                } else if (task.status === "added") {
+
+                    taskDB.run(`INSERT INTO u_${uid} (description) VALUES (?)`, [task.description], (err) => {
+                        if(err) {
+                            taskDB.run('ROLLBACK');
+                            return res.status(500).json({ message: "Internal server error: a record could not be added"});
+                        }
+                    });
                 }
             });
-        });
 
-        return res.status(200).json({ message: "Tasks have been updated successfully!"});
+            // Commit all serialized queries.
+            taskDB.run('COMMIT', (err) => {
+
+                if(err)
+                    return res.status(500).json({ message: `Internal server error: ${err}`});
+
+                return res.status(200).json({ message: "Tasks have been updated successfully!"});
+            });
+        });
     } catch (err) {
         console.log(err);
         return res.status(500).json({ message: "Internal server error"});
