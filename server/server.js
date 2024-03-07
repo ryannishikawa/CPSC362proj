@@ -280,6 +280,9 @@ server.post('/api/tasks/find', (req, res) => {
 server.post('/api/tasks/update', (req, res) => {
     const {uid, taskObject} = req.body;
 
+    if(taskObject === null)
+        return res.status(500).json( { message: "taskObject is empty."});
+
     // Begin updating the tasks in this try block
     try {
 
@@ -322,7 +325,7 @@ server.post('/api/tasks/update', (req, res) => {
                     // Handle added record
                 } else if (task.status === "added") {
 
-                    taskDB.run(`INSERT INTO u_${uid} (description) VALUES (?)`, [task.description], (err) => {
+                    taskDB.run(`INSERT INTO u_${uid} (description, completed) VALUES (?, ?)`, [task.description, task.completed], (err) => {
                         if(err) {
                             taskDB.run('ROLLBACK');
                             return res.status(500).json({ message: "Internal server error: a record could not be added"});
