@@ -51,6 +51,7 @@ import React, {useState} from 'react';
 import '../css/login.css';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useAuth } from '../hooks/AuthProvider';
 
 function RegisterButton() {
     return(
@@ -81,19 +82,29 @@ function RegisterForm() {
     const [email, setEmail] = useState('');
     const [pass, setPassword] = useState('');
 
-    const navigate = useNavigate();
+    const auth = useAuth();
 
     //sends user to home page on submit
     const handleSubmit = async(e) => {
         e.preventDefault();
-        // ]localStorage.setItem("user", JSON.stringify(input));
 
         // Attempt to send a register request to the Express server.
         try {
-            const response = await axios.post('http://localhost:5000/api/users/register', {name, email, pass});
-            alert(`Welcome to our app ${name}! Logging you in...`);
 
-            navigate("/home");
+            // Create the new user
+            const regRes = await axios.post('http://localhost:5000/api/users/register', {name, email, pass});
+
+            // Find the new user and get their UID
+            const userObjRes = await axios.post('http://localhost:5000/api/users/find', {email, pass});
+            const uid = userObjRes.data.user.uid;
+
+            // Add the welcome task
+            const description = 'Welcome to our app! Time to get productive and start adding tasks!';
+            const newTaskRes = await axios.post('http://localhost:5000/api/tasks/add', {uid, description});
+
+            // Login
+            auth.loginAction(email, pass);
+
         } catch (err) {
             alert(err);
         }

@@ -49,7 +49,7 @@
 
 import '../css/login.css';
 import React, {useState} from 'react';
-import axios from 'axios';
+import { useAuth } from '../hooks/AuthProvider';
 import { useNavigate } from 'react-router-dom';
 
 function LoginButton() {
@@ -75,22 +75,23 @@ function ToRegister() {
 }
 
 function LoginForm() {
+    
+    // Input field data
     const [email, setEmail] = useState('');
     const [pass, setPassword] = useState('');
-    const navigate = useNavigate();
+
+    // Create an auth for persistive sessions
+    const auth = useAuth();
 
     const handleSubmit = async(e) => {
         e.preventDefault();
 
-        try {
-            const response = await axios.post('http://localhost:5000/api/users/find', {email, pass});
-            alert(`Welcome back ${response.data.name}! Logging you in...`);
-
-            navigate('/home');
-        } catch (err) {
-            
-            alert(`Incorrect email and/or password`);
+        if(email !== "" && pass !== "") {
+            auth.loginAction(email, pass);
+            return;
         }
+
+        alert("Please provide a valid input.");
     }
 
     return(

@@ -21,7 +21,8 @@ import crypto from 'crypto';
 
 const server = express();
 const PORT = process.env.PORT || 5000;
-const db = new sqlite3.Database('./data/credentials.db');
+const credDB = new sqlite3.Database('./data/credentials.db');
+const taskDB = new sqlite3.Database('./data/taskdata.db');
 
 server.use(cors());             // Allow Cross Origin Resource Sharing (CORS)
 server.use(express.json());     // Responses must be in JSON to post anything from the server.
@@ -99,6 +100,8 @@ function deriveKey(password, salt) {
 }
 
 
+
+
 // ==================== API ENDPOINTS DEFINED BELOW ==================== \\
 
 /**
@@ -112,6 +115,7 @@ server.get('/api', (req, res) => {
 });
 
 
+
 /**
  * The /users/find endpoint takes in an EMAIL and PASSWORD in plaintext.
  * 
@@ -121,7 +125,7 @@ server.post('/api/users/find', (req, res) => {
     const {email, pass} = req.body;
 
     // Pull associated record from the email
-    db.get('SELECT * FROM user_data WHERE email = ?', [email], (iErr, findUser) => {
+    credDB.get('SELECT * FROM user_data WHERE email = ?', [email], (iErr, findUser) => {
 
         if (iErr) {
             return res.status(500).json({ error: 'Internal server error' });
@@ -132,7 +136,7 @@ server.post('/api/users/find', (req, res) => {
         }
 
         // Once an associated record via email is found, pull the encrypted password and salt from that record.
-        db.get('SELECT name, email, pass, user_key, salt FROM user_data WHERE email = ?', [email], (nErr, user) => {
+        credDB.get('SELECT name, email, pass, user_key, salt, uid FROM user_data WHERE email = ?', [email], (nErr, user) => {
 
             if(nErr) {
                 return res.status(500).json({error: 'Internal server error'});
@@ -157,7 +161,14 @@ server.post('/api/users/find', (req, res) => {
                 const decryptedPass = decryptData(userPasswordObject, decryptedUserKey);
 
                 if(pass == decryptedPass) {
-                    return res.status(200).json(user);
+
+                    // Ensure the returned user object is decrypted.
+                    const decryptUserObj = {
+                        name: user.name,
+                        user_key: decryptedUserKey,
+                        uid: user.uid
+                    }
+                    return res.status(200).json({user: decryptUserObj});
                 } else {
                     return res.status(404).json({error: 'User not found'});
                 }
@@ -166,6 +177,7 @@ server.post('/api/users/find', (req, res) => {
         });
     });
 })
+
 
 
 /**
@@ -191,7 +203,7 @@ server.post('/api/users/register', (req, res) => {
         const encUserKey = JSON.stringify(encryptData(newUserKey, dKey));
 
         // Begin database insertion with the encrypted password, encrypted user_key and the salt used to encrypt the password & user_key.
-        db.run(`INSERT INTO user_data (name, email, pass, user_key, salt) VALUES (?, ?, ?, ?, ?)`, [name, email, encPassword, encUserKey, salt], function (err) {
+        credDB.run(`INSERT INTO user_data (name, email, pass, user_key, salt) VALUES (?, ?, ?, ?, ?)`, [name, email, encPassword, encUserKey, salt], function (err) {
 
             // Output result
             if (err) {
@@ -202,4 +214,137 @@ server.post('/api/users/register', (req, res) => {
         });
     });
 
+});
+
+
+
+/**
+ * The /api/tasks/add endpoint takes in a unique User ID (uid) and a description for the task, and adds a task to their table within the taskdata database.
+ * If the user does not have a table within this database, it also creates it for them.
+ */
+server.post('/api/tasks/add', (req, res) => {
+    const {uid, description} = req.body;
+
+    let tableQuery = `CREATE TABLE IF NOT EXISTS u_${uid} (tid INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL, description TEXT NOT NULL, completed TEXT NOT NULL DEFAULT 'FALSE') STRICT`;
+    let newTaskQuery = `INSERT INTO u_${uid} (description) VALUES (?)`;
+
+    // If the table does not exist, create a new table with the first task to the database.
+    taskDB.run(tableQuery, function (ctErr) {
+
+        if (ctErr) {
+            console.log(ctErr);
+            return res.status(500).json({ error: 'Internal server error' });
+        }
+
+        taskDB.run(newTaskQuery, [description], function (ntErr) {
+
+            if (ntErr) {
+                console.log(ntErr);
+                return res.status(500).json({ error: 'Internal server error' });
+            }
+    
+            console.log(`New task for ${uid} added successfully!`);
+
+            return res.status(200).json({ message: `A task for user with ID ${uid} was successfully added to the database` });
+        });
+
+    });
+});
+
+
+
+/**
+ * The /api/tasks/find endpoint takes in a User ID (uid) and returns an array of tasks.
+ */
+server.post('/api/tasks/find', (req, res) => {
+    const {uid} = req.body;
+
+    let fetchQuery = `SELECT * FROM u_${uid} ORDER BY tid`;
+
+    taskDB.all(fetchQuery, [], (err, rows) => {
+
+        if(err) {
+            return res.status(500).json({ error: 'Internal server error' }); 
+        }
+
+            return res.status(200).json({ taskObject: rows });
+    });
+});
+
+
+
+/**
+ * The /api/tasks/update endpoint takes in a User ID (uid) and a TaskObject and updates the corresponding user record
+ * in the database with the provided TaskObject
+ */
+server.post('/api/tasks/update', (req, res) => {
+    const {uid, taskObject} = req.body;
+
+    if(taskObject === null)
+        return res.status(500).json( { message: "taskObject is empty."});
+
+    // Begin updating the tasks in this try block
+    try {
+
+        // Change the mapping between the given taskObject to the database taskObject with appended property
+        let preppedTaskObject = taskObject.map(task => ({
+            tid: task.id,
+            description: task.name,
+            completed: task.completed,
+            status: task.status
+        }));
+
+        taskDB.serialize(() => {
+
+            taskDB.run('BEGIN TRANSACTION');    // Start chain of queries
+
+            // Prepare a query to update every task object if it was changed by the user.
+            preppedTaskObject.forEach(task => {
+                
+                // Handle updated record
+                if(task.status === "deleted") {
+
+                    taskDB.run(`DELETE FROM u_${uid} WHERE tid = ?`, [task.tid], (err) => {
+                        if(err) {
+                            taskDB.run('ROLLBACK');
+                            return res.status(500).json({ message: "Internal server error: a record could not be deleted"});
+                        }
+                    });
+
+                    // Handle deleted record
+                } else if (task.status === "updated") {
+                    const completedVal = task.completed ? "TRUE" : "FALSE";
+
+                    taskDB.run(`UPDATE u_${uid} SET description = ?, completed = ? WHERE tid = ?`, [task.description, completedVal, task.tid], (err) => {
+                        if(err) {
+                            taskDB.run('ROLLBACK');
+                            return res.status(500).json({ message: "Internal server error: a record could not be updated"});
+                        }
+                    });
+
+                    // Handle added record
+                } else if (task.status === "added") {
+
+                    taskDB.run(`INSERT INTO u_${uid} (description, completed) VALUES (?, ?)`, [task.description, task.completed], (err) => {
+                        if(err) {
+                            taskDB.run('ROLLBACK');
+                            return res.status(500).json({ message: "Internal server error: a record could not be added"});
+                        }
+                    });
+                }
+            });
+
+            // Commit all serialized queries.
+            taskDB.run('COMMIT', (err) => {
+
+                if(err)
+                    return res.status(500).json({ message: `Internal server error: ${err}`});
+
+                return res.status(200).json({ message: "Tasks have been updated successfully!"});
+            });
+        });
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({ message: "Internal server error"});
+    }
 });
