@@ -255,23 +255,23 @@ export const getSelctedDueTime = ({selectedHours, selectedMins, selectedAMPM}) =
 
 //datepicker function
 // import {Example} from "./Time"
-export const Example = () => {
-    const [startDate, setStartDate] = useState(new Date());
+export const Example = ({ setStartDate }) => {
+    const [startDate, setInternalStartDate] = useState(new Date());
+  
+    const handleDateChange = (date) => {
+      setInternalStartDate(date);
+      setStartDate(date);
+    };
+  
     return (
-      <DatePicker selected={startDate} onChange={(date) => setStartDate(date)} />
-    );
-  };
-
-export const Example2 = () => {
-    const [startDate, setStartDate] = useState(new Date());
-    return (
-        <DatePicker
-        selected={startDate} 
-        onChange={(date) => setStartDate(date)}
-        showTimeSelect
-        dateFormat="Pp"
+      <DatePicker
+        selected={startDate}
+        onChange={handleDateChange}
+        dateFormat="MMMM d, yyyy"
+        showMonthDropdown={true}
       />
     );
   };
+
 
 export default DateTime

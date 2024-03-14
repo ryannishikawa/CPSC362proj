@@ -18,11 +18,13 @@ function TaskList(props) {
 
   const [filter, setFilter] = useState("All");
 
+
   function addTask(name, dueDate) {
     // Create task object
     const newTask = { id: `todo-${nanoid()}`, name, dueDate, completed: false };
     //  Add the new task to the list of tasks
     setTasks([...tasks, newTask]);
+    setDueDate(dueDate);
   }
 
   function editTask(id, newName, newDueDate) {

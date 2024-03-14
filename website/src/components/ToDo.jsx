@@ -1,9 +1,11 @@
 import { useState } from "react";
+import { HoursDropdown, MinsDropdown, AMPMdropdown, Example} from "./Time";
 
 function Todo(props) {
 
   const [isEditing, setEditing] = useState(false);
   const [newName, setNewName] = useState("");
+  const [newDueDate, setNewDueDate] = useState("");
 
   function handleChange(event) {
     setNewName(event.target.value);
@@ -29,6 +31,9 @@ function Todo(props) {
           value={newName}
           onChange={handleChange}
         />
+        <label className="todo-label" htmlFor={props.id}>
+          New due date for {props.dueDate}
+        </label>
       </div>
       <div className="btn-group">
         <button

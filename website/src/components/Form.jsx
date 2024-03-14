@@ -5,7 +5,7 @@ import { HoursDropdown, MinsDropdown, AMPMdropdown, Example} from "./Time";
 function Form(props) {
 
   const [name, setName] = useState("");
-  const [dueDate, setDueDate] = useState("");
+  const [dueDate, setDueDate] = useState('');
 
   function handleChange(event) {
     // Change text inside the task creation
@@ -20,22 +20,45 @@ function Form(props) {
       props.addTask(name, dueDate);
       // Clears input after adding task
       setName("");
-      setDueDate("");
+      setDueDate(new Date());
     }
   }
 
-  function SelectDueDate() {
-    const [selectedHours, setSelectedHours] = useState("");
-    const [selectedMins, setSelectedMins] = useState("");
-    const [selectedAMPM, setSelectedAMPM] = useState("");
+  function SelectDueDate({ setDueDate }) {
+  const [startDate, setStartDate] = useState(new Date());
+  const [selectedHours, setSelectedHours] = useState('');
+  const [selectedMins, setSelectedMins] = useState('');
+  const [selectedAMPM, setSelectedAMPM] = useState('');
 
-    return (
-      <div>
-        Due Date: <Example /> <br/>
-        Due Time: <HoursDropdown setSelectedHours={setSelectedHours}/>:<MinsDropdown setSelectedMins={setSelectedMins}/> <AMPMdropdown setSelectedAMPM={setSelectedAMPM}/> 
-      </div>
-    );
+  // Function to format the selected due date and time
+  function formatDueDate() {
+    const formattedDate = startDate.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    });
+
+    const formattedTime = `${selectedHours}:${selectedMins} ${selectedAMPM}`;
+    return `${formattedDate} ${formattedTime}`;
+  }
+
+  // Function to handle adding the task with due date
+  function handleAddTask() {
+    const dueDate = formatDueDate();
+    setDueDate(dueDate);
+  }
+
+  return (
+    <div>
+      Due Date: <Example setStartDate={setStartDate} /> <br />
+      Due Time: <HoursDropdown setSelectedHours={setSelectedHours} />:
+      <MinsDropdown setSelectedMins={setSelectedMins} />{' '}
+      <AMPMdropdown setSelectedAMPM={setSelectedAMPM} />
+      <button onClick={handleAddTask}>Add Task</button>
+    </div>
+  );
 }
+
 
 
   return (
@@ -56,7 +79,7 @@ function Form(props) {
       />
       <p id="new-todo-duedate"
          defaultValue={""}>
-        <SelectDueDate />
+        <SelectDueDate setDueDate={setDueDate}/>
       </p>
       <button type="submit" className="btn btn__primary btn__lg">
         Add
