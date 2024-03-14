@@ -17,6 +17,7 @@ function TaskList(props) {
 
   const [filter, setFilter] = useState("All");
   const [tasks, setTasks] = useState(props.tasks);
+  const [dueDate, setDueDate] = useState(props.dueDate);
 
   // Ensure updates to tasks are pushed to local storage
   useEffect(() => {
