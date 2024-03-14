@@ -48,25 +48,32 @@
 //===== Begin code area ================================================================================================
 
 import React from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import AuthProvider from "./hooks/AuthProvider";
+import PrivateRoute from "./components/privateRoute";
+
 import LoginPage from "./pages/login";
-import Register from "./pages/register";
 import Home from "./pages/home";
-import ToDoListPage from './pages/todo-list.jsx';
+import RegisterPage from "./pages/register";
+import ToDoListPage from "./pages/todo-list";
 
 const App = () => {
-  return(
-    <>
+  return (
+    <div className="App">
       <BrowserRouter>
-        <Routes>
-          <Route path ="/" element ={<LoginPage />} />
-          <Route path ="/login" element ={<LoginPage />} />
-          <Route path ="/register" element ={<Register />} />
-          <Route path ="/home" element ={<Home />} />
-          <Route path ="/tasks" element={<ToDoListPage />} />
-        </Routes>
+        <AuthProvider>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/login" element={<LoginPage />}/>
+            <Route path="/register" element={<RegisterPage />}/>
+            <Route element={<PrivateRoute />}>
+              <Route path="/tasks" element={<ToDoListPage />} />
+            </Route>
+            <Route path="*" element={<Navigate to="/" />}/>
+          </Routes>
+        </AuthProvider>
       </BrowserRouter>
-    </>
+    </div>
   );
 }
 

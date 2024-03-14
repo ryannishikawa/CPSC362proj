@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { nanoid } from "nanoid";
+import { useEffect, useState } from "react";
 import '../css/todo-list.css';
 import Todo from "./ToDo";
 import Form from './Form';
@@ -17,22 +16,29 @@ const FILTER_NAMES = Object.keys(FILTER_MAP);
 function TaskList(props) {
 
   const [filter, setFilter] = useState("All");
+  const [tasks, setTasks] = useState(props.tasks);
+
+  // Ensure updates to tasks are pushed to local storage
+  useEffect(() => {
+    localStorage.setItem("usertasks", JSON.stringify(tasks));
+  }, [tasks]);
 
 
   function addTask(name, dueDate) {
     // Create task object
-    const newTask = { id: `todo-${nanoid()}`, name, dueDate, completed: false };
+    const newTask = { id: -1, name, dueDate, completed: false, status: 'added' };
     //  Add the new task to the list of tasks
     setTasks([...tasks, newTask]);
     setDueDate(dueDate);
   }
 
   function editTask(id, newName, newDueDate) {
+
     const editedTaskList = tasks.map((task) => {
       // if this task has the same ID as the edited task
       if (id === task.id) {
         // Copy the task and update its name
-        return { ...task, name: newName, dueDate: newDueDate };
+        return { ...task, name: newName, dueDate: newDueDate, status: task.status === 'added' ? 'added' : 'updated' };
       }
       // Return the original task if it's not the edited task
       return task;
@@ -46,7 +52,7 @@ function TaskList(props) {
       if (id === task.id) {
         // use object spread to make a new object
         // whose `completed` prop has been inverted
-        return { ...task, completed: !task.completed };
+        return { ...task, completed: !task.completed, status: task.status === 'added' ? 'added' : 'updated' };
       }
       return task;
     });
@@ -54,20 +60,27 @@ function TaskList(props) {
   }
 
   function deleteTask(id) {
+    
     // get all tasks other than this task
-    const remainingTasks = tasks.filter((task) => id !== task.id);
+    const remainingTasks = tasks.map((task) => {
+      if(id === task.id) {
+        return { ...task, status: 'deleted'};
+      }
+      return task;
+    });
+
     setTasks(remainingTasks);
   }
-
-  const [tasks, setTasks] = useState(props.tasks);
+  
   const taskList = tasks
-    .filter(FILTER_MAP[filter])
+    .filter(task => task.status !== 'deleted' && FILTER_MAP[filter](task))
     .map((task) => (
       <Todo
         id={task.id}
         name={task.name}
         dueDate={task.dueDate}
         completed={task.completed}
+        status={task.status}
         key={task.id}
         toggleTaskCompleted={toggleTaskCompleted}
         deleteTask={deleteTask}
