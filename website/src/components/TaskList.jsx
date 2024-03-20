@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import '../css/todo-list.css';
 import Todo from "./ToDo";
 import Form from './Form';
 import FilterButton from './FilterButton';

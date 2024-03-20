@@ -47,7 +47,6 @@
 //
 //===== Begin code area ================================================================================================
 
-import '../css/login.css';
 import React, {useState} from 'react';
 import { useAuth } from '../hooks/AuthProvider';
 import { useNavigate } from 'react-router-dom';

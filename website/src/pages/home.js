@@ -50,7 +50,6 @@
 
 import { React } from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../css/login.css';
 import coconut from '../assets/coconut.jpg'; // Import the image file
 
 function ToTasks() {
@@ -74,7 +73,7 @@ const Home = () => {
   
 
   return (
-    <div>
+    <div className='todoapp stack-large'>
       <h1>Welcome !</h1>
       <img src={coconut} alt="My Image" style={{ width: '100%', height: 'auto' }} />{}
       <ToTasks />

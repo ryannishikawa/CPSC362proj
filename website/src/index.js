@@ -1,6 +1,13 @@
+// Import React and ReactDOM components to persist throughout the application
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+
+// Import all CSS styles
 import './index.css';
+import './css/defaults.css';
+import './css/todo-list.css';
+
+// Import the app and web vitals
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
