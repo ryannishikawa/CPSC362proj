@@ -50,11 +50,21 @@
 
 import { React } from 'react';
 import { Link } from 'react-router-dom';
+
 import { DateTimeFormat } from '../components/Time.jsx';
 import { LoggedUser } from '../components/LoggedUser.jsx';
+import { useAuth } from '../hooks/AuthProvider.js';
+
 import coconut from '../assets/coconut.jpg'; // Import the image file
 
 export default function Home() {
+
+  const {user, logoutAction} = useAuth();
+
+  const handleLogout = () => {
+    logoutAction();
+    window.location.reload();
+  }
 
   return (
     <div className='todoapp stack-large'>
@@ -67,24 +77,14 @@ export default function Home() {
         <Link to='/tasks' className='nav-link'>Manage Tasks</Link>
         <Link to='/about' className='nav-link'>About</Link>
         <Link to='/settings' className='nav-link'>Settings</Link>
-        <Link to='/' className='nav-link'>{loggedInOrOut()}</Link>
+        { user ? (
+          <button onClick={handleLogout} className='nav-link'>Log Out</button>
+        ) : (
+          <Link to='/login' className='nav-link'>Log In</Link>
+        )}
       </nav>
       <img src={coconut} alt='coconut' style={{ width: '100%', height: 'auto' }} />{ }
       
     </div>
   );
 };
-
-/**
- * Checks if the user is logged in or out.
- * @returns {String} A string saying "Log Out" or "Log In"
- */
-function loggedInOrOut() {
-  let user = localStorage.getItem('username') || '';
-
-  if(user.length > 0) {
-    return 'Log Out';
-  }
-
-  return 'Sign In';
-}

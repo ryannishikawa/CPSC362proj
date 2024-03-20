@@ -16,21 +16,20 @@ import { useState } from 'react';
  */
 export function LoggedUser() {
 
-    const user = useState(localStorage.getItem("username") | "");
+    const [user] = useState(localStorage.getItem('username') || null);
 
-    if(user === null) {
+    if(user !== null) {
         return (
             <div className='container-top-item'>
-                <p>Not logged in<br></br>
-                :(</p>
+                <p>Logged in as <br></br>
+                {user}</p>
             </div>
         );
-    }
+    } 
 
     return (
         <div className='container-top-item'>
-            <p>Logged in as <br></br>
-            {localStorage.getItem('username')}</p>
+            <p>Not logged in<br></br></p>
         </div>
     );
 }

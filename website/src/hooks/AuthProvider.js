@@ -76,7 +76,7 @@ export default function AuthProvider({children}) {
         localStorage.removeItem("userkey");
         localStorage.removeItem("userid");
         localStorage.removeItem("usertasks");
-        navigate("/login")
+        navigate("/");
     };
 
     return <AuthContext.Provider value={{token, user, loginAction, logoutAction}}>{children}</AuthContext.Provider>;
