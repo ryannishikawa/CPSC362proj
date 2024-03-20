@@ -16,19 +16,25 @@ import axios from "axios";
 
 const AuthContext = createContext();
 
-// Wraps application with auth context.
-const AuthProvider = ({children}) => {
+/**
+ * Provides authentication to manage user sessions.
+ * @param {Object} props The properties for the AuthProvider component.
+ * @param {ReactNode} props.children The child components to be wrapped by AuthProvider.
+ * @returns {JSX.Element} An AuthProvider component.
+ */
+export default function AuthProvider({children}) {
 
     // User and token states
     const [user, setUser] = useState(null);
     const [token, setToken] = useState(localStorage.getItem("userkey") || "");
     const navigate = useNavigate();
 
+    
     /**
      * Allows sessions to persist upon exiting website assuming valid credentials are provided
-     * @param {string} email 
-     * @param {string} pass 
-     * @returns void, saves user key and user ID to the session.
+     * @param {string} email The email address of the user
+     * @param {string} pass The password for the user
+     * @returns {void} Saves user key and user ID to the session.
      */
     const loginAction = async (email, pass) => {
 
@@ -59,6 +65,7 @@ const AuthProvider = ({children}) => {
 
     /**
      * Removes the user, token, and associated information in the account from the session.
+     * @returns {void} Removed user, token, and associated info.
      */
     const logoutAction = () => {
         setUser(null);
@@ -73,9 +80,10 @@ const AuthProvider = ({children}) => {
     return <AuthContext.Provider value={{token, user, loginAction, logoutAction}}>{children}</AuthContext.Provider>;
 }
 
-export default AuthProvider;
-
-// Can be called from child components.
+/**
+ * Accesses authentication context within child components
+ * @returns {Object} Context containing token, user, loginAction, and logoutAction
+ */
 export const useAuth = () => {
     return useContext(AuthContext);
 }
