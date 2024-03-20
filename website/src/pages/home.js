@@ -48,7 +48,7 @@
 //
 //===== Begin code area ================================================================================================
 
-import { React } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 import { DateTimeFormat } from '../components/Time.jsx';
@@ -58,14 +58,30 @@ import { useAuth } from '../hooks/AuthProvider.js';
 import coconut from '../assets/coconut.jpg'; // Import the image file
 
 export default function Home() {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const {logoutAction} = useAuth();
 
-  const {user, logoutAction} = useAuth();
+  // Pull user data from storage before the page loads.
+  useEffect(() => {
+    const userData = localStorage.getItem('username');
+    if(userData) {
+      setUser(userData);
+    }
 
+    setLoading(false);
+  }, []);
+
+  // Delete user data and refresh the page.
   const handleLogout = async() => {
     await logoutAction();
     window.location.reload();
   }
 
+  if(loading) {
+    return <div>Loading...</div>
+  }
+  
   return (
     <div className='todoapp stack-large'>
       <div className='container'>
