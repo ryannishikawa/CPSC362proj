@@ -51,12 +51,6 @@ import React, {useState} from 'react';
 import { useAuth } from '../hooks/AuthProvider';
 import { useNavigate } from 'react-router-dom';
 
-function LoginButton() {
-    return(
-        <button type='submit' class='Button'>Login</button>
-    );
-}
-
 function ToRegister() {
 
     const navigate = useNavigate();
@@ -94,21 +88,21 @@ function LoginForm() {
     }
 
     return(
-        <div class="Login-Form">
-            <h1>Welcome</h1>
+        <div>
+            <h1>Log In</h1>
             <form onSubmit={handleSubmit}>
                 <input type="text" title="email address" value={email} onChange={e => setEmail(e.target.value)}placeholder='you@email.domain' />
                 <input type="password" title="password" value={pass} onChange={e => setPassword(e.target.value)} placeholder='password' />
-                <LoginButton />
-                <ToRegister />
+                <button type='submit' className='login-button'>Login</button>
             </form>
+            <ToRegister />
         </div>
     );
 }
 
 export default function LoginPage() {
     return (
-        <div className='Login-Background'>
+        <div className='todoapp stack-large'>
             <LoginForm />
         </div>
     );

@@ -47,21 +47,15 @@
 //
 //===== Begin code area ================================================================================================
 
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../hooks/AuthProvider';
 
-function RegisterButton() {
-    return(
-        <button type='submit' className='Button'>Create Account</button>
-    );
-}
-
 function ToLogin() {
 
     const navigate = useNavigate();
-    
+
     // Take to login page if user already has an account.
     const ToSignIn = (e) => {
         e.preventDefault();
@@ -69,7 +63,7 @@ function ToLogin() {
     };
 
     // Component returned here.
-    return(
+    return (
         <p>
             Already have an account? <button type='submit' onClick={ToSignIn}><b><i><u>Sign in here!</u></i></b></button>
         </p>
@@ -84,22 +78,22 @@ function RegisterForm() {
     const auth = useAuth();
 
     //sends user to home page on submit
-    const handleSubmit = async(e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
         // Attempt to send a register request to the Express server.
         try {
 
             // Create the new user
-            const regRes = await axios.post('http://localhost:5000/api/users/register', {name, email, pass});
+            const regRes = await axios.post('http://localhost:5000/api/users/register', { name, email, pass });
 
             // Find the new user and get their UID
-            const userObjRes = await axios.post('http://localhost:5000/api/users/find', {email, pass});
+            const userObjRes = await axios.post('http://localhost:5000/api/users/find', { email, pass });
             const uid = userObjRes.data.user.uid;
 
             // Add the welcome task
             const description = 'Welcome to our app! Time to get productive and start adding tasks!';
-            const newTaskRes = await axios.post('http://localhost:5000/api/tasks/add', {uid, description});
+            const newTaskRes = await axios.post('http://localhost:5000/api/tasks/add', { uid, description });
 
             // Login
             auth.loginAction(email, pass);
@@ -110,15 +104,15 @@ function RegisterForm() {
     };
 
     // Returns the register form component here.
-    return(
-        <div className="Register-Form">
-            <h1>Welcome</h1>
-           <form onSubmit={handleSubmit}>
+    return (
+        <div>
+            <h1>Registration</h1>
+            <form onSubmit={handleSubmit}>
                 <input type="text" title="name" value={name} onChange={e => setName(e.target.value)} placeholder='first last' />
                 <input type="text" title="email" value={email} onChange={e => setEmail(e.target.value)} placeholder='you@email.domain' />
                 <input type="password" title="password" value={pass} onChange={e => setPassword(e.target.value)} placeholder='password' />
-               <RegisterButton />
-               <ToLogin />
+                <button type='submit' className='register-button'>Create Account</button>
+                <ToLogin />
             </form>
         </div>
     );
@@ -126,7 +120,7 @@ function RegisterForm() {
 
 export default function RegisterPage() {
     return (
-        <div className='Register-Background'>
+        <div className='todoapp stack-large'>
             <RegisterForm />
         </div>
     );

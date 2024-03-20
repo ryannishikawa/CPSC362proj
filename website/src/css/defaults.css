@@ -1,3 +1,4 @@
+/* Default global styles */
 * {
     box-sizing: border-box;
 }
@@ -18,43 +19,79 @@ input {
     width: 100%;
     margin-bottom: 2em;
     padding: .5em 0;
-    border: none;
-    border-bottom: 1px solid #282C34;
-    background: #EBEBEB;
 }
 
+input:focus {
+    outline: none;
+}
+
+button {
+    cursor: pointer;
+    border: 0;
+    border-radius: 4px;
+    font-weight: 600;
+    margin: 0 10px;
+    width: 200px;
+    padding: 10px 0;
+    transition: 0.3s;
+}
+/* End default global styles*/
+
+ 
+/* Form styles throughout the app*/
 form {
     display: block;
     width: 100%;
     padding: 2em;
 }
 
-.Button {
-    border-radius: 5px;
-    display: inline-block;
-    background-color: #51E181;
+form>button {
+    width: 100%;
+    margin-top: 10%;
+    margin-bottom: 10%;
+    padding-top: 10px;
+    padding-bottom: 10px;
 }
 
-.Login-Form {
-    border-radius: 15px;
-    width: 40%;
-    min-width: 320px;
-    max-width: 475px;
-    background: #EBEBEB;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-
-    box-shadow: 0px 2px 5px rgba(0, 0, 0, .25);
-
+form>input {
+    border: none;
+    border-bottom: 1px solid #282C34;
+    outline: none;
 }
 
-.Login-Background {
-    background-color: #6A758A;
-    min-height: 100vh;
+/* button:hover {
+    color: #fff;
+    background-color: #6855e0;
+} */
+
+.login-button {
+    color: #6855e0;
+    background-color: #fff;
+    border: 1px solid #6855e0;
+    box-shadow: 0 0 5px #6855e066;
 }
 
+.login-button:hover {
+    color: #fff;
+    background-color: #6855e0cc;
+}
+
+.register-button {
+    color: #fff;
+    background-color: #33b249;
+    box-shadow: 0 0 5px #33b24966;
+}
+
+.register-button:hover {
+    color: #fff;
+    background-color: #33b249cc;
+}
+
+/* End button styles*/
+
+
+
+/* Container styles for top of pages*/
 .container {
     display: flex;
     justify-content: space-between;
@@ -75,8 +112,11 @@ form {
     font-weight: 600;
     flex: 1;
 }
+/* End container styles*/
 
-/* Navigation Bar styles!*/
+
+
+/* Navigation bar class styles!*/
 .navbar {
     background-color: 333;
     display: flex;
