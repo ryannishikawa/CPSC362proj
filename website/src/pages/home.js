@@ -49,41 +49,42 @@
 //===== Begin code area ================================================================================================
 
 import { React } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { DateTimeFormat } from '../components/Time.jsx';
 import { LoggedUser } from '../components/LoggedUser.jsx';
 import coconut from '../assets/coconut.jpg'; // Import the image file
 
-function ToTasks() {
-
-  const navigate = useNavigate();
-
-  const ToTasks = (e) => {
-      e.preventDefault();
-      navigate("/tasks");
-  };
-
-  return(
-      <p>
-          <button type='submit' onClick={ToTasks}><b><i><u>View your tasks</u></i></b></button>
-      </p>
-  );
-}
-
-
-const Home = () => {
+export default function Home() {
 
   return (
     <div className='todoapp stack-large'>
-      <div className='container-heading'>
+      <div className='container'>
         <div className='logged-user'><LoggedUser /></div>
         <div className='display-date'><DateTimeFormat /></div>
       </div>
       <h1>Welcome!</h1>
-      <img src={coconut} alt="My Image" style={{ width: '100%', height: 'auto' }} />{ }
-      <ToTasks />
+      <nav className='navbar'>
+        <Link to='/tasks' className='nav-link'>Manage Tasks</Link>
+        <Link to='/about' className='nav-link'>About</Link>
+        <Link to='/settings' className='nav-link'>Settings</Link>
+        <Link to='/' className='nav-link'>{loggedInOrOut()}</Link>
+      </nav>
+      <img src={coconut} alt='coconut' style={{ width: '100%', height: 'auto' }} />{ }
+      
     </div>
   );
 };
 
-export default Home;
+/**
+ * Checks if the user is logged in or out.
+ * @returns {String} A string saying "Log Out" or "Log In"
+ */
+function loggedInOrOut() {
+  let user = localStorage.getItem('username') || '';
+
+  if(user.length > 0) {
+    return 'Log Out';
+  }
+
+  return 'Sign In';
+}
