@@ -61,8 +61,8 @@ export default function Home() {
 
   const {user, logoutAction} = useAuth();
 
-  const handleLogout = () => {
-    logoutAction();
+  const handleLogout = async() => {
+    await logoutAction();
     window.location.reload();
   }
 
@@ -83,11 +83,8 @@ export default function Home() {
           <Link to='/login' className='nav-link'>Log In</Link>
         )}
       </nav>
-      <body>
-        We're still working on adding content to the homepage in addition to an about and settings page.
-      </body>
+      <p>We're still working on adding content to the homepage in addition to an about and settings page.</p>
       <img src={coconut} alt='coconut' style={{ width: '100%', height: 'auto' }} />{ }
-      
     </div>
   );
 };
