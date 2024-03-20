@@ -50,7 +50,8 @@
 
 import { React } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {DateTimeFormat} from '../components/Time.jsx';
+import { DateTimeFormat } from '../components/Time.jsx';
+import { LoggedUser } from '../components/LoggedUser.jsx';
 import coconut from '../assets/coconut.jpg'; // Import the image file
 
 function ToTasks() {
@@ -71,12 +72,15 @@ function ToTasks() {
 
 
 const Home = () => {
-  
+
   return (
     <div className='todoapp stack-large'>
-      <DateTimeFormat />
+      <div className='container-heading'>
+        <div className='logged-user'><LoggedUser /></div>
+        <div className='display-date'><DateTimeFormat /></div>
+      </div>
       <h1>Welcome!</h1>
-      <img src={coconut} alt="My Image" style={{ width: '100%', height: 'auto' }} />{}
+      <img src={coconut} alt="My Image" style={{ width: '100%', height: 'auto' }} />{ }
       <ToTasks />
     </div>
   );
