@@ -25,7 +25,7 @@ const AuthContext = createContext();
 export default function AuthProvider({children}) {
 
     // User and token states
-    const [user, setUser] = useState(null);
+    const [user, setUser] = useState(localStorage.getItem("username") | "");
     const [token, setToken] = useState(localStorage.getItem("userkey") || "");
     const navigate = useNavigate();
 
@@ -45,7 +45,8 @@ export default function AuthProvider({children}) {
                 setUser(response.data.user.name);
                 setToken(response.data.user.user_key)
 
-                // Store the user key, user ID, and tasks that will be modified in the session
+                // Store user info and tasks that will be modified in the session
+                localStorage.setItem("username", response.data.user.name);
                 localStorage.setItem("userkey", response.data.user.user_key);
                 localStorage.setItem("userid", response.data.user.uid);
                 localStorage.setItem("usertasks", []);
@@ -71,6 +72,7 @@ export default function AuthProvider({children}) {
         setUser(null);
         setToken("");
 
+        localStorage.removeItem("username");
         localStorage.removeItem("userkey");
         localStorage.removeItem("userid");
         localStorage.removeItem("usertasks");
