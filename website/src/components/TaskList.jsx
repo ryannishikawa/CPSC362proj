@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import Todo from "./ToDo";
 import Form from './Form';
 import FilterButton from './FilterButton';
-import {DateTime, DateTimeFormat} from "./Time";
+import { LoggedUser } from './LoggedUser.jsx';
+import { DateTime, DateTimeFormat } from "./Time";
 
 const FILTER_MAP = {
   // functions to be used for filtering tasks
@@ -57,18 +58,18 @@ function TaskList(props) {
   }
 
   function deleteTask(id) {
-    
+
     // get all tasks other than this task
     const remainingTasks = tasks.map((task) => {
-      if(id === task.id) {
-        return { ...task, status: 'deleted'};
+      if (id === task.id) {
+        return { ...task, status: 'deleted' };
       }
       return task;
     });
 
     setTasks(remainingTasks);
   }
-  
+
   const taskList = tasks
     .filter(task => task.status !== 'deleted' && FILTER_MAP[filter](task))
     .map((task) => (
@@ -99,7 +100,10 @@ function TaskList(props) {
 
   return (
     <div className="todoapp stack-large">
-    <DateTimeFormat />
+      <div className='container'>
+        <div className='logged-user'><LoggedUser /></div>
+        <div className='display-date'><DateTimeFormat /></div>
+      </div>
       <h1>Task List</h1>
       <Form addTask={addTask} />
       <div className="filters btn-group stack-exception">
