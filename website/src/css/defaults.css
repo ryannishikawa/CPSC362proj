@@ -36,8 +36,13 @@ button {
     transition: 0.3s;
 }
 /* End default global styles*/
-
- 
+/* Specific styles */
+.center-content {
+    margin: auto;
+    width: 50%;
+    padding: 10px;
+}
+/* end specific styles */
 /* Form styles throughout the app*/
 form {
     display: block;
@@ -48,7 +53,7 @@ form {
 form>button {
     width: 100%;
     margin-top: 10%;
-    margin-bottom: 10%;
+    margin-bottom: 5%;
     padding-top: 10px;
     padding-bottom: 10px;
 }
@@ -87,6 +92,17 @@ form>input {
     background-color: #33b249cc;
 }
 
+.below-forms {
+    text-align: center;
+}
+
+.below-forms>button {
+    width: 100%;
+    margin-top: 1%;
+    margin-bottom: 1%;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
 /* End button styles*/
 
 

@@ -51,30 +51,16 @@ import React, {useState} from 'react';
 import { useAuth } from '../hooks/AuthProvider';
 import { useNavigate } from 'react-router-dom';
 
-function ToRegister() {
-
-    const navigate = useNavigate();
-
-    const ToSignupPage = (e) => {
-        e.preventDefault();
-        navigate("/register");
-    };
-
-    return(
-        <p>
-            Don't have an account? <button type='submit' onClick={ToSignupPage}><b><i><u>Sign up here!</u></i></b></button>
-        </p>
-    );
-}
-
-function LoginForm() {
+export default function LoginPage() {
     
     // Input field data
     const [email, setEmail] = useState('');
     const [pass, setPassword] = useState('');
+    
 
     // Create an auth for persistive sessions
     const auth = useAuth();
+    const navigate = useNavigate();
 
     const handleSubmit = async(e) => {
         e.preventDefault();
@@ -87,24 +73,31 @@ function LoginForm() {
         alert("Please provide a valid input.");
     }
 
+    // Goes to signup page
+    const ToSignupPage = (e) => {
+        e.preventDefault();
+        navigate("/register");
+    };
+
+    // Goes home
+    const ToHome = (e) => {
+        e.preventDefault();
+        navigate("/");
+    };
+
     return(
-        <div>
+        <div className='todoapp stack-large'>
             <h1>Log In</h1>
             <form onSubmit={handleSubmit}>
                 <input type="text" title="email address" value={email} onChange={e => setEmail(e.target.value)}placeholder='you@email.domain' />
                 <input type="password" title="password" value={pass} onChange={e => setPassword(e.target.value)} placeholder='password' />
                 <button type='submit' className='login-button'>Login</button>
             </form>
-            <ToRegister />
+            <div className='below-forms'>
+                <p> OR </p>
+                <button className='register-button' onClick={ToSignupPage}>Register for an Account</button>
+                <button className='login-button' onClick={ToHome}>Go Home</button>
+            </div>
         </div>
     );
 }
-
-export default function LoginPage() {
-    return (
-        <div className='todoapp stack-large'>
-            <LoginForm />
-        </div>
-    );
-}
-

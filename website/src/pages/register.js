@@ -52,30 +52,13 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../hooks/AuthProvider';
 
-function ToLogin() {
-
-    const navigate = useNavigate();
-
-    // Take to login page if user already has an account.
-    const ToSignIn = (e) => {
-        e.preventDefault();
-        navigate("/login");
-    };
-
-    // Component returned here.
-    return (
-        <p>
-            Already have an account? <button type='submit' onClick={ToSignIn}><b><i><u>Sign in here!</u></i></b></button>
-        </p>
-    );
-}
-
-function RegisterForm() {
+export default function RegisterPage() {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [pass, setPassword] = useState('');
 
     const auth = useAuth();
+    const navigate = useNavigate();
 
     //sends user to home page on submit
     const handleSubmit = async (e) => {
@@ -103,25 +86,33 @@ function RegisterForm() {
         }
     };
 
+    // Goes to sign in page
+    const ToSignIn = (e) => {
+        e.preventDefault();
+        navigate("/login");
+    };
+
+    // Goes home
+    const ToHome = (e) => {
+        e.preventDefault();
+        navigate("/");
+    };
+
     // Returns the register form component here.
     return (
-        <div>
+        <div className='todoapp stack-large'>
             <h1>Registration</h1>
             <form onSubmit={handleSubmit}>
                 <input type="text" title="name" value={name} onChange={e => setName(e.target.value)} placeholder='first last' />
                 <input type="text" title="email" value={email} onChange={e => setEmail(e.target.value)} placeholder='you@email.domain' />
                 <input type="password" title="password" value={pass} onChange={e => setPassword(e.target.value)} placeholder='password' />
                 <button type='submit' className='register-button'>Create Account</button>
-                <ToLogin />
             </form>
-        </div>
-    );
-}
-
-export default function RegisterPage() {
-    return (
-        <div className='todoapp stack-large'>
-            <RegisterForm />
+            <div className='below-forms'>
+                <p>OR</p>
+                <button className='login-button' onClick={ToSignIn}>Log In</button>
+                <button className='login-button' onClick={ToHome}>Go Home</button>
+            </div>
         </div>
     );
 }
