@@ -16,8 +16,7 @@ const FILTER_NAMES = Object.keys(FILTER_MAP);
 function TaskList(props) {
 
   const [filter, setFilter] = useState("All");
-  const [tasks, setTasks] = useState(props.tasks);
-  const [dueDate, setDueDate] = useState(props.dueDate);
+  const [tasks, setTasks] = useState(props.tasks.map(task => ({ ...task, dueDate: new Date(task.dueDate) })));
 
   // Ensure updates to tasks are pushed to local storage
   useEffect(() => {
@@ -30,7 +29,6 @@ function TaskList(props) {
     const newTask = { id: -1, name, dueDate, completed: false, status: 'added' };
     //  Add the new task to the list of tasks
     setTasks([...tasks, newTask]);
-    setDueDate(dueDate);
   }
 
   function editTask(id, newName, newDueDate) {
@@ -76,17 +74,17 @@ function TaskList(props) {
   const taskList = tasks
     .filter(task => task.status !== 'deleted' && FILTER_MAP[filter](task))
     .map((task) => (
-      <Todo
-        id={task.id}
-        name={task.name}
-        dueDate={task.dueDate}
-        completed={task.completed}
-        status={task.status}
-        key={task.id}
-        toggleTaskCompleted={toggleTaskCompleted}
-        deleteTask={deleteTask}
-        editTask={editTask}
-      />
+        <Todo
+            id={task.id}
+            name={task.name}
+            dueDate={task.dueDate?.toLocaleString()}
+            completed={task.completed}
+            status={task.status}
+            key={task.id}
+            toggleTaskCompleted={toggleTaskCompleted}
+            deleteTask={deleteTask}
+            editTask={editTask}
+        />
     ));
 
   const filterList = FILTER_NAMES.map((name) => (

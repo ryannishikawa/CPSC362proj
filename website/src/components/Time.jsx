@@ -103,15 +103,15 @@ export const DateTimeFormat = () => {
 //function that creates a dropdown menu to select *hour* for dueDate
 // import {HoursDropdown} from "./Time"
 export const HoursDropdown = ({setSelectedHours}) => {
-    var hoursNow = DateTime().getHours();
-    var hoursNowReal = (hoursNow + 1) > 12 ? (hoursNow - 11) : (hoursNow + 1)
+    //var hoursNow = DateTime().getHours();
+    //var hoursNowReal = (hoursNow + 1) > 12 ? (hoursNow - 11) : (hoursNow + 1);
 
     const handleHoursChange = (e) => {
         setSelectedHours(e.target.value);
     }
 
     return (
-        <select id="dropdown-button" title="Hour" onChange={handleHoursChange} defaultValue={hoursNowReal}>
+        <select id="dropdown-button" title="Hour" onChange={handleHoursChange} defaultValue={12}>
           {[...Array(12)].map((_, index) => (
             <option value={index+1}>
               {index + 1}
@@ -147,14 +147,14 @@ export const MinsDropdown = ({setSelectedMins}) => {
 //function that creates a dropdown menu to select *AM/PM* for dueDate
 // import {AMPMDropdown} from "./Time"
 export const AMPMdropdown = ({setSelectedAMPM}) => {
-    var AMorPM = DateTime().getHours() >= 12 ? "PM" : "AM";
+    //var AMorPM = DateTime().getHours() >= 12 ? "PM" : "AM";
 
     const handleAMPMChange = (e) => {
         setSelectedAMPM(e.target.value);
     }
 
     return (
-        <select id="dropdown-button" title="AMPM" onChange={handleAMPMChange} defaultValue={AMorPM}>
+        <select id="dropdown-button" title="AMPM" onChange={handleAMPMChange} defaultValue={"AM"}>
             <option value="AM">AM</option>
             <option value="PM">PM</option>
         </select>
@@ -272,6 +272,5 @@ export const Example = ({ setStartDate }) => {
       />
     );
   };
-
 
 export default DateTime
