@@ -1,11 +1,18 @@
+
 import React, { useState } from "react";
-import { HoursDropdown, MinsDropdown, AMPMdropdown, Example} from "./Time";
+import { HoursDropdown, MinsDropdown, AMPMdropdown, Example, DateTime} from "./Time";
+
 
 
 function Form(props) {
 
+  var initialHours = (DateTime().getHours() + 1) > 12 ? (DateTime().getHours() - 11) : (DateTime().getHours() + 1);
+
   const [name, setName] = useState("");
-  const [dueDate, setDueDate] = useState("");
+  const [selectedDueDate, setSelectedDueDate] = useState(new Date());
+  const [selectedHours, setSelectedHours] = useState(initialHours);
+  const [selectedMins, setSelectedMins] = useState(0);
+  const [selectedAMPM, setSelectedAMPM] = useState(DateTime().getHours() >= 12 ? "PM" : "AM");
 
   function handleChange(event) {
     // Change text inside the task creation
@@ -17,52 +24,71 @@ function Form(props) {
     event.preventDefault();
     // Makes sure task text is not empty
     if (name !== "") {
+      const dueDate = getDueDate();
       props.addTask(name, dueDate);
       // Clears input after adding task
       setName("");
-      setDueDate("");
+      setSelectedDueDate(selectedDueDate);
+      setSelectedHours(selectedHours);
+      setSelectedMins(selectedMins);
+      setSelectedAMPM(selectedAMPM);
     }
   }
 
-  function SelectDueDate() {
-    const [selectedHours, setSelectedHours] = useState("");
-    const [selectedMins, setSelectedMins] = useState("");
-    const [selectedAMPM, setSelectedAMPM] = useState("");
+  function getDueDate() {
+    const selectedDateTime = new Date(selectedDueDate);
+    const hours = parseInt(selectedHours);
+    const mins = parseInt(selectedMins);
+    
+    //ensure selected hours and minutes are valid integers
+    if (isNaN(hours) || isNaN(mins)) {
+      selectedDateTime.setHours(0);
+      selectedDateTime.setMinutes(0);
+    }
 
-    return (
-      <div>
-        Due Date: <Example /> <br/>
-        Due Time: <HoursDropdown setSelectedHours={setSelectedHours}/>:<MinsDropdown setSelectedMins={setSelectedMins}/> <AMPMdropdown setSelectedAMPM={setSelectedAMPM}/> 
-      </div>
-    );
-}
+    //adjust hours based on AM/PM selection
+    if (selectedAMPM === "PM") {
+      selectedDateTime.setHours(hours === 12 ? 12 : hours + 12);
+    } else {
+      selectedDateTime.setHours(hours === 12 ? 0 : hours);
+    }
+
+    selectedDateTime.setMinutes(mins);
+    selectedDateTime.setSeconds(0);
+    return selectedDateTime;
+  }
 
 
   return (
     <form onSubmit={handleSubmit}>
-      <h2 className="label-wrapper">
-        <label htmlFor="new-todo-input" className="label__lg">
-          What needs to be done?
-        </label>
-      </h2>
-      <input
-        type="text"
-        id="new-todo-input"
-        className="input input__lg"
-        name="text"
-        autoComplete="off"
-        value={name}
-        onChange={handleChange}
-      />
-      <p id="new-todo-duedate"
-         defaultValue={""}>
-        <SelectDueDate />
-      </p>
-      <button type="submit" className="btn btn__primary btn__lg">
-        Add
-      </button>
-    </form>
-  )
+    <h2 className="label-wrapper">
+      <label htmlFor="new-todo-input" className="label__lg">
+        What needs to be done?
+      </label>
+    </h2>
+    <input
+      type="text"
+      id="new-todo-input"
+      className="input input__lg"
+      name="text"
+      autoComplete="off"
+      value={name}
+      onChange={handleChange}
+    />
+    <div>
+      <label htmlFor="due-date-picker">Due Date:</label>
+      <Example setStartDate={setSelectedDueDate} />
+    </div>
+    <div>
+      <label htmlFor="due-time">Due Time:</label>
+      <HoursDropdown setSelectedHours={setSelectedHours} />: <MinsDropdown setSelectedMins={setSelectedMins} /> <AMPMdropdown setSelectedAMPM={setSelectedAMPM} />
+    </div>
+    <button type="submit" className="btn btn__primary btn__lg">
+      Add
+    </button>
+  </form>
+
+  );
 }
 
 export default Form;
