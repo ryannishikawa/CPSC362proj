@@ -1,5 +1,18 @@
 {
   "projects": {
-    "default": "todoapp-mattdebinion-dev"
-  }
+    "default": "mattdebinion-dev"
+  },
+  "targets": {
+    "mattdebinion-dev": {
+      "hosting": {
+        "todoapp": [
+          "todoapp-mattdebinion.dev"
+        ],
+        "main": [
+          "mattdebinion.dev"
+        ]
+      }
+    }
+  },
+  "etags": {}
 }
