@@ -49,6 +49,7 @@
 
 import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+
 import AuthProvider from "./hooks/AuthProvider";
 import PrivateRoute from "./components/privateRoute";
 

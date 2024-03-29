@@ -49,40 +49,37 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { useAuth } from '../hooks/AuthProvider';
+
+// Firebase imports
+import { app } from '../firebaseConfig.js';
+import { getAuth, createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 
 export default function RegisterPage() {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [pass, setPassword] = useState('');
 
-    const auth = useAuth();
     const navigate = useNavigate();
+    const auth = getAuth(app);
 
     //sends user to home page on submit
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Attempt to send a register request to the Express server.
+        // Create account with Firebase Authentication
         try {
+            const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
+            const user = userCredential.user;
 
-            // Create the new user
-            const regRes = await axios.post('http://localhost:5000/api/users/register', { name, email, pass });
+            await updateProfile(user, {
+                displayName: name
+            });
 
-            // Find the new user and get their UID
-            const userObjRes = await axios.post('http://localhost:5000/api/users/find', { email, pass });
-            const uid = userObjRes.data.user.uid;
-
-            // Add the welcome task
-            const description = 'Welcome to our app! Time to get productive and start adding tasks!';
-            const newTaskRes = await axios.post('http://localhost:5000/api/tasks/add', { uid, description });
-
-            // Login
-            auth.loginAction(email, pass);
-
+            alert(`Welcome to our app ${user.displayName}!`);
+            navigate('/');
+            
         } catch (err) {
-            alert(err);
+            alert(err.message);
         }
     };
 

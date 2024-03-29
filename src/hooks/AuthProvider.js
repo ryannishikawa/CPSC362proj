@@ -1,18 +1,22 @@
 /**
  * @file AuthProvider.js
  * @author Matt De Binion <mattdb@csu.fullerton.edu>
- * @description This file handles authentication of user sessions within child components in the application.
+ * @description This file handles authentication of user sessions within child components in the application using Firebase Authentication
  * 
  * @see {@link: https://github.com/ryannishikawa/CPSC362proj} for our project repository and the README.md file within the server
  * directory for a less stressful viewing experience.
+ * @see {@link: }https://firebase.google.com/docs/auth} for more about Firebase Authentication
  * 
  * Resources:
  * @see {@link: https://dev.to/miracool/how-to-manage-user-authentication-with-react-js-3ic5} for inspiration for this file
  */
 
-import { useContext, createContext, useState } from "react";
+import { useContext, createContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+
+// Firebase Authentication
+import { app } from '../firebaseConfig.js';
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut} from 'firebase/auth';
 
 const AuthContext = createContext();
 
@@ -24,11 +28,33 @@ const AuthContext = createContext();
  */
 export default function AuthProvider({children}) {
 
-    // User and token states
-    const [user, setUser] = useState(localStorage.getItem("username") | "");
-    const [token, setToken] = useState(localStorage.getItem("userkey") || "");
+    // User and UID states
+    const [user, setUser] = useState(null)
+    const [uid, setUID] = useState('');
     const navigate = useNavigate();
 
+
+    const auth = getAuth(app);
+
+    useEffect(() => {
+        const authState = onAuthStateChanged(auth, (user) => {
+            if (user) {
+                setUser(user.displayName);
+                setUID(user.uid);
+                localStorage.setItem("username", user.displayName);
+                localStorage.setItem("uid", user.uid);
+            } else {
+                setUser(null);
+                setUID("");
+                localStorage.removeItem("username");
+                localStorage.removeItem("uid");
+            }
+        });
+
+        // Cleanup subscription on unmount
+        return () => authState();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
     
     /**
      * Allows sessions to persist upon exiting website assuming valid credentials are provided
@@ -37,30 +63,19 @@ export default function AuthProvider({children}) {
      * @returns {void} Saves user key and user ID to the session.
      */
     const loginAction = async (email, pass) => {
-
         try {
-            const response = await axios.post('http://localhost:5000/api/users/find', {email, pass});
+            const userCredential = await signInWithEmailAndPassword(auth, email, pass);
+            const user = userCredential.user;
 
-            if(response.data.user) {
-                setUser(response.data.user.name);
-                setToken(response.data.user.user_key)
+            setUser(user.displayName);
+            setUID(user.uid);
+            localStorage.setItem("username", user.displayName);
+            localStorage.setItem("uid", user.uid);
 
-                // Store user info and tasks that will be modified in the session
-                localStorage.setItem("username", response.data.user.name);
-                localStorage.setItem("userkey", response.data.user.user_key);
-                localStorage.setItem("userid", response.data.user.uid);
-                localStorage.setItem("usertasks", []);
-
-                alert(`Welcome ${response.data.user.name}! Logging you in...`);
-                navigate("/home");
-                return;
-            } else {
-                alert(`Incorrect email and/or password.`);
-            }
-
-            throw new Error(response.message);
+            alert(`Welcome ${user.displayName}! Logging you in...`);
+            navigate("/home");
         } catch (err) {
-            console.log(err);
+            alert(err.message);
         }
     };
 
@@ -68,18 +83,26 @@ export default function AuthProvider({children}) {
      * Removes the user, token, and associated information in the account from the session.
      * @returns {void} Removed user, token, and associated info.
      */
-    const logoutAction = () => {
-        setUser(null);
-        setToken("");
+    const logoutAction = async () => {
+        try {
+            await signOut(auth);
 
-        localStorage.removeItem("username");
-        localStorage.removeItem("userkey");
-        localStorage.removeItem("userid");
-        localStorage.removeItem("usertasks");
-        navigate("/");
+            setUser(null);
+            setUID("");
+            localStorage.removeItem("username");
+            localStorage.removeItem("uid");
+
+            navigate("/");
+        } catch (err) {
+            alert(err.message);
+        }
     };
 
-    return <AuthContext.Provider value={{token, user, loginAction, logoutAction}}>{children}</AuthContext.Provider>;
+    return (
+        <AuthContext.Provider value={{ uid, user, loginAction, logoutAction }}>
+            {children}
+        </AuthContext.Provider>
+    );
 }
 
 /**

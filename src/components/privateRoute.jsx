@@ -12,16 +12,19 @@
 
 import React from "react";
 import {Navigate, Outlet} from "react-router-dom";
-import { useAuth } from "../hooks/AuthProvider";
+
+import { app } from "../firebaseConfig.js";
+import { getAuth } from "firebase/auth";
 
 /**
  * Protects a page from unauthenticated users.
  * @returns {JSX.Element} 
  */
-export default function PrivateRoute() {
-    const user = useAuth();
+export default function PrivateRoute({ children, ...rest }) {
+    const auth = getAuth(app);
+    const isAuthenticated = auth.currentUser !== null;
 
-    if(!user.token) return <Navigate to="/login" />
+    if(!isAuthenticated) return <Navigate to="/login" />
 
     return <Outlet />
 };
