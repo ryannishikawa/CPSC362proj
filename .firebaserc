@@ -6,10 +6,10 @@
     "mattdebinion-dev": {
       "hosting": {
         "todoapp": [
-          "todoapp-mattdebinion.dev"
+          "todoapp-mattdebinion-dev"
         ],
         "main": [
-          "mattdebinion.dev"
+          "mattdebinion-dev"
         ]
       }
     }
