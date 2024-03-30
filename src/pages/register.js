@@ -53,6 +53,7 @@ import { useNavigate } from 'react-router-dom';
 // Firebase imports
 import { app } from '../firebaseConfig.js';
 import { getAuth, createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { getFirestore, doc, setDoc, collection, Timestamp } from 'firebase/firestore';
 
 export default function RegisterPage() {
     const [name, setName] = useState('');
@@ -61,6 +62,7 @@ export default function RegisterPage() {
 
     const navigate = useNavigate();
     const auth = getAuth(app);
+    const db = getFirestore(app);
 
     //sends user to home page on submit
     const handleSubmit = async (e) => {
@@ -71,10 +73,25 @@ export default function RegisterPage() {
             const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
             const user = userCredential.user;
 
+            // Update the user's display name to the name they set in registration
             await updateProfile(user, {
                 displayName: name
             });
 
+            // Add a welcome task upon account creation
+            // Creates a new document from the user's ID in the user-data collection.
+            const userDocRef = doc(db, 'user-data', user.uid);
+            await setDoc(userDocRef, {});
+
+            const taskCollectionRef = collection(userDocRef, 'tasks');
+            await setDoc(doc(taskCollectionRef), {
+                description: `Welcome to our app, ${user.displayName}! Get started by adding tasks!`,
+                completed: false,
+                dueDate: Timestamp.now(),
+                createDate: Timestamp.now()
+            });
+
+            localStorage.setItem('username', user.displayName);
             alert(`Welcome to our app ${user.displayName}!`);
             navigate('/');
             
