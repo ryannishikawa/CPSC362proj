@@ -6,6 +6,19 @@
       "firebase.json",
       "**/.*",
       "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ],
+    "redirects": [
+      {
+        "source": "**",
+        "destination": "https://todoapp.mattdebinion.dev",
+        "type": 301
+      }
     ]
   }
 }
