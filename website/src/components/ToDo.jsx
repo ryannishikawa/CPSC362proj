@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { HoursDropdown, MinsDropdown, AMPMdropdown, Example, DateTime} from "./Time";
+import { HoursDropdown, MinsDropdown, AMPMdropdown, Example, DateTime, showStatus} from "./Time";
 
 function Todo(props) {
 
@@ -105,6 +105,7 @@ function Todo(props) {
         />
         <label className="todo-label" htmlFor={props.id}>
           {props.name} - Due: {props.dueDate}
+          <br /> {showStatus(selectedDueDate, selectedHours, selectedMins, props.completed)}
         </label>
       </div>
       <div className="btn-group">

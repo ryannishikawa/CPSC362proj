@@ -18,7 +18,7 @@
 //
 //Program information
 //  Program name: Task manager
-//  Date of last update: March 5, 2024
+//  Date of last update: March 28, 2024
 //  Programming language(s): JavaScript, HTML, CSS
 //  Files in this program: App.js, login.js, register.js, home.js, etc...
 //
@@ -274,4 +274,29 @@ export const Example = ({ setStartDate }, initialDate) => {
     );
   };
 
+  //function to set the status of a task
+  export const showStatus = (dueDate, hour, minute, complete) => {
+    if(!complete) {
+        if(dueDate > DateTime().getDate()) {
+            return (<div style={{color: 'red'}}>LATE!!!!!</div>);
+        } 
+        if(dueDate === DateTime().getDate()) {
+            if(hour > DateTime().getHours()) {
+                return (<div style={{color: 'red'}}>{DateTime().getHours() - hour} LATE!!!!!</div>);
+            } else if (hour < DateTime().getHours()) {
+                return (<pre style={{font: '100% / 1.15 sans-serif'}}>          in {hour - DateTime().getHours()} hours</pre>);
+            } 
+        } 
+        if(dueDate === DateTime().getDate() && hour === DateTime().getHours()) {
+            if (minute > DateTime().getMinutes()) {
+                return (<div style={{color: 'red'}}>{DateTime().getMinutes() - minute} LATE!!!!!</div>);
+            } else if (minute < DateTime().getMinutes()) {
+                return (<pre style={{font: '100% / 1.15 sans-serif'}}>          in {minute - DateTime().getMinutes()} minutes</pre>);
+            }
+        } else {
+            return (<pre style={{font: '100% / 1.15 sans-serif'}}>          in {dueDate - DateTime().getDate()} days</pre>);
+        }
+    }
+    return (<div>done</div>);
+  };
 export default DateTime
