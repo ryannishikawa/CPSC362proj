@@ -5,7 +5,7 @@
  * 
  * @see {@link: https://github.com/ryannishikawa/CPSC362proj} for our project repository and the README.md file within the server
  * directory for a less stressful viewing experience.
- * @see {@link: }https://firebase.google.com/docs/auth} for more about Firebase Authentication
+ * @see {@link: https://firebase.google.com/docs/auth} for more about Firebase Authentication
  * 
  * Resources:
  * @see {@link: https://dev.to/miracool/how-to-manage-user-authentication-with-react-js-3ic5} for inspiration for this file
@@ -13,10 +13,7 @@
 
 import { useContext, createContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-
-// Firebase Authentication
-import { app } from '../firebaseConfig.js';
-import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut} from 'firebase/auth';
+import * as Firebase from '../firebaseConfig.js';
 
 const AuthContext = createContext();
 
@@ -33,11 +30,8 @@ export default function AuthProvider({children}) {
     const [uid, setUID] = useState('');
     const navigate = useNavigate();
 
-
-    const auth = getAuth(app);
-
     useEffect(() => {
-        const authState = onAuthStateChanged(auth, (user) => {
+        const authState = Firebase.onAuthStateChanged(Firebase.auth, (user) => {
             if (user) {
                 setUser(user.displayName);
                 setUID(user.uid);
@@ -53,7 +47,6 @@ export default function AuthProvider({children}) {
 
         // Cleanup subscription on unmount
         return () => authState();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
     
     /**
@@ -64,7 +57,7 @@ export default function AuthProvider({children}) {
      */
     const loginAction = async (email, pass) => {
         try {
-            const userCredential = await signInWithEmailAndPassword(auth, email, pass);
+            const userCredential = await Firebase.signInWithEmailAndPassword(Firebase.auth, email, pass);
             const user = userCredential.user;
 
             setUser(user.displayName);
@@ -85,7 +78,7 @@ export default function AuthProvider({children}) {
      */
     const logoutAction = async () => {
         try {
-            await signOut(auth);
+            await Firebase.signOut(Firebase.auth);
 
             setUser(null);
             setUID("");
