@@ -17,6 +17,7 @@ let attestationProviderKey;
 if(process.env.NODE_ENV === 'production') {
   attestationProviderKey = process.env.REACT_APP_ATTESTATION_PROVIDER_KEY;
 } else {
+  window.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
   attestationProviderKey = process.env.REACT_APP_ATTESTATION_DEBUG_KEY;
 }
 
