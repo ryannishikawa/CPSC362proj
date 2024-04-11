@@ -10,10 +10,11 @@
  * Resources:
  * @see {@link: https://dev.to/miracool/how-to-manage-user-authentication-with-react-js-3ic5} for inspiration for this file
  */
-
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useContext, createContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import * as Firebase from '../firebaseConfig.js';
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth'; 
+import { app } from "../firebaseConfig";
 
 const AuthContext = createContext();
 
@@ -30,8 +31,10 @@ export default function AuthProvider({children}) {
     const [uid, setUID] = useState('');
     const navigate = useNavigate();
 
+    const auth = getAuth(app);
+
     useEffect(() => {
-        const authState = Firebase.onAuthStateChanged(Firebase.auth, (user) => {
+        const authState = onAuthStateChanged(auth, (user) => {
             if (user) {
                 setUser(user.displayName);
                 setUID(user.uid);
@@ -57,7 +60,7 @@ export default function AuthProvider({children}) {
      */
     const loginAction = async (email, pass) => {
         try {
-            const userCredential = await Firebase.signInWithEmailAndPassword(Firebase.auth, email, pass);
+            const userCredential = await signInWithEmailAndPassword(auth, email, pass);
             const user = userCredential.user;
 
             setUser(user.displayName);
@@ -78,7 +81,7 @@ export default function AuthProvider({children}) {
      */
     const logoutAction = async () => {
         try {
-            await Firebase.signOut(Firebase.auth);
+            await signOut(auth);
 
             setUser(null);
             setUID("");

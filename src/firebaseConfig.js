@@ -7,7 +7,6 @@
  * 
  */
 import { initializeApp } from 'firebase/app';                                                         // The Firebase application
-import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth';     // Application authentication
 import { initializeAppCheck, ReCaptchaEnterpriseProvider } from 'firebase/app-check';                 // Using ReCaptchaEnterprise as attestation provider for backend.
 import { getPerformance } from 'firebase/performance';                                                // Application performance metrics
 
@@ -42,12 +41,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 /**
- * The auth instance for the FirebaseApp instance.
- * @type {import('firebase/auth').Auth}
- */
-const auth = getAuth(app);
-
-/**
  * The ReCaptchaEnterpriseProvider instance for AppCheck
  * See {@link https://cloud.google.com/security/products/recaptcha-enterprise/pricing} for ReCaptcha Enterprise pricing (1 mil. free calls per month)
  */
@@ -64,4 +57,4 @@ const appCheck = initializeAppCheck(app, {
 const perf = getPerformance(app);
 
 // All exports needed for the application.
-export { app, auth, perf, onAuthStateChanged, signInWithEmailAndPassword, signOut };
+export { app, perf, appCheck };
