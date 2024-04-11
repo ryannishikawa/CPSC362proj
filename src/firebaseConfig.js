@@ -13,7 +13,13 @@ import { getPerformance } from 'firebase/performance';                          
 
 // Use the debug attestation provider key to bypass AppCheck if process.env.NODE_ENV is in development.
 // Otherwise, use the ReCaptcha Enterprise key.
+let attestationProviderKey;
 
+if(process.env.NODE_ENV === 'production') {
+  attestationProviderKey = process.env.REACT_APP_ATTESTATION_PROVIDER_KEY;
+} else {
+  attestationProviderKey = process.env.REACT_APP_ATTESTATION_DEBUG_KEY;
+}
 
 /**
  * The Firebase configuration.
@@ -46,16 +52,10 @@ const auth = getAuth(app);
  * See {@link https://cloud.google.com/security/products/recaptcha-enterprise/pricing} for ReCaptcha Enterprise pricing (1 mil. free calls per month)
  */
 // eslint-disable-next-line no-unused-vars
-const appCheck = process.env.NODE_ENV === 'development' ? 
-  initializeAppCheck(app, {
-    provider: new ReCaptchaEnterpriseProvider(process.env.REACT_APP_ATTESTATION_PROVIDER_KEY),
-    isTokenAutoRefreshEnabled: true
-  })
-  :
-  initializeAppCheck(app, {
-    provider: new ReCaptchaEnterpriseProvider(window.FIREBASE_APPCHECK_DEBUG_TOKEN),
-    isTokenAutoRefreshEnabled: true
-  });
+const appCheck = initializeAppCheck(app, {
+  provider: new ReCaptchaEnterpriseProvider(attestationProviderKey),
+  isTokenAutoRefreshEnabled: true
+});
 
 /**
  * The performance isntance for the FirebaseApp instance.
