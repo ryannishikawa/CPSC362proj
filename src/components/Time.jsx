@@ -18,7 +18,7 @@
 //
 //Program information
 //  Program name: Task manager
-//  Date of last update: March 5, 2024
+//  Date of last update: March 28, 2024
 //  Programming language(s): JavaScript, HTML, CSS
 //  Files in this program: App.js, login.js, register.js, home.js, etc...
 //
@@ -273,5 +273,39 @@ export const Example = ({ setStartDate }, initialDate) => {
       />
     );
   };
+
+  //function to set the status of a task(WIP)
+  export const showStatus = (dueDate, hour, minute, complete) => {
+    const currentDate = DateTime();
+    const currentHour = currentDate.getHours();
+    const currentMinute = currentDate.getMinutes();
+    const currentDay = currentDate.getDate();
+
+    if (!complete) {
+        if (dueDate < currentDay || 
+            (dueDate === currentDay && hour < currentHour) ||
+            (dueDate === currentDay && hour === currentHour && minute < currentMinute)) {
+                return <div>{dueDate-0} days left</div>;
+        } else if (dueDate === currentDay && hour === currentHour && minute === currentMinute) {
+            return <div style={{color: 'red'}}>NOW!!!!!</div>;
+        } else if (dueDate === currentDay) {
+            if (hour > currentHour) {
+                return <div>{hour - currentHour} hours left</div>;
+            } else if (hour === currentHour) {
+                if (minute > currentMinute) {
+                    return <div>{minute - currentMinute} minutes left</div>;
+                } else {
+                    return <div>done</div>;
+                }
+            } else {
+                return <div>done</div>;
+            }
+        } else {
+            return <div>{dueDate-0} days left</div>;
+        }
+    } else {
+        return <div>done</div>;
+    }
+};
 
 export default DateTime
