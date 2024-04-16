@@ -298,8 +298,10 @@ export const Example = ({ setStartDate }, initialDate) => {
     //if dueHour is within 1 hour of hourNow, returns the time difference in minutes
             } else if (hour === (currentHour+1)) {
                 if (currentMinute > minute) {
-                    return <div>{60 - currentMinute} minute(s) left</div>;
-                } 
+                    return <div>{60 + (minute - currentMinute)} minute(s) left</div>;
+                } else {
+                    return <div>1 hour left</div>;
+                }
     //if dueHour and hourNow are equal, compare minutes to return mins left
             } else if (hour === currentHour) {
                 if (minute > currentMinute) {
