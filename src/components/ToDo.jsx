@@ -62,6 +62,7 @@ function Todo(props) {
           id={props.id}
           className="todo-text"
           type="text"
+          initialValue={props.name}
           value={newName}
           onChange={handleChange}
         />
@@ -69,7 +70,7 @@ function Todo(props) {
           New due date for {props.name}
           <div>
             <label htmlFor="due-date-picker">Due Date:</label>
-              <Example setStartDate={setSelectedDueDate} initialDate={selectedDueDate} />
+              <Example setStartDate={setSelectedDueDate} initialDate={props.dueDate} />
           </div>
           <div>
             <label htmlFor="due-time">Due Time:</label>
@@ -105,7 +106,7 @@ function Todo(props) {
         />
         <label className="todo-label" htmlFor={props.id}>
           {props.name} - Due: {props.dueDate}
-          
+          <br /> {showStatus(props.dueDay, props.dueHour, props.dueMins, props.dueAMPM, props.completed)}
         </label>
       </div>
       <div className="btn-group">

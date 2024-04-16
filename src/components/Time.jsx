@@ -18,7 +18,7 @@
 //
 //Program information
 //  Program name: Task manager
-//  Date of last update: March 28, 2024
+//  Date of last update: April 16, 2024
 //  Programming language(s): JavaScript, HTML, CSS
 //  Files in this program: App.js, login.js, register.js, home.js, etc...
 //
@@ -35,7 +35,7 @@
 //
 //This file
 //   File name: Time.jsx
-//   Date of last update: February 22, 2024
+//   Date of last update: April 16, 2024
 //   Languages: JavaScript, HTML
 //
 //References for this file
@@ -274,35 +274,54 @@ export const Example = ({ setStartDate }, initialDate) => {
     );
   };
 
-  //function to set the status of a task(WIP)
-  export const showStatus = (dueDate, hour, minute, complete) => {
+  //function to set the status of a task
+  export const showStatus = (dueDate, hour, minute, AMPM, complete) => {
     const currentDate = DateTime();
     const currentHour = currentDate.getHours();
     const currentMinute = currentDate.getMinutes();
     const currentDay = currentDate.getDate();
 
     if (!complete) {
+    //if dueDateTime is before than currentDateTime returns LATE
         if (dueDate < currentDay || 
             (dueDate === currentDay && hour < currentHour) ||
             (dueDate === currentDay && hour === currentHour && minute < currentMinute)) {
-                return <div>{dueDate-0} days left</div>;
+            return <div style={{color: 'red'}}>LATE!!!!!</div>;
+    //if it is the dueDateTime right now returns NOW
         } else if (dueDate === currentDay && hour === currentHour && minute === currentMinute) {
             return <div style={{color: 'red'}}>NOW!!!!!</div>;
+    //if dueDate is today
         } else if (dueDate === currentDay) {
-            if (hour > currentHour) {
-                return <div>{hour - currentHour} hours left</div>;
+    //if dueHour is greater than hourNow+1, returns hours left until due
+            if (hour > (currentHour+1)) {
+                return <div>{hour - currentHour} hour(s) left</div>;
+    //if dueHour is within 1 hour of hourNow, returns the time difference in minutes
+            } else if (hour === (currentHour+1)) {
+                if (currentMinute > minute) {
+                    return <div>{60 - currentMinute} minute(s) left</div>;
+                } 
+    //if dueHour and hourNow are equal, compare minutes to return mins left
             } else if (hour === currentHour) {
                 if (minute > currentMinute) {
-                    return <div>{minute - currentMinute} minutes left</div>;
+                    return <div>{minute - currentMinute} minute(s) left</div>;
                 } else {
-                    return <div>done</div>;
+                    return <div style={{color: 'red'}}>LATE!!!!!</div>;;
                 }
             } else {
-                return <div>done</div>;
+                return <div style={{color: 'red'}}>LATE!!!!!</div>;;
             }
+    //if dueDate is tommorow but still within 24hrs of currentDay, return the time diff in hours
+        } else if (dueDate === (currentDay+1)) {
+            if (hour < currentHour) {
+                return <div>{24 + hour - currentHour} hour(s) left</div>;
+            } else {
+                return <div>1 day left</div>;
+            }
+    //if dueDate is after current date and the time diff is >24hrs, return the difference in days 
         } else {
-            return <div>{dueDate-0} days left</div>;
+            return <div>{dueDate - currentDay} day(s) left</div>;
         }
+    //if complete return done
     } else {
         return <div>done</div>;
     }
