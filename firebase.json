@@ -1,7 +1,6 @@
 {
   "hosting": {
-    "target": "todoapp",
-    "public": "build",
+    "public": "public",
     "ignore": [
       "firebase.json",
       "**/.*",
@@ -11,28 +10,6 @@
       {
         "source": "**",
         "destination": "/index.html"
-      }
-    ],
-    "redirects": [
-      {
-        "source": "https://todoapp-mattdebinion-dev.web.app/:path*",
-        "destination": "https://todoapp.mattdebinion.dev/:path",
-        "type": 301
-      },
-      {
-        "source": "https://todoapp-mattdebinion-dev.web.app",
-        "destination": "https://todoapp.mattdebinion.dev/",
-        "type": 301
-      },
-      {
-        "source": "https://todoapp-mattdebinion-dev.firebaseapp.com/:path*",
-        "destination": "https://todoapp.mattdebinion.dev/:path",
-        "type": 301
-      },
-      {
-        "source": "https://todoapp-mattdebinion-dev.firebaseapp.com",
-        "destination": "https://todoapp.mattdebinion.dev/",
-        "type": 301
       }
     ]
   }

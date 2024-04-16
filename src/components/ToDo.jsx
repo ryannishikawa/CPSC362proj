@@ -105,7 +105,7 @@ function Todo(props) {
         />
         <label className="todo-label" htmlFor={props.id}>
           {props.name} - Due: {props.dueDate}
-          <br /> {showStatus(selectedDueDate, selectedHours, selectedMins, props.completed)}
+          
         </label>
       </div>
       <div className="btn-group">

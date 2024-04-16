@@ -274,29 +274,38 @@ export const Example = ({ setStartDate }, initialDate) => {
     );
   };
 
-  //function to set the status of a task
+  //function to set the status of a task(WIP)
   export const showStatus = (dueDate, hour, minute, complete) => {
-    if(!complete) {
-        if(dueDate > DateTime().getDate()) {
-            return (<div style={{color: 'red'}}>LATE!!!!!</div>);
-        } 
-        if(dueDate === DateTime().getDate()) {
-            if(hour > DateTime().getHours()) {
-                return (<div style={{color: 'red'}}>{DateTime().getHours() - hour} LATE!!!!!</div>);
-            } else if (hour < DateTime().getHours()) {
-                return (<pre style={{font: '100% / 1.15 sans-serif'}}>          in {hour - DateTime().getHours()} hours</pre>);
-            } 
-        } 
-        if(dueDate === DateTime().getDate() && hour === DateTime().getHours()) {
-            if (minute > DateTime().getMinutes()) {
-                return (<div style={{color: 'red'}}>{DateTime().getMinutes() - minute} LATE!!!!!</div>);
-            } else if (minute < DateTime().getMinutes()) {
-                return (<pre style={{font: '100% / 1.15 sans-serif'}}>          in {minute - DateTime().getMinutes()} minutes</pre>);
+    const currentDate = DateTime();
+    const currentHour = currentDate.getHours();
+    const currentMinute = currentDate.getMinutes();
+    const currentDay = currentDate.getDate();
+
+    if (!complete) {
+        if (dueDate < currentDay || 
+            (dueDate === currentDay && hour < currentHour) ||
+            (dueDate === currentDay && hour === currentHour && minute < currentMinute)) {
+                return <div>{dueDate-0} days left</div>;
+        } else if (dueDate === currentDay && hour === currentHour && minute === currentMinute) {
+            return <div style={{color: 'red'}}>NOW!!!!!</div>;
+        } else if (dueDate === currentDay) {
+            if (hour > currentHour) {
+                return <div>{hour - currentHour} hours left</div>;
+            } else if (hour === currentHour) {
+                if (minute > currentMinute) {
+                    return <div>{minute - currentMinute} minutes left</div>;
+                } else {
+                    return <div>done</div>;
+                }
+            } else {
+                return <div>done</div>;
             }
         } else {
-            return (<pre style={{font: '100% / 1.15 sans-serif'}}>          in {dueDate - DateTime().getDate()} days</pre>);
+            return <div>{dueDate-0} days left</div>;
         }
+    } else {
+        return <div>done</div>;
     }
-    return (<div>done</div>);
-  };
+};
+
 export default DateTime
