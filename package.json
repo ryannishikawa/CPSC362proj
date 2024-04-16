@@ -1,6 +1,6 @@
 {
-  "name": "task-manager",
-  "version": "1.0.0",
+  "name": "website",
+  "version": "0.1.0",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.17.0",
@@ -11,29 +11,39 @@
     "cors": "^2.8.5",
     "nanoid": "^5.0.5",
     "newsapi": "^2.4.1",
+    "firebase": "^10.10.0",
+    "nanoid": "^5.0.6",
     "react": "^18.2.0",
-    "react-bootstrap": "^2.10.1",
-    "react-datepicker": "^6.2.0",
+    "react-bootstrap": "^2.10.2",
+    "react-datepicker": "^6.6.0",
     "react-datetime-picker": "^5.6.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.22.0",
     "react-scripts": "5.0.1",
-    "react-time-picker": "^6.6.0",
-    "sqlite3": "^5.1.7",
     "web-vitals": "^2.1.4"
   },
-  "description": "CPSC 362 project!",
   "scripts": {
-    "start": "concurrently \"npm run start:frontend\" \"npm run start:backend\"",
-    "start:frontend": "cd website && npm start",
-    "start:backend": "cd server && npm start",
-    "dbinit": "cd server && node initDatabase"
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
-    "concurrently": "^8.2.2"
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }

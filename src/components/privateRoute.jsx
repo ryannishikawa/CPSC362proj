@@ -1,5 +1,5 @@
 /**
- * @file PrivateRoute.js
+ * @file PrivateRoute.jsx
  * @author Matt De Binion <mattdb@csu.fullerton.edu>
  * @description This component handles non-authenticated users by redirecting them to the login page.
  * 
@@ -12,14 +12,19 @@
 
 import React from "react";
 import {Navigate, Outlet} from "react-router-dom";
-import { useAuth } from "../hooks/AuthProvider";
 
-const PrivateRoute = () => {
-    const user = useAuth();
+import { app } from "../firebaseConfig.js";
+import { getAuth } from "firebase/auth";
 
-    if(!user.token) return <Navigate to="/login" />
+/**
+ * Protects a page from unauthenticated users.
+ * @returns {JSX.Element} 
+ */
+export default function PrivateRoute({ children, ...rest }) {
+    const auth = getAuth(app);
+    const isAuthenticated = auth.currentUser !== null;
+
+    if(!isAuthenticated) return <Navigate to="/login" />
 
     return <Outlet />
 };
-
-export default PrivateRoute;

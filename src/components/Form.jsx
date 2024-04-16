@@ -1,15 +1,18 @@
+
 import React, { useState } from "react";
-import { HoursDropdown, MinsDropdown, AMPMdropdown, Example, defaultHours, defaultMinutes, defaultAMPM} from "./Time";
+import { HoursDropdown, MinsDropdown, AMPMdropdown, Example, DateTime} from "./Time";
 
 
 
 function Form(props) {
 
+  var initialHours = (DateTime().getHours() + 1) > 12 ? (DateTime().getHours() - 11) : (DateTime().getHours() + 1);
+
   const [name, setName] = useState("");
   const [selectedDueDate, setSelectedDueDate] = useState(new Date());
-  const [selectedHours, setSelectedHours] = useState(12);
+  const [selectedHours, setSelectedHours] = useState(initialHours);
   const [selectedMins, setSelectedMins] = useState(0);
-  const [selectedAMPM, setSelectedAMPM] = useState("AM");
+  const [selectedAMPM, setSelectedAMPM] = useState(DateTime().getHours() >= 12 ? "PM" : "AM");
 
   function handleChange(event) {
     // Change text inside the task creation

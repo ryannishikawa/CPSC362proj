@@ -50,12 +50,16 @@
 
 import { useEffect, useState } from "react";
 import TaskList from "../components/TaskList";
-import axios from "axios";
+
+// Firebase imports
+import { app } from '../firebaseConfig.js';
+import { getFirestore, query, doc, getDocs, setDoc, deleteDoc, collection, Timestamp } from 'firebase/firestore';
 
 function ToDoListPage() {
   const [tasks, setTasks] = useState([]);                         // Set initial state blank
   const [loading, isLoading] = useState(true);                    // Set loading state for database queries to true
 
+  const db = getFirestore(app);                                   // The Firestore database.
   /**
    * This effect handles pulling database information before the page is loaded.
    */
@@ -63,28 +67,32 @@ function ToDoListPage() {
 
     // Fetch data from the database
     const fetchData = async () => {
-      
+
       try {
-        const uid = localStorage.getItem("userid");
-        const response = await axios.post('http://localhost:5000/api/tasks/find', {uid});
+        // Go to the tasks collection associated with the UID of the user.
+        const uid = localStorage.getItem("uid");
 
-        console.log(`POST to database with status ` + response.status);
-        if(response.status === 200) {
-          let taskObject = response.data.taskObject;
-      
-          // Map database response to object property names in TaskList.jsx
-          let mappedTaskObj = taskObject.map(task => ({
-            id: task.tid.toString(),
-            name: task.description,
-            completed: JSON.parse(task.completed.toLowerCase()),
-            status: "none"        // The status must be 'none' (no action on this record), 'updated' (updated value on this record),
-          }));                    // OR 'deleted' (this record was deleted). Otherwise, the database will not accept this record.
+        // Prepare Firestore query and get the associated documents
+        const q = query(collection(db, 'user-data', uid, 'tasks'));
+        const querySnapshot = await getDocs(q);
 
-          setTasks(mappedTaskObj);
-          localStorage.setItem("usertasks", JSON.stringify(tasks));   // Store the pulled tasks locally for modification.
+        // Given an array of Firestore documents, map them to the object property names in TaskList.jsx
+        // Ignore the empty document which is needed to keep the /tasks directory per user.
+        let mappedTaskObj = querySnapshot.docs
+        .filter(doc => Object.keys(doc.data()).length > 0)
+        .map(doc => ({
+          id: doc.id,
+          name: doc.data().description,
+          completed: doc.data().completed,
+          createDate: doc.data().createDate,
+          dueDate: doc.data().dueDate,
+          status: 'none'                      // The status must be 'none' (no action on this record), 'updated' (updated value on this record),
+        }));                                  // OR 'deleted' (this record was deleted). Otherwise, the database will not accept this record.
 
-          isLoading(false);
-        }
+        setTasks(mappedTaskObj);
+        localStorage.setItem("usertasks", JSON.stringify(tasks));   // Store the pulled tasks locally for modification.
+
+        isLoading(false);
       } catch (err) {
         console.log(err);
       }
@@ -98,7 +106,7 @@ function ToDoListPage() {
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);   // Empty dependency array intentional, do not remove as this effect must run only once.
 
   /**
@@ -109,18 +117,74 @@ function ToDoListPage() {
 
       // Save tasks
       try {
-        const uid = localStorage.getItem("userid");
-        const taskObject = JSON.parse(localStorage.getItem("usertasks"));
+        // Go to the tasks collection associated with the UID of the user.
+        const uid = localStorage.getItem("uid");
+        const currentUserRef = collection(db, 'user-data', uid, 'tasks');
 
-        const response = await axios.post('http://localhost:5000/api/tasks/update', { uid, taskObject });
-        console.log('POST to database with status ' + JSON.stringify(response.data));
+        // Parse the in-memory task object
+        const taskObject = JSON.parse(localStorage.getItem('usertasks'));
+
+        // For each taskObject, update the values within Firestore
+        if (taskObject !== null) {
+
+          // Determine if the tasks collection exists before attempting to access the task document.
+          let tasksCollectionRef = collection(db, 'user-data', uid, 'tasks');
+          const tasksSnapshot = await getDocs(tasksCollectionRef);
+
+          // If the collection is empty, initialize with an empty document
+          if (tasksSnapshot.empty) {
+            const emptyDocRef = doc(tasksCollectionRef);
+            await setDoc(emptyDocRef, {});
+
+            console.log('User task directory empty, sample document created.')
+
+            // Otherwise, check if the first document has no fields. If it does, delete!
+          } else {
+
+            // If the snapshot size is greater than one, delete the first document if it's empty.
+            if (tasksSnapshot.size > 1) {
+              const firstDoc = tasksSnapshot.docs[0];
+              const firstDocData = firstDoc.data();
+
+              if (Object.keys(firstDocData).length === 0) {
+                await deleteDoc(firstDoc.ref)
+              }
+            }
+          }
+
+          taskObject.forEach(async (task) => {
+            let docRef;
+            
+            if(task.id === -1) {
+              docRef = doc(tasksCollectionRef);                         // Create a new document with a Firestore provided ID.
+            } else {
+              docRef = doc(db, 'user-data', uid, 'tasks', task.id);     // Point to user-data/UID/tasks document specified in taskObject instead
+            }
+
+            // If the task status is not set to deleted, merge.
+            if (task.status !== 'deleted') {
+
+              await setDoc(docRef, {
+                completed: Boolean(task.completed),
+                createDate: Timestamp.now(),
+                description: task.name,
+                dueDate: task.dueDate
+              }, {
+                merge: true
+              })
+            } else if (task.status === 'deleted') {
+
+              await deleteDoc(docRef);       // banish thy document
+            }
+          });
+        }
 
         localStorage.removeItem("usertasks");
       } catch (err) {
         console.log(err);
       }
     }
-  }, [tasks]);
+  }, [db, tasks]);
 
   /**
    * Prompts user if they really want to leave.
@@ -131,7 +195,7 @@ function ToDoListPage() {
   };
 
   // Wait until the task list is retrieved from the database.
-  if(loading) {
+  if (loading) {
     return <div>Loading...</div>;
   }
 

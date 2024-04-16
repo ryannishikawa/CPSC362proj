@@ -1,14 +1,16 @@
+
 import { useState } from "react";
-import { HoursDropdown, MinsDropdown, AMPMdropdown, Example} from "./Time";
+import { HoursDropdown, MinsDropdown, AMPMdropdown, Example, DateTime} from "./Time";
 
 function Todo(props) {
 
   const [isEditing, setEditing] = useState(false);
   const [newName, setNewName] = useState("");
   const [selectedDueDate, setSelectedDueDate] = useState(new Date());
-  const [selectedHours, setSelectedHours] = useState('');
-  const [selectedMins, setSelectedMins] = useState('');
-  const [selectedAMPM, setSelectedAMPM] = useState('');
+  const [selectedHours, setSelectedHours] = useState((DateTime().getHours() + 1) > 12 ? (DateTime().getHours() - 11) : (DateTime().getHours() + 1));
+  const [selectedMins, setSelectedMins] = useState(0);
+  const [selectedAMPM, setSelectedAMPM] = useState(DateTime().getHours() >= 12 ? "PM" : "AM");
+
 
 
   function handleChange(event) {

@@ -1,24 +1,23 @@
 # dependencies
 /node_modules/
-/server/node_modules/
-/server/data/
-/website/node_modules/
-/website/.pnp
-/website/.pnp.js
+.pnp
+.pnp.js
 
 # testing
-/website/coverage
+coverage
+.firebase
 
 # production
-/website/build
+build
 
 # misc
-/website/.DS_Store
-/website/.env.local
-/website/.env.development.local
-/website/.env.test.local
-/website/.env.production.local
+.DS_Store
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
-/website/npm-debug.log*
-/website/yarn-debug.log*
-/website/yarn-error.log*
+/npm-debug.log*
+/yarn-debug.log*
+/yarn-error.log*
