@@ -110,6 +110,10 @@ input:focus {
   outline: none;
 }
 
+input:read-only {
+  background-color: #cccccc;
+}
+
 button {
   cursor: pointer;
   border: 0;
