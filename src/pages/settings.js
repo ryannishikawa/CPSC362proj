@@ -1,10 +1,12 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 // Firebase imports
 import { app } from '../firebaseConfig.js';
 import { getFirestore, doc, getDocs, collection } from 'firebase/firestore';
-import { getAuth, updateProfile, updatePassword } from "firebase/auth";
+import { getAuth, updateProfile, updatePassword, reauthenticateWithCredential, updateEmail } from "firebase/auth";
+import { sendEmailVerification, EmailAuthProvider } from 'firebase/auth';
 
 export default function SettingsPage() {
 
@@ -18,6 +20,13 @@ export default function SettingsPage() {
     const [isEditingName, setIsEditingName] = useState(false);      // The state of name editing
     const [isEditingEmail, setIsEditingEmail] = useState(false);    // The state of email editing
     const [isEditingPass, setIsEditingPass] = useState(false);      // The state of password editing
+
+    // Prevent email verification resend abuse. One minute is standard to send again.
+    const [lastSentTime, setLastSentTime] = useState(localStorage.getItem('lastSentTime') ?
+        parseInt(localStorage.getItem('lastSentTime'), 10)
+        :
+        null
+    );
 
     const navigate = useNavigate();                     // Use navigate features
     const auth = getAuth(app);                          // Use Firebase Authentication
@@ -52,9 +61,11 @@ export default function SettingsPage() {
         isLoading(false);
     };
 
-    // Pull user data from storage before the page loads.
+    /**
+     * Before the page loads, ensure all data is fetched before loading the window.
+     */
     useEffect(() => {
-        
+
         fetchData();
 
         const handleFocus = () => {
@@ -70,10 +81,33 @@ export default function SettingsPage() {
         };
     }, []);
 
+    /**
+     * For this effect, check if a minute has elapsed for verification email before sending again. 
+     */
+    useEffect(() => {
+
+        const timer = setInterval(() => {
+          if (lastSentTime && Date.now() - lastSentTime >= 60000) {
+
+            setLastSentTime(null);
+            localStorage.removeItem('lastSentTime');
+          }
+        }, 1000); // Check every second
+    
+        return () => {
+          clearInterval(timer);
+        };
+      }, [lastSentTime]);
+
     // Handle Account Name changing below
     const handleAccountNameChange = () => {
         setdNameHold(dName);
         setIsEditingName(!isEditingName);
+
+        const inputElement = document.querySelector('input[type="text"]');
+        if (inputElement) {
+            inputElement.value = null;
+        }
     }
 
 
@@ -92,6 +126,12 @@ export default function SettingsPage() {
     const handleAccountEmailChange = () => {
         setEmailHold(email);
         setIsEditingEmail(!isEditingEmail);
+
+        if(!isEditingEmail) {
+            setEmail('');
+        } else {
+            setEmail(emailNameHold);
+        }
     }
 
     const handleAccountEmailChangeCancel = () => {
@@ -124,9 +164,40 @@ export default function SettingsPage() {
         // WIP
     }
 
+    // =============================
+    //  EMAIL VERIFICATION HANDLERS
+    // =============================
 
-    // These functions push data to the database from respective calls
-    const pushNewName = () => {
+    /**
+     * This sends an email to the specified user so they can verify their account
+     */
+    const sendEmailVerificationToEmail = async () => {
+        try {
+
+            await sendEmailVerification(auth.currentUser);              // Send email verification to the new email
+
+            setLastSentTime(Date.now());
+            localStorage.setItem('lastSentTime', Date.now().toString());
+
+            console.log('Verification email sent to', email);
+        } catch (error) {
+            console.error('Error sending verification email:', error);
+        }
+    };
+
+    /**
+     * The pushNewEmail function does two things:
+     * 1) When a verified user requests to change their email, sends them an email to verify and updates the 'save' button to 'verify'
+     * 2) When the verified user successfully verifies their new email, pushes new email to their Firebase Authentication and reverts
+     *    to the 'Change' button again.
+     */
+    const pushNewEmail = async () => {
+
+        // EMAIL
+    }
+
+    const pushNewName = async () => {
+
         updateProfile(user, {
             displayName: dName
         }).then(() => {
@@ -149,11 +220,11 @@ export default function SettingsPage() {
 
 
     // Handle page rendering here
-    if(loading) {
+    if (loading) {
         return <div>Loading...</div>
     }
 
-    return(
+    return (
         <div className='todoapp stack-large'>
             <h1>Settings</h1>
             <h2>Account</h2>
@@ -162,27 +233,33 @@ export default function SettingsPage() {
                 {isEditingEmail ? (
                     <input type="text" value={email} onChange={(e) => setEmail(e.target.value)} />
                 ) : (
-                    <input type="text" value={email} readOnly/>
+                    <input type="text" value={email} readOnly />
                 )}
             </p>
+            {!user.emailVerified && <p>Please check your email to verify your email.</p>}
+            {user.emailVerified && <p>Email verified</p>}
+            {isEditingEmail && user.emailVerified && <p>Enter password to confirm changes.</p>}
+            {isEditingEmail && user.emailVerified && <input type="password" id='confirmPassBox' onChange={(e) => setPass(e.target.value)} />}
             <div>
-                <button className='login-button' onClick={isEditingEmail ?  handleAccountEmailChangeCancel :handleAccountEmailChange}>
+                {user.emailVerified && <button className='login-button' onClick={isEditingEmail ? handleAccountEmailChangeCancel : handleAccountEmailChange} disabled={loading && !isEditingEmail}>
                     {
                         isEditingEmail ? 'Cancel' : 'Change'
                     }
                 </button>
-                {isEditingEmail && <button className='login-button'>Save</button>}
+                }
+                {user.emailVerified && isEditingEmail && <button className='login-button' onClick={pushNewEmail}>Save</button>}
+                {!user.emailVerified && <button className='login-button' onClick={sendEmailVerificationToEmail} disabled={lastSentTime && Date.now() - lastSentTime < 60000} >Resend Email</button>}
             </div>
 
             <p>Display Name
                 {isEditingName ? (
                     <input type="text" value={dName} onChange={(e) => setdName(e.target.value)} />
                 ) : (
-                    <input type="text" value={dName} readOnly/>
+                    <input type="text" value={dName} readOnly />
                 )}
             </p>
             <div>
-                <button className='login-button' onClick={isEditingName ?  handleAccountNameChangeCancel :handleAccountNameChange}>
+                <button className='login-button' onClick={isEditingName ? handleAccountNameChangeCancel : handleAccountNameChange}>
                     {
                         isEditingName ? 'Cancel' : 'Change'
                     }
@@ -194,7 +271,7 @@ export default function SettingsPage() {
                 {isEditingPass ? (
                     <input type="password" onChange={(e) => setPass(e.target.value)} />
                 ) : (
-                    <input type="text" value="" readOnly/>
+                    <input type="text" value="" readOnly />
                 )}
             </p>
             <div>
@@ -205,7 +282,7 @@ export default function SettingsPage() {
                 </button>
                 {isEditingPass && <button className='login-button'>Save</button>}
             </div>
-            
+
             <p>Delete Account</p>
             <div><button className='login-button'>Delete</button></div>
             <h2>Task Management</h2>
