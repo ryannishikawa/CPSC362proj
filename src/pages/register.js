@@ -8,22 +8,42 @@
  * @see {@link: https://github.com/ryannishikawa/CPSC362proj} for our project repository and the README.md file within the server
  * directory for a less stressful viewing experience.
  */
-import React, { useState } from 'react';
+import React, { useState, useEffect} from 'react';
 import { useNavigate } from 'react-router-dom';
 
 // Firebase imports
 import { app } from '../firebaseConfig.js';
 import { getAuth, createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { getFirestore, doc, setDoc, collection, Timestamp } from 'firebase/firestore';
+import { setAnalyticsCollectionEnabled } from 'firebase/analytics';
 
 export default function RegisterPage() {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [pass, setPassword] = useState('');
+    const [authCheck, setAuthCheck] = useState(false);
 
     const navigate = useNavigate();
     const auth = getAuth(app);
     const db = getFirestore(app);
+
+    /**
+     * For this effect, checks if the user is not authenticated. If they are not, navigate home.
+     */
+    useEffect(() => {
+
+        const unsubscribe = auth.onAuthStateChanged(user => {
+            if (user) {
+                navigate('/');
+            } else {
+                setAuthCheck(true);
+            }
+        });
+
+        // Cleanup subscription on unmount
+        return () => unsubscribe();
+    }, [navigate, auth]);
+
 
     //sends user to home page on submit
     const handleSubmit = async (e) => {
@@ -31,6 +51,13 @@ export default function RegisterPage() {
 
         // Create account with Firebase Authentication
         try {
+
+            // Ensure user is not already authenticated.
+            if(auth.currentUser) {
+                alert("You're already logged in.");
+                navigate('/');
+                return;
+            }
             const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
             const user = userCredential.user;
 
@@ -75,6 +102,11 @@ export default function RegisterPage() {
         e.preventDefault();
         navigate("/");
     };
+
+    // Determine the status of authentication (return home if they are logged in).
+    if(!authCheck) {
+        return <div>Loading...</div>
+    }
 
     // Returns the register form component here.
     return (
