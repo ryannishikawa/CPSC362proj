@@ -8,21 +8,22 @@
  */
 
 import React from 'react';
-import { useState } from 'react';
+import { app } from '../firebaseConfig.js';
+import { getAuth } from 'firebase/auth';
 
+const auth = getAuth(app);
+const user = auth.currentUser;
 /**
  * Shows if a user is logged in or not.
  * @returns {JSX.Element} Not logged in displayed OR logged in as user
  */
 export function LoggedUser() {
 
-    const [user] = useState(localStorage.getItem('username') || null);
-
     if(user !== null) {
         return (
             <div className='container-top-item'>
                 <p>Logged in as <br></br>
-                {user}</p>
+                {user.displayName}</p>
             </div>
         );
     } 
