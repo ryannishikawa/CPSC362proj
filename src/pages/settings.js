@@ -4,8 +4,8 @@ import { useNavigate } from 'react-router-dom';
 
 // Firebase imports
 import { app } from '../firebaseConfig.js';
-import { getFirestore, doc, getDocs, collection } from 'firebase/firestore';
-import { getAuth, updateProfile, updatePassword, reauthenticateWithCredential, updateEmail } from "firebase/auth";
+import { getFirestore, doc, getDocs, collection, updateDoc } from 'firebase/firestore';
+import { getAuth, updateProfile, updatePassword, reauthenticateWithCredential, verifyBeforeUpdateEmail } from "firebase/auth";
 import { sendEmailVerification, EmailAuthProvider } from 'firebase/auth';
 
 export default function SettingsPage() {
@@ -185,26 +185,49 @@ export default function SettingsPage() {
         }
     };
 
+
+
     /**
      * The pushNewEmail function does two things:
      * 1) When a verified user requests to change their email, sends them an email to verify and updates the 'save' button to 'verify'
      * 2) When the verified user successfully verifies their new email, pushes new email to their Firebase Authentication and reverts
      *    to the 'Change' button again.
+     * 
+     * WIP!
      */
     const pushNewEmail = async () => {
 
-        // EMAIL
+        try {
+            const credential = EmailAuthProvider.credential(user.email, pass);
+            await reauthenticateWithCredential(user, credential);
+            await verifyBeforeUpdateEmail(user, email);
+        } catch(err) {
+            console.log(`Error pushing email: ${err}`);
+        }
+        handleAccountEmailChange();
     }
 
+    /**
+     * pushNewName changes the name of the users profile and their name in the database.
+     */
     const pushNewName = async () => {
 
+        // Update the display name for the user in Authentication
         updateProfile(user, {
             displayName: dName
         }).then(() => {
-            //success!
+            console.log('Name changed!');
         }).catch((err) => {
-            // err!
-        })
+            console.log(`Error changing name: ${err}`);
+        });
+
+        // Update the display name for the user in Firestore
+        const userDocRef = doc(db, 'user-data', user.uid);
+        await updateDoc(userDocRef, {
+            displayName: dName
+        });
+
+        handleAccountNameChange();
     }
 
     const pushNewPass = () => {
@@ -264,7 +287,7 @@ export default function SettingsPage() {
                         isEditingName ? 'Cancel' : 'Change'
                     }
                 </button>
-                {isEditingName && <button className='login-button'>Save</button>}
+                {isEditingName && <button className='login-button' onClick={pushNewName}>Save</button>}
             </div>
 
             <p>Password
