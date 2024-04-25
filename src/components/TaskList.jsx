@@ -78,6 +78,10 @@ function TaskList(props) {
             id={task.id}
             name={task.name}
             dueDate={task.dueDate?.toLocaleString()}
+            dueDay={task.dueDate?.getDate()}
+            dueHour={task.dueDate?.getHours()}
+            dueAMPM={task.dueDate?.getHours() >= 12 ? "PM" : "AM"}
+            dueMins={task.dueDate?.getMinutes()}
             completed={task.completed}
             status={task.status}
             key={task.id}
