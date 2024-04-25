@@ -110,6 +110,10 @@ input:focus {
   outline: none;
 }
 
+input:read-only {
+  background-color: #cccccc;
+}
+
 button {
   cursor: pointer;
   border: 0;
@@ -120,6 +124,12 @@ button {
   padding: 10px 0;
   transition: 0.3s;
 }
+
+button:disabled {
+  background-color: #cccccc;
+  pointer-events: none;
+}
+
 /* End default global styles*/
 /* Global styles */
 .form-group>input[type="text"] {

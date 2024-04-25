@@ -57,6 +57,7 @@ import LoginPage from "./pages/login";
 import Home from "./pages/home";
 import RegisterPage from "./pages/register";
 import ToDoListPage from "./pages/todo-list";
+import SettingsPage from "./pages/settings";
 
 const App = () => {
   return (
@@ -69,6 +70,7 @@ const App = () => {
             <Route path="/register" element={<RegisterPage />}/>
             <Route element={<PrivateRoute />}>
               <Route path="/tasks" element={<ToDoListPage />} />
+              <Route path="/settings" element={<SettingsPage />} />
             </Route>
             <Route path="*" element={<Navigate to="/" />}/>
           </Routes>

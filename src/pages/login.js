@@ -47,25 +47,46 @@
 //
 //===== Begin code area ================================================================================================
 
-import React, {useState} from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../hooks/AuthProvider';
 import { useNavigate } from 'react-router-dom';
+import { getAuth } from 'firebase/auth';
 
 export default function LoginPage() {
-    
+
     // Input field data
     const [email, setEmail] = useState('');
     const [pass, setPassword] = useState('');
-    
+
 
     // Create an auth for persistive sessions
+    const [authCheck, setAuthCheck] = useState(false);
     const auth = useAuth();
+    const fAuth = getAuth();
     const navigate = useNavigate();
 
-    const handleSubmit = async(e) => {
+    /**
+     * For this effect, checks if the user is not authenticated. If they are not, navigate home.
+     */
+    useEffect(() => {
+
+        const unsubscribe = fAuth.onAuthStateChanged(user => {
+            if (user) {
+                navigate('/');
+            } else {
+                setAuthCheck(true);
+            }
+        });
+
+        // Cleanup subscription on unmount
+        return () => unsubscribe();
+    }, [navigate, fAuth]);
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if(email !== "" && pass !== "") {
+
+        if (email !== "" && pass !== "") {
             auth.loginAction(email, pass);
             return;
         }
@@ -85,11 +106,16 @@ export default function LoginPage() {
         navigate("/");
     };
 
-    return(
+    // Determine the status of authentication (return home if they are logged in).
+    if(!authCheck) {
+        return <div>Loading...</div>
+    }
+
+    return (
         <div className='todoapp stack-large'>
             <h1>Log In</h1>
             <form onSubmit={handleSubmit}>
-                <input type="text" title="email address" value={email} onChange={e => setEmail(e.target.value)}placeholder='you@email.domain' />
+                <input type="text" title="email address" value={email} onChange={e => setEmail(e.target.value)} placeholder='you@email.domain' />
                 <input type="password" title="password" value={pass} onChange={e => setPassword(e.target.value)} placeholder='password' />
                 <button type='submit' className='login-button'>Login</button>
             </form>

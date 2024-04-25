@@ -1,68 +1,49 @@
-//****************************************************************************************************************************
-//Program name: "register.js".  This program controls the sign up page of our web app. Copyright (C)  *
-//2024 Ryan Nishikawa                                                                                                        *
-//This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License  *
-//version 3 as published by the Free Software Foundation.                                                                    *
-//This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied         *
-//warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.     *
-//A copy of the GNU General Public License v3 is available here:  <https://www.gnu.org/licenses/>.                           *
-//****************************************************************************************************************************
-
-
-//=======1=========2=========3=========4=========5=========6=========7=========8=========9=========0=========1=========2=========3**
-//
-//Author information
-//  Author names: Ryan Nishikawa, 
-//  Author emails: ryannishikawa48@csu.fullerton.edu, 
-//  Course ID: CPSC362
-//
-//Program information
-//  Program name: Task manager
-//  Date of last update: February 15, 2024
-//  Programming language(s): JavaScript, HTML, CSS
-//  Files in this program: App.js, login.js, register.js, home.js, etc...
-//  
-//  OS of the computer where the program was developed: Ubuntu 22.04.3 LTS
-//  OS of the computer where the program was tested: Ubuntu 22.04.3 LTS
-//  Status: WIP
-//
-//References for this program
-//  https://www.youtube.com/watch?v=psU13XU1gDY&list=LL&index=3&t=796s&ab_channel=CodeWithViju
-//
-//Purpose
-//  Allow users to create an account for the website
-//
-//This file
-//   File name: register.js
-//   Date of last update: February 15, 2024
-//   Languages: JavaScript, HTML, CSS
-//
-//References for this file
-//   https://www.youtube.com/watch?v=psU13XU1gDY&list=LL&index=3&t=796s&ab_channel=CodeWithViju
-//
-//=======1=========2=========3=========4=========5=========6=========7=========8=========9=========0=========1=========2**
-//
-//
-//
-//
-//===== Begin code area ================================================================================================
-
-import React, { useState } from 'react';
+/**
+ * @file register.js
+ * @author Ryan Nishikawa <ryannishikawa48@csu.fullerton.edu>
+ * @author Matt De Binion <mattdb@csu.fullerton.edu>
+ * @description This file controls the sign up process for a new user.
+ * 
+ * @see {@link: https://www.youtube.com/watch?v=psU13XU1gDY&list=LL&index=3&t=796s&ab_channel=CodeWithViju} used as reference.
+ * @see {@link: https://github.com/ryannishikawa/CPSC362proj} for our project repository and the README.md file within the server
+ * directory for a less stressful viewing experience.
+ */
+import React, { useState, useEffect} from 'react';
 import { useNavigate } from 'react-router-dom';
 
 // Firebase imports
 import { app } from '../firebaseConfig.js';
 import { getAuth, createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { getFirestore, doc, setDoc, collection, Timestamp } from 'firebase/firestore';
+import { setAnalyticsCollectionEnabled } from 'firebase/analytics';
 
 export default function RegisterPage() {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [pass, setPassword] = useState('');
+    const [authCheck, setAuthCheck] = useState(false);
 
     const navigate = useNavigate();
     const auth = getAuth(app);
     const db = getFirestore(app);
+
+    /**
+     * For this effect, checks if the user is not authenticated. If they are not, navigate home.
+     */
+    useEffect(() => {
+
+        const unsubscribe = auth.onAuthStateChanged(user => {
+            if (user) {
+                navigate('/');
+            } else {
+                setAuthCheck(true);
+            }
+        });
+
+        // Cleanup subscription on unmount
+        return () => unsubscribe();
+    }, [navigate, auth]);
+
 
     //sends user to home page on submit
     const handleSubmit = async (e) => {
@@ -70,6 +51,13 @@ export default function RegisterPage() {
 
         // Create account with Firebase Authentication
         try {
+
+            // Ensure user is not already authenticated.
+            if(auth.currentUser) {
+                alert("You're already logged in.");
+                navigate('/');
+                return;
+            }
             const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
             const user = userCredential.user;
 
@@ -80,9 +68,12 @@ export default function RegisterPage() {
 
             // Add a welcome task upon account creation
             // Creates a new document from the user's ID in the user-data collection.
+            // Also adds their username to the document as well.
             const userDocRef = doc(db, 'user-data', user.uid);
-            await setDoc(userDocRef, {});
-
+            await setDoc(userDocRef, {
+                displayName: name
+            });
+ 
             const taskCollectionRef = collection(userDocRef, 'tasks');
             await setDoc(doc(taskCollectionRef), {
                 description: `Welcome to our app, ${user.displayName}! Get started by adding tasks!`,
@@ -111,6 +102,11 @@ export default function RegisterPage() {
         e.preventDefault();
         navigate("/");
     };
+
+    // Determine the status of authentication (return home if they are logged in).
+    if(!authCheck) {
+        return <div>Loading...</div>
+    }
 
     // Returns the register form component here.
     return (
