@@ -7,17 +7,26 @@
  * directory for a less stressful viewing experience.
  */
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { app } from '../firebaseConfig.js';
 import { getAuth } from 'firebase/auth';
 
-const auth = getAuth(app);
-const user = auth.currentUser;
 /**
  * Shows if a user is logged in or not.
  * @returns {JSX.Element} Not logged in displayed OR logged in as user
  */
 export function LoggedUser() {
+
+    const auth = getAuth(app);
+    const [user, setUser] = useState(auth.currentUser);
+
+    useEffect(() => {
+        const unsubscribe = auth.onAuthStateChanged(newUser => {
+            setUser(newUser);
+        });
+
+        return () => unsubscribe();
+    }, [auth]);
 
     if(user !== null) {
         return (
@@ -26,11 +35,11 @@ export function LoggedUser() {
                 {user.displayName}</p>
             </div>
         );
+    } else {
+        return (
+            <div className='container-top-item'>
+                <p>Not logged in<br></br></p>
+            </div>
+        );
     } 
-
-    return (
-        <div className='container-top-item'>
-            <p>Not logged in<br></br></p>
-        </div>
-    );
 }
