@@ -537,10 +537,10 @@ export default function SettingsPage() {
             {/**
              * This section allows users to change their display name.
              */}
-            <p>Display Name</p>
+            <h3>Display Name</h3>
             <div>
                 {/** If NOT editing the display name, show the current display name with change button. */}
-                {isEditingName && <p>Enter your new display name</p>}
+                {isEditingName ? (<p>Enter your new display name.</p>) : (<p>Your current display name.</p>)}
                 {isEditingName ? (
                     <input type="text" value={displayNamePlaceholder} disabled={disabledButton} onChange={(e) => setDisplayNamePlaceholder(e.target.value)} />
                 ) : (
@@ -562,9 +562,9 @@ export default function SettingsPage() {
             {/** If NOT editing email, show current email in readonly input field with "change" button*/}
             <div>
                 {isEditingEmail ? (
-                    <p>Enter your new email</p>
+                    <p>Enter your new email.</p>
                 ) : (
-                    user.emailVerified ? (<p>Email verified</p>) : (<p>The current email is not verified, check for an email at your new email address.</p>)
+                    user.emailVerified ? (<p>Email verified.</p>) : (<p>The current email is not verified, check for an email at your new email address.</p>)
                 )}
                 {isEditingEmail ? (
                     <input type="text" value={emailPlaceholder} disabled={disabledButton} onChange={(e) => setEmailPlaceholder(e.target.value)} />
@@ -574,9 +574,9 @@ export default function SettingsPage() {
                 {!isEditingEmail && <button className='login-button' onClick={toggleEmailEdit}>Change</button>}
 
                 {/** IF editing email, input becomes cleared out and can have an entry, buttons become "Cancel and Confirm" */}
-                {isEditingEmail && <p>Re-enter your new email</p>}
+                {isEditingEmail && <p>Re-enter your new email.</p>}
                 {isEditingEmail && <input type="text" value={email} disabled={disabledButton} onChange={(e) => setEmail(e.target.value)} />}
-                {isEditingEmail && <p>Enter current password to confirm changes</p>}
+                {isEditingEmail && <p>Enter current password to confirm changes.</p>}
                 {isEditingEmail && <input type="password" value={pass} disabled={disabledButton} onChange={(e) => setPass(e.target.value)} />}
                 {isEditingEmail && <button className='login-button' onClick={toggleEmailEdit} disabled={disabledButton}>Cancel</button>}
                 {isEditingEmail && <button className='login-button' onClick={confirmEmailEdit} disabled={disabledButton}>Confirm</button>}
@@ -593,7 +593,7 @@ export default function SettingsPage() {
             <h3>Password</h3>
             <div>
                 {/** If NOT editing password, display a readOnly text field and a Change button.*/}
-                {isEditingPass && <p>Enter your current password</p>}
+                {isEditingPass ? (<p>Enter your current password.</p>) : (<p>Improve your security with a strong password.</p>)}
                 {isEditingPass ? (
                     <input type="password" value={passPlaceholder} disabled={disabledButton} onChange={(e) => setPassPlaceholder(e.target.value)} />
                 ) : (
@@ -602,9 +602,9 @@ export default function SettingsPage() {
                 {!isEditingPass && <button className='login-button' onClick={togglePasswordEdit}>Change</button>}
 
                 {/** If editing password, add an additional inputs to verify the new password, buttons become "Cancel" and "Confirm"*/}
-                {isEditingPass && <p>Enter your new password</p>}
+                {isEditingPass && <p>Enter your new password.</p>}
                 {isEditingPass && <input type="password" value={pass} disabled={disabledButton} onChange={(e) => setPass(e.target.value)} />}
-                {isEditingPass && <p>Re-enter your new password</p>}
+                {isEditingPass && <p>Re-enter your new password.</p>}
                 {isEditingPass && <input type="password" value={passRepeat} disabled={disabledButton} onChange={(e) => setPassRepeat(e.target.value)} />}
                 {isEditingPass && <button className='login-button' onClick={togglePasswordEdit} disabled={disabledButton}>Cancel</button>}
                 {isEditingPass && <button className='login-button' onClick={confirmPaswordEdit} disabled={disabledButton}>Confirm</button>}
@@ -627,7 +627,7 @@ export default function SettingsPage() {
             </div>
             <h2>Task Management</h2>
             <h3>Clear Tasks</h3>
-            <p>Currently, there are {numTasks} tasks associated with your account.</p>
+            <p>Currently, you have {numTasks} task(s) associated with your account.</p>
             <div>
                 {!isContemplatingTaskPurge && <button className='login-button' onClick={toggleTaskPurge}>Clear Tasks</button>}
                 
