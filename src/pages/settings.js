@@ -12,8 +12,8 @@ import { useNavigate } from 'react-router-dom';
 
 // Firebase imports
 import { app } from '../firebaseConfig.js';
-import { getFirestore, doc, getDoc, getDocs, setDoc, collection } from 'firebase/firestore';
-import { getAuth, updateProfile, updatePassword, reauthenticateWithCredential, EmailAuthProvider, sendEmailVerification, updateEmail } from "firebase/auth";
+import { getFirestore, doc, getDoc, getDocs, setDoc, collection, deleteDoc } from 'firebase/firestore';
+import { getAuth, updateProfile, updatePassword, reauthenticateWithCredential, EmailAuthProvider, sendEmailVerification, updateEmail, deleteUser } from "firebase/auth";
 
 export default function SettingsPage() {
 
@@ -28,6 +28,7 @@ export default function SettingsPage() {
     const [isEditingName, setIsEditingName] = useState(false);                                  // The state of name editing
     const [isEditingEmail, setIsEditingEmail] = useState(false);                                // The state of email editing
     const [isEditingPass, setIsEditingPass] = useState(false);                                  // The state of password editing
+    const [isContemplatingAccountDelete, setIsContemplatingAccountDelete] = useState(false);    // The state of account deletion
 
     const [displayNamePlaceholder, setDisplayNamePlaceholder] = useState(null);                 // The state of the display name input box
     const [emailPlaceholder, setEmailPlaceholder] = useState(null);                             // The state of the email address input box
@@ -129,9 +130,6 @@ export default function SettingsPage() {
     }, [lastSentTime]);
 
 
-    // =============================
-    //  EMAIL VERIFICATION HANDLERS
-    // =============================
 
     /**
      * This sends an email to the current user to verify their email that is stored within Firebase Authentication.
@@ -166,15 +164,16 @@ export default function SettingsPage() {
      */
     const toggleEmailEdit = () => {
 
-        // If the user is editing display name or password, cancel out of it.
+        // If the user is editing anything else, cancel it out.
         if(isEditingPass) {
             togglePasswordEdit();
         }
-
         if(isEditingName) {
             toggleDisplayNameEdit();
         }
-
+        if(isContemplatingAccountDelete){
+            toggleAccountDelete();
+        }
 
         setIsEditingEmail(!isEditingEmail);     // Invert status
         setEmail('');                           // Clear email state
@@ -196,13 +195,15 @@ export default function SettingsPage() {
      */
     const togglePasswordEdit = () => {
 
-        // If they are editing email or display name, cancel changes.
+        // If they are editing anything, cancel changes.
         if(isEditingEmail) {
             toggleEmailEdit();
         }
-
         if(isEditingName) {
             toggleDisplayNameEdit();
+        }
+        if(isContemplatingAccountDelete) {
+            toggleAccountDelete();
         }
 
         setIsEditingPass(!isEditingPass);
@@ -212,15 +213,23 @@ export default function SettingsPage() {
 
     }
 
+    /**
+     * This toggles the state of the Display Name field and related components. It can be in two states:
+     * 
+     * If editing the display name, clears and unlocks the text entry.
+     * If not editing display name, locks text entry and populates with current display name.
+     */
     const toggleDisplayNameEdit = () => {
 
-        // If they are editing email or password, cancel changes.
+        // If they are editing anything, cancel changes.
         if(isEditingEmail) {
             toggleEmailEdit();
         }
-
         if(isEditingPass) {
             togglePasswordEdit();
+        }
+        if(isContemplatingAccountDelete) {
+            toggleAccountDelete();
         }
 
         setIsEditingName(!isEditingName);       // Invert status
@@ -233,6 +242,26 @@ export default function SettingsPage() {
         } else {
             setDisplayNamePlaceholder('');
         }
+    }
+
+    /**
+     * This toggles the state of the account deletion section. It prompts for the password if the user wishes to delete their account.
+     */
+    const toggleAccountDelete = () => {
+
+        // If user is editing anything, cancel out of it.
+        if(isEditingName) {
+            toggleDisplayNameEdit();
+        }
+        if(isEditingEmail) {
+            toggleEmailEdit();
+        }
+        if(isEditingPass) {
+            togglePasswordEdit();
+        }
+
+        setIsContemplatingAccountDelete(!isContemplatingAccountDelete);
+        setPass('');
     }
 
     /**
@@ -341,6 +370,9 @@ export default function SettingsPage() {
         togglePasswordEdit();
     }
 
+    /**
+     * This confirms the changes made to the display name.
+     */
     const confirmDisplayNameEdit = async () => {
 
         console.log('Updating display name to ' + displayNamePlaceholder)
@@ -358,6 +390,60 @@ export default function SettingsPage() {
         console.log('Updated display name successfully!');
         setDisabledButton(false);
         toggleDisplayNameEdit();
+    }
+
+    /**
+     * This confirms that a user wishes to delete their account. It also deletes their Firestore entry.
+     */
+    const confirmAccountDelete = async () => {
+
+        setDisabledButton(true);    // Disable inputs
+
+        console.log('SAD HOUR! Checking if passwords match up...');
+        const credential = EmailAuthProvider.credential(user.email, pass);
+
+        try {
+            await reauthenticateWithCredential(user, credential);
+        } catch (err) {
+            console.log('Passwords do not match, cannot delete account.');
+            setDisabledButton(false);
+            return;
+        }
+        
+        console.log('Credentials reauthenticated, deleting Firestored information...');
+        try {
+            const userTasksRef = collection(db, 'user-data', user.uid, 'tasks');
+            const querySnapshot = await getDocs(userTasksRef);
+
+            if(!querySnapshot.empty) {
+                querySnapshot.forEach(async (taskDoc) => {
+                    await deleteDoc(taskDoc.ref);
+                });
+
+                await deleteDoc(doc(db, 'user-data', user.uid, 'tasks'));
+            }
+
+            await deleteDoc(doc(db, 'user-data', user.uid));
+
+            console.log('Tasks deleted successfully.');
+
+        } catch (err) {
+            console.log('Could not delete user collection, ' + err);
+            setDisabledButton(false);
+            return;
+        }
+
+        console.log('Deleting user account...');
+        try {
+            await deleteUser(user);
+        } catch (err) {
+            console.log('An error occured deleting the user account. ' + err);
+            setDisabledButton(false);
+            return;
+        }
+
+        alert('Account deleted, thank you for using our app!');
+        navigate('/');
     }
 
 
@@ -379,7 +465,7 @@ export default function SettingsPage() {
                 {/** If NOT editing the display name, show the current display name with change button. */}
                 {isEditingName && <p>Enter your new display name</p>}
                 {isEditingName ? (
-                    <input type="text" value={displayNamePlaceholder} onChange={(e) => setDisplayNamePlaceholder(e.target.value)} />
+                    <input type="text" value={displayNamePlaceholder} disabled={disabledButton} onChange={(e) => setDisplayNamePlaceholder(e.target.value)} />
                 ) : (
                     <input type="text" value={displayNamePlaceholder} readOnly />
                 )}
@@ -404,7 +490,7 @@ export default function SettingsPage() {
                     user.emailVerified ? (<p>Email verified</p>) : (<p>The current email is not verified, check for an email at your new email address.</p>)
                 )}
                 {isEditingEmail ? (
-                    <input type="text" value={emailPlaceholder} onChange={(e) => setEmailPlaceholder(e.target.value)} />
+                    <input type="text" value={emailPlaceholder} disabled={disabledButton} onChange={(e) => setEmailPlaceholder(e.target.value)} />
                 ) : (
                     <input type="text" value={emailPlaceholder} readOnly />
                 )}
@@ -412,9 +498,9 @@ export default function SettingsPage() {
 
                 {/** IF editing email, input becomes cleared out and can have an entry, buttons become "Cancel and Confirm" */}
                 {isEditingEmail && <p>Re-enter your new email</p>}
-                {isEditingEmail && <input type="text" value={email} onChange={(e) => setEmail(e.target.value)} />}
+                {isEditingEmail && <input type="text" value={email} disabled={disabledButton} onChange={(e) => setEmail(e.target.value)} />}
                 {isEditingEmail && <p>Enter current password to confirm changes</p>}
-                {isEditingEmail && <input type="password" value={pass} onChange={(e) => setPass(e.target.value)} />}
+                {isEditingEmail && <input type="password" value={pass} disabled={disabledButton} onChange={(e) => setPass(e.target.value)} />}
                 {isEditingEmail && <button className='login-button' onClick={toggleEmailEdit} disabled={disabledButton}>Cancel</button>}
                 {isEditingEmail && <button className='login-button' onClick={confirmEmailEdit} disabled={disabledButton}>Confirm</button>}
 
@@ -432,7 +518,7 @@ export default function SettingsPage() {
                 {/** If NOT editing password, display a readOnly text field and a Change button.*/}
                 {isEditingPass && <p>Enter your current password</p>}
                 {isEditingPass ? (
-                    <input type="password" value={passPlaceholder} onChange={(e) => setPassPlaceholder(e.target.value)} />
+                    <input type="password" value={passPlaceholder} disabled={disabledButton} onChange={(e) => setPassPlaceholder(e.target.value)} />
                 ) : (
                     <input type="password" value={passPlaceholder} readOnly />
                 )}
@@ -440,16 +526,28 @@ export default function SettingsPage() {
 
                 {/** If editing password, add an additional inputs to verify the new password, buttons become "Cancel" and "Confirm"*/}
                 {isEditingPass && <p>Enter your new password</p>}
-                {isEditingPass && <input type="password" value={pass} onChange={(e) => setPass(e.target.value)} />}
+                {isEditingPass && <input type="password" value={pass} disabled={disabledButton} onChange={(e) => setPass(e.target.value)} />}
                 {isEditingPass && <p>Re-enter your new password</p>}
-                {isEditingPass && <input type="password" value={passRepeat} onChange={(e) => setPassRepeat(e.target.value)} />}
+                {isEditingPass && <input type="password" value={passRepeat} disabled={disabledButton} onChange={(e) => setPassRepeat(e.target.value)} />}
                 {isEditingPass && <button className='login-button' onClick={togglePasswordEdit} disabled={disabledButton}>Cancel</button>}
                 {isEditingPass && <button className='login-button' onClick={confirmPaswordEdit} disabled={disabledButton}>Confirm</button>}
 
             </div>
 
-            <p>Delete Account</p>
-            <div><button className='login-button'>Delete</button></div>
+
+            {/**
+             * This section allows user to delete their account. THIS ACTION IS IRREVERSIBLE AND ALSO DELETES THEIR STORED TASKS!
+             */}
+            <h3>Delete Account</h3>
+            <div>
+                {!isContemplatingAccountDelete && <button className='login-button' onClick={toggleAccountDelete}>Delete</button>}
+
+                {isContemplatingAccountDelete && <p>You are about to delete your account and all associated data. This action is IRREVERSIBLE. Are you sure?</p>}
+                {isContemplatingAccountDelete && <p>Enter current password to confirm changes</p>}
+                {isContemplatingAccountDelete && <input type="password" value={pass} disabled={disabledButton} onChange={(e) => setPass(e.target.value)} />}
+                {isContemplatingAccountDelete && <button className='login-button' onClick={toggleAccountDelete} disabled={disabledButton}>Nevermind</button>}
+                {isContemplatingAccountDelete && <button className='login-button' onClick={confirmAccountDelete} disabled={disabledButton}>Goodbye</button>}
+            </div>
             <h2>Task Management</h2>
             <p>Tasks Stored: {numTasks} </p>
             <div><button className='login-button'>Clear Tasks</button></div>
