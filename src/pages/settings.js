@@ -29,6 +29,7 @@ export default function SettingsPage() {
     const [isEditingEmail, setIsEditingEmail] = useState(false);                                // The state of email editing
     const [isEditingPass, setIsEditingPass] = useState(false);                                  // The state of password editing
     const [isContemplatingAccountDelete, setIsContemplatingAccountDelete] = useState(false);    // The state of account deletion
+    const [isContemplatingTaskPurge, setIsContemplatingTaskPurge] = useState(false);            // The state of task deletion.
 
     const [displayNamePlaceholder, setDisplayNamePlaceholder] = useState(null);                 // The state of the display name input box
     const [emailPlaceholder, setEmailPlaceholder] = useState(null);                             // The state of the email address input box
@@ -174,6 +175,9 @@ export default function SettingsPage() {
         if(isContemplatingAccountDelete){
             toggleAccountDelete();
         }
+        if(isContemplatingTaskPurge) {
+            toggleTaskPurge();
+        }
 
         setIsEditingEmail(!isEditingEmail);     // Invert status
         setEmail('');                           // Clear email state
@@ -205,6 +209,9 @@ export default function SettingsPage() {
         if(isContemplatingAccountDelete) {
             toggleAccountDelete();
         }
+        if(isContemplatingTaskPurge) {
+            toggleTaskPurge();
+        }
 
         setIsEditingPass(!isEditingPass);
         setPass('');
@@ -230,6 +237,9 @@ export default function SettingsPage() {
         }
         if(isContemplatingAccountDelete) {
             toggleAccountDelete();
+        }
+        if(isContemplatingTaskPurge) {
+            toggleTaskPurge();
         }
 
         setIsEditingName(!isEditingName);       // Invert status
@@ -259,10 +269,38 @@ export default function SettingsPage() {
         if(isEditingPass) {
             togglePasswordEdit();
         }
+        if(isContemplatingTaskPurge) {
+            toggleTaskPurge();
+        }
 
         setIsContemplatingAccountDelete(!isContemplatingAccountDelete);
         setPass('');
     }
+
+    /**
+     * This toggles the state of deleting all tasks with the user account. It prompts for a password if the user wishes to delete all their tasks.
+     */
+    const toggleTaskPurge = () => {
+
+        // If user is editing anything, cancel out of it.
+        if(isEditingName) {
+            toggleDisplayNameEdit();
+        }
+        if(isEditingEmail) {
+            toggleEmailEdit();
+        }
+        if(isEditingPass) {
+            togglePasswordEdit();
+        }
+        if(isContemplatingAccountDelete) {
+            toggleAccountDelete();
+        }
+
+        setIsContemplatingTaskPurge(!isContemplatingTaskPurge);
+        setPass('');
+    }
+
+
 
     /**
      * This confirms the new value within emailPlaceholder. 
@@ -446,6 +484,45 @@ export default function SettingsPage() {
         navigate('/');
     }
 
+    /**
+     * This confirms if a user wants to delete all their tasks in their user account.
+     */
+    const confirmTaskPurge = async () => {
+        setDisabledButton(true);    // Disable inputs
+
+        console.log('Checking if passwords match up...');
+        const credential = EmailAuthProvider.credential(user.email, pass);
+
+        try {
+            await reauthenticateWithCredential(user, credential);
+        } catch (err) {
+            console.log('Passwords do not match, cannot delete account.');
+            setDisabledButton(false);
+            return;
+        }
+        
+        console.log('Credentials reauthenticated, deleting Firestored information...');
+        try {
+            const userTasksRef = collection(db, 'user-data', user.uid, 'tasks');
+            const querySnapshot = await getDocs(userTasksRef);
+
+            if(!querySnapshot.empty) {
+                querySnapshot.forEach(async (taskDoc) => {
+                    await deleteDoc(taskDoc.ref);
+                });
+            }
+        } catch (err) {
+            console.log('An error occured deleting tasks, ' + err);
+            setDisabledButton(false);
+            return;
+        }
+
+        console.log('Tasks deleted successfully!');
+        setNumTasks(0);
+        setDisabledButton(false);
+        toggleTaskPurge();
+    }
+
 
     // Handle page rendering here
     if (loading) {
@@ -543,14 +620,23 @@ export default function SettingsPage() {
                 {!isContemplatingAccountDelete && <button className='login-button' onClick={toggleAccountDelete}>Delete</button>}
 
                 {isContemplatingAccountDelete && <p>You are about to delete your account and all associated data. This action is IRREVERSIBLE. Are you sure?</p>}
-                {isContemplatingAccountDelete && <p>Enter current password to confirm changes</p>}
+                {isContemplatingAccountDelete && <p>Enter current password to confirm changes.</p>}
                 {isContemplatingAccountDelete && <input type="password" value={pass} disabled={disabledButton} onChange={(e) => setPass(e.target.value)} />}
                 {isContemplatingAccountDelete && <button className='login-button' onClick={toggleAccountDelete} disabled={disabledButton}>Nevermind</button>}
                 {isContemplatingAccountDelete && <button className='login-button' onClick={confirmAccountDelete} disabled={disabledButton}>Goodbye</button>}
             </div>
             <h2>Task Management</h2>
-            <p>Tasks Stored: {numTasks} </p>
-            <div><button className='login-button'>Clear Tasks</button></div>
+            <h3>Clear Tasks</h3>
+            <p>Currently, there are {numTasks} tasks associated with your account.</p>
+            <div>
+                {!isContemplatingTaskPurge && <button className='login-button' onClick={toggleTaskPurge}>Clear Tasks</button>}
+                
+                {isContemplatingTaskPurge && <p>You are about to delete {numTasks} task(s) that are associated with your account. This action is IRREVERSIBLE. Are you sure?</p>}
+                {isContemplatingTaskPurge && <p>Enter current password to confirm changes.</p>}
+                {isContemplatingTaskPurge && <input type="password" value={pass} disabled={disabledButton} onChange={(e) => setPass(e.target.value)} />}
+                {isContemplatingTaskPurge && <button className='login-button' onClick={toggleTaskPurge} disabled={disabledButton}>Cancel</button>}
+                {isContemplatingTaskPurge && <button className='login-button' onClick={confirmTaskPurge} disabled={disabledButton}>Delete</button>}
+            </div>
             <br />
             <div><button className='login-button' onClick={ToHome}>Go Home</button></div>
         </div>
