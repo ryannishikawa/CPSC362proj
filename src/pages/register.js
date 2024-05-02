@@ -15,7 +15,6 @@ import { useNavigate } from 'react-router-dom';
 import { app } from '../firebaseConfig.js';
 import { getAuth, createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { getFirestore, doc, setDoc, collection, Timestamp } from 'firebase/firestore';
-import { setAnalyticsCollectionEnabled } from 'firebase/analytics';
 
 export default function RegisterPage() {
     const [name, setName] = useState('');

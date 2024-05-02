@@ -3,13 +3,9 @@
  * @author Matt De Binion <mattdb@csu.fullerton.edu>
  * @description This file handles all settings related information within the todoapp.
  * 
- * On page load:
- *  - Pull all user information from Authentication and Firestore.
- *  - Updates all components accordingly.
- * 
- * On veriifed email requesting email change:
- *  - Enters new email, enters valid password.
- *  - On correct password, c
+ * @see {@link: https://firebase.google.com/docs/auth} on Firebase Authentication
+ * @see {@link: https://github.com/ryannishikawa/CPSC362proj} for our project repository and the README.md file within the server
+ * directory for a less stressful viewing experience.
  */
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -17,8 +13,7 @@ import { useNavigate } from 'react-router-dom';
 // Firebase imports
 import { app } from '../firebaseConfig.js';
 import { getFirestore, doc, getDoc, getDocs, setDoc, collection } from 'firebase/firestore';
-import { getAuth, updateProfile, updatePassword, reauthenticateWithCredential, updateEmail } from "firebase/auth";
-import { sendEmailVerification, EmailAuthProvider } from 'firebase/auth';
+import { getAuth, updateProfile, updatePassword, reauthenticateWithCredential, EmailAuthProvider, sendEmailVerification, updateEmail } from "firebase/auth";
 
 export default function SettingsPage() {
 
