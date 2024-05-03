@@ -1,56 +1,16 @@
-//****************************************************************************************************************************
-//Program name: "login.js".  This program controls the login page of our web app. Copyright (C)  *
-//2024 Ryan Nishikawa                                                                                                        *
-//This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License  *
-//version 3 as published by the Free Software Foundation.                                                                    *
-//This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied         *
-//warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.     *
-//A copy of the GNU General Public License v3 is available here:  <https://www.gnu.org/licenses/>.                           *
-//****************************************************************************************************************************
-
-
-//=======1=========2=========3=========4=========5=========6=========7=========8=========9=========0=========1=========2=========3**
-//
-//Author information
-//  Author names: Ryan Nishikawa, 
-//  Author emails: ryannishikawa48@csu.fullerton.edu, 
-//  Course ID: CPSC362
-//
-//Program information
-//  Program name: Task manager
-//  Date of last update: February 15, 2024
-//  Programming language(s): JavaScript, HTML, CSS
-//  Files in this program: App.js, login.js, register.js, home.js, etc...
-//  
-//  OS of the computer where the program was developed: Ubuntu 22.04.3 LTS
-//  OS of the computer where the program was tested: Ubuntu 22.04.3 LTS
-//  Status: WIP
-//
-//References for this program
-//  https://www.youtube.com/watch?v=psU13XU1gDY&list=LL&index=3&t=796s&ab_channel=CodeWithViju
-//
-//Purpose
-//  Allow users to login to an exiting account and access the app
-//
-//This file
-//   File name: login.js
-//   Date of last update: February 15, 2024
-//   Languages: JavaScript, HTML, CSS
-//
-//References for this file
-//   https://www.youtube.com/watch?v=psU13XU1gDY&list=LL&index=3&t=796s&ab_channel=CodeWithViju
-//
-//=======1=========2=========3=========4=========5=========6=========7=========8=========9=========0=========1=========2**
-//
-//
-//
-//
-//===== Begin code area ================================================================================================
-
+/**
+ * @file login.js
+ * @author Ryan Nishikawa <ryannishikawa48@csu.fullerton.edu>
+ * @author Matt De Binion <mattdb@csu.fullerton.edu>
+ * @description This file controls the log in process for a user.
+ * 
+ * @see {@link: https://www.youtube.com/watch?v=psU13XU1gDY&list=LL&index=3&t=796s&ab_channel=CodeWithViju} used as reference.
+ * @see {@link: https://github.com/ryannishikawa/CPSC362proj} for our project repository and the README.md file within the server
+ * directory for a less stressful viewing experience.
+ */
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../hooks/AuthProvider';
 import { useNavigate } from 'react-router-dom';
-import { getAuth } from 'firebase/auth';
+import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 
 export default function LoginPage() {
 
@@ -59,57 +19,68 @@ export default function LoginPage() {
     const [pass, setPassword] = useState('');
 
 
-    // Create an auth for persistive sessions
-    const [authCheck, setAuthCheck] = useState(false);
-    const auth = useAuth();
-    const fAuth = getAuth();
+    // Authentication checking and navigation
+    const auth = getAuth();
     const navigate = useNavigate();
 
     /**
-     * For this effect, checks if the user is not authenticated. If they are not, navigate home.
+     * For this effect, checks if the user is authenticated. If they are, navigate home.
+     * Authenticated users do not need to be at the login page.
      */
     useEffect(() => {
 
-        const unsubscribe = fAuth.onAuthStateChanged(user => {
+        const unsubscribe = auth.onAuthStateChanged(user => {
             if (user) {
                 navigate('/');
-            } else {
-                setAuthCheck(true);
             }
         });
 
         // Cleanup subscription on unmount
         return () => unsubscribe();
-    }, [navigate, fAuth]);
+    }, [navigate, auth]);
 
+
+    /**
+     * When handling a submit, checks if the email and password fields are valid then proceeds to log in.
+     * @param {Event} e a submission event
+     */
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-
         if (email !== "" && pass !== "") {
-            auth.loginAction(email, pass);
-            return;
+
+            try {
+                await signInWithEmailAndPassword(auth, email, pass);
+                console.log('User signed in successfully!');
+                alert(`Welcome ${auth.currentUser.displayName}! Signing you in...`);
+                navigate('/');
+            } catch (err) {
+                console.log('Unable to sign in user: ' + err);
+                alert(`Could not log in: ${err}`);
+            }
         }
 
+        console.log('Invalid field input')
         alert("Please provide a valid input.");
     }
 
-    // Goes to signup page
+    /**
+     * Navigates to sign up page.
+     * @param {Event} e An event
+     */
     const ToSignupPage = (e) => {
         e.preventDefault();
         navigate("/register");
     };
 
-    // Goes home
+    /**
+     * Navigates to home page.
+     * @param {Event} e An event
+     */
     const ToHome = (e) => {
         e.preventDefault();
         navigate("/");
     };
-
-    // Determine the status of authentication (return home if they are logged in).
-    if(!authCheck) {
-        return <div>Loading...</div>
-    }
 
     return (
         <div className='todoapp stack-large'>
