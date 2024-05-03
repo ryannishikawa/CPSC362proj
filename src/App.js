@@ -50,7 +50,6 @@
 import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
-import AuthProvider from "./hooks/AuthProvider";
 import PrivateRoute from "./components/privateRoute";
 
 import LoginPage from "./pages/login";
@@ -63,18 +62,16 @@ const App = () => {
   return (
     <div className="App">
       <BrowserRouter>
-        <AuthProvider>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/login" element={<LoginPage />}/>
-            <Route path="/register" element={<RegisterPage />}/>
-            <Route element={<PrivateRoute />}>
-              <Route path="/tasks" element={<ToDoListPage />} />
-              <Route path="/settings" element={<SettingsPage />} />
-            </Route>
-            <Route path="*" element={<Navigate to="/" />}/>
-          </Routes>
-        </AuthProvider>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<LoginPage />}/>
+          <Route path="/register" element={<RegisterPage />}/>
+          <Route element={<PrivateRoute />}>
+            <Route path="/tasks" element={<ToDoListPage />} />
+            <Route path="/settings" element={<SettingsPage />} />
+          </Route>
+          <Route path="*" element={<Navigate to="/" />}/>
+        </Routes>
       </BrowserRouter>
     </div>
   );
