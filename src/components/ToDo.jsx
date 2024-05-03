@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { HoursDropdown, MinsDropdown, AMPMdropdown, Example, DateTime, showStatus} from "./Time";
+import { HoursDropdown, MinsDropdown, AMPMdropdown, Example, DateTime} from "./Time";
 
 function Todo(props) {
 
