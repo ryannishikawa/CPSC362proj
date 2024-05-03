@@ -83,7 +83,7 @@ function Form(props) {
       <label htmlFor="due-time">Due Time:</label>
       <HoursDropdown setSelectedHours={setSelectedHours} />: <MinsDropdown setSelectedMins={setSelectedMins} /> <AMPMdropdown setSelectedAMPM={setSelectedAMPM} />
     </div>
-    <button type="submit" className="btn btn__primary btn__lg">
+    <button type="submit" className="action-button">
       Add
     </button>
   </form>

@@ -88,12 +88,12 @@ export default function LoginPage() {
             <form onSubmit={handleSubmit}>
                 <input type="text" title="email address" value={email} onChange={e => setEmail(e.target.value)} placeholder='you@email.domain' />
                 <input type="password" title="password" value={pass} onChange={e => setPassword(e.target.value)} placeholder='password' />
-                <button type='submit' className='login-button'>Login</button>
+                <button type='submit' className='action-button'>Login</button>
             </form>
             <div className='below-forms'>
                 <p> OR </p>
-                <button className='register-button' onClick={ToSignupPage}>Register for an Account</button>
-                <button className='login-button' onClick={ToHome}>Go Home</button>
+                <button className='confirm-button' onClick={ToSignupPage}>Register for an Account</button>
+                <button className='action-button' onClick={ToHome}>Go Home</button>
             </div>
         </div>
     );

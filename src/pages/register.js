@@ -108,12 +108,12 @@ export default function RegisterPage() {
                 <input type="text" title="name" value={name} onChange={e => setName(e.target.value)} placeholder='first last' />
                 <input type="text" title="email" value={email} onChange={e => setEmail(e.target.value)} placeholder='you@email.domain' />
                 <input type="password" title="password" value={pass} onChange={e => setPassword(e.target.value)} placeholder='password' />
-                <button type='submit' className='register-button'>Create Account</button>
+                <button type='submit' className='confirm-button'>Create Account</button>
             </form>
             <div className='below-forms'>
                 <p>OR</p>
-                <button className='login-button' onClick={ToSignIn}>Log In</button>
-                <button className='login-button' onClick={ToHome}>Go Home</button>
+                <button className='action-button' onClick={ToSignIn}>Log In</button>
+                <button className='action-button' onClick={ToHome}>Go Home</button>
             </div>
         </div>
     );

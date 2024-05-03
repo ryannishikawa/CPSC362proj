@@ -546,11 +546,11 @@ export default function SettingsPage() {
                 ) : (
                     <input type="text" value={displayNamePlaceholder} readOnly />
                 )}
-                {!isEditingName && <button className='login-button' onClick={toggleDisplayNameEdit}>Change</button>}
+                {!isEditingName && <button className='action-button' onClick={toggleDisplayNameEdit}>Change</button>}
 
                 {/** Otherwise, clear the display name field, make it editable, prompt for password, and add "Cancel" and "Confirm" button */}
-                {isEditingName && <button className='login-button' onClick={toggleDisplayNameEdit} disabled={disabledButton}>Cancel</button>}
-                {isEditingName && <button className='login-button' onClick={confirmDisplayNameEdit} disabled={disabledButton}>Confirm</button>}
+                {isEditingName && <button className='action-button' onClick={toggleDisplayNameEdit} disabled={disabledButton}>Cancel</button>}
+                {isEditingName && <button className='action-button' onClick={confirmDisplayNameEdit} disabled={disabledButton}>Confirm</button>}
             </div>
 
 
@@ -571,18 +571,18 @@ export default function SettingsPage() {
                 ) : (
                     <input type="text" value={emailPlaceholder} readOnly />
                 )}
-                {!isEditingEmail && <button className='login-button' onClick={toggleEmailEdit}>Change</button>}
+                {!isEditingEmail && <button className='action-button' onClick={toggleEmailEdit}>Change</button>}
 
                 {/** IF editing email, input becomes cleared out and can have an entry, buttons become "Cancel and Confirm" */}
                 {isEditingEmail && <p>Re-enter your new email.</p>}
                 {isEditingEmail && <input type="text" value={email} disabled={disabledButton} onChange={(e) => setEmail(e.target.value)} />}
                 {isEditingEmail && <p>Enter current password to confirm changes.</p>}
                 {isEditingEmail && <input type="password" value={pass} disabled={disabledButton} onChange={(e) => setPass(e.target.value)} />}
-                {isEditingEmail && <button className='login-button' onClick={toggleEmailEdit} disabled={disabledButton}>Cancel</button>}
-                {isEditingEmail && <button className='login-button' onClick={confirmEmailEdit} disabled={disabledButton}>Confirm</button>}
+                {isEditingEmail && <button className='action-button' onClick={toggleEmailEdit} disabled={disabledButton}>Cancel</button>}
+                {isEditingEmail && <button className='action-button' onClick={confirmEmailEdit} disabled={disabledButton}>Confirm</button>}
 
                 {/** If the current email is unverified, send verification email button is displayed when not editing.*/}
-                {!isEditingEmail && !user.emailVerified && <button className='login-button' onClick={sendEmailVerificationToEmail} disabled={lastSentTime}>Resend Email</button>}
+                {!isEditingEmail && !user.emailVerified && <button className='action-button' onClick={sendEmailVerificationToEmail} disabled={lastSentTime}>Resend Email</button>}
             </div>
 
 
@@ -599,15 +599,15 @@ export default function SettingsPage() {
                 ) : (
                     <input type="password" value={passPlaceholder} readOnly />
                 )}
-                {!isEditingPass && <button className='login-button' onClick={togglePasswordEdit}>Change</button>}
+                {!isEditingPass && <button className='action-button' onClick={togglePasswordEdit}>Change</button>}
 
                 {/** If editing password, add an additional inputs to verify the new password, buttons become "Cancel" and "Confirm"*/}
                 {isEditingPass && <p>Enter your new password.</p>}
                 {isEditingPass && <input type="password" value={pass} disabled={disabledButton} onChange={(e) => setPass(e.target.value)} />}
                 {isEditingPass && <p>Re-enter your new password.</p>}
                 {isEditingPass && <input type="password" value={passRepeat} disabled={disabledButton} onChange={(e) => setPassRepeat(e.target.value)} />}
-                {isEditingPass && <button className='login-button' onClick={togglePasswordEdit} disabled={disabledButton}>Cancel</button>}
-                {isEditingPass && <button className='login-button' onClick={confirmPaswordEdit} disabled={disabledButton}>Confirm</button>}
+                {isEditingPass && <button className='action-button' onClick={togglePasswordEdit} disabled={disabledButton}>Cancel</button>}
+                {isEditingPass && <button className='action-button' onClick={confirmPaswordEdit} disabled={disabledButton}>Confirm</button>}
 
             </div>
 
@@ -617,28 +617,28 @@ export default function SettingsPage() {
              */}
             <h3>Delete Account</h3>
             <div>
-                {!isContemplatingAccountDelete && <button className='login-button' onClick={toggleAccountDelete}>Delete</button>}
+                {!isContemplatingAccountDelete && <button className='action-button' onClick={toggleAccountDelete}>Delete</button>}
 
                 {isContemplatingAccountDelete && <p>You are about to delete your account and all associated data. This action is IRREVERSIBLE. Are you sure?</p>}
                 {isContemplatingAccountDelete && <p>Enter current password to confirm changes.</p>}
                 {isContemplatingAccountDelete && <input type="password" value={pass} disabled={disabledButton} onChange={(e) => setPass(e.target.value)} />}
-                {isContemplatingAccountDelete && <button className='login-button' onClick={toggleAccountDelete} disabled={disabledButton}>Nevermind</button>}
-                {isContemplatingAccountDelete && <button className='login-button' onClick={confirmAccountDelete} disabled={disabledButton}>Goodbye</button>}
+                {isContemplatingAccountDelete && <button className='action-button' onClick={toggleAccountDelete} disabled={disabledButton}>Nevermind</button>}
+                {isContemplatingAccountDelete && <button className='action-button' onClick={confirmAccountDelete} disabled={disabledButton}>Goodbye</button>}
             </div>
             <h2>Task Management</h2>
             <h3>Clear Tasks</h3>
             <p>Currently, you have {numTasks} task(s) associated with your account.</p>
             <div>
-                {!isContemplatingTaskPurge && <button className='login-button' onClick={toggleTaskPurge}>Clear Tasks</button>}
+                {!isContemplatingTaskPurge && <button className='action-button' onClick={toggleTaskPurge}>Clear Tasks</button>}
                 
                 {isContemplatingTaskPurge && <p>You are about to delete {numTasks} task(s) that are associated with your account. This action is IRREVERSIBLE. Are you sure?</p>}
                 {isContemplatingTaskPurge && <p>Enter current password to confirm changes.</p>}
                 {isContemplatingTaskPurge && <input type="password" value={pass} disabled={disabledButton} onChange={(e) => setPass(e.target.value)} />}
-                {isContemplatingTaskPurge && <button className='login-button' onClick={toggleTaskPurge} disabled={disabledButton}>Cancel</button>}
-                {isContemplatingTaskPurge && <button className='login-button' onClick={confirmTaskPurge} disabled={disabledButton}>Delete</button>}
+                {isContemplatingTaskPurge && <button className='action-button' onClick={toggleTaskPurge} disabled={disabledButton}>Cancel</button>}
+                {isContemplatingTaskPurge && <button className='action-button' onClick={confirmTaskPurge} disabled={disabledButton}>Delete</button>}
             </div>
             <br />
-            <div><button className='login-button' onClick={ToHome}>Go Home</button></div>
+            <div><button className='action-button' onClick={ToHome}>Go Home</button></div>
         </div>
     );
 }

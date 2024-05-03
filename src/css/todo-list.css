@@ -137,51 +137,6 @@ button:disabled {
   margin-top: 0.4rem;
 }
 
-.btn {
-  border: 0.2rem solid #4d4d4d;
-  cursor: pointer;
-  padding: 0.8rem 1rem 0.7rem;
-  text-transform: capitalize;
-}
-
-.btn.toggle-btn {
-  border-color: #d3d3d3;
-  border-width: 1px;
-}
-
-.btn.toggle-btn[aria-pressed="true"] {
-  border-color: #4d4d4d;
-  text-decoration: underline;
-}
-
-.btn__danger {
-  background-color: #ca3c3c;
-  border-color: #bd2130;
-  color: #fff;
-}
-
-.btn__filter {
-  border-color: lightgrey;
-}
-
-.btn__primary {
-  background-color: #000;
-  color: #fff;
-}
-
-.btn-group {
-  display: flex;
-  justify-content: space-between;
-}
-
-.btn-group>* {
-  flex: 1 1 49%;
-}
-
-.btn-group>*+* {
-  margin-left: 0.8rem;
-}
-
 .label-wrapper {
   flex: 0 0 100%;
   margin: 0;
@@ -427,34 +382,6 @@ form>input {
   outline: none;
 }
 
-/* button:hover {
-  color: #fff;
-  background-color: #6855e0;
-} */
-
-.login-button {
-  color: #6855e0;
-  background-color: #fff;
-  border: 1px solid #6855e0;
-  box-shadow: 0 0 5px #6855e066;
-}
-
-.login-button:hover {
-  color: #fff;
-  background-color: #6855e0cc;
-}
-
-.register-button {
-  color: #fff;
-  background-color: #33b249;
-  box-shadow: 0 0 5px #33b24966;
-}
-
-.register-button:hover {
-  color: #fff;
-  background-color: #33b249cc;
-}
-
 .below-forms {
   text-align: center;
 }
@@ -530,3 +457,69 @@ code {
     monospace;
 }
 /* moved from index.css */
+
+
+/* ========================== */
+/*      CLASSES FOR           */
+/*    APP BUTTON STYLES       */
+/* ========================== */
+.action-button {
+  color: #6855e0;
+  background-color: #fff;
+  border: 1px solid #6855e0;
+  box-shadow: 0 0 5px #6855e066;
+}
+
+.action-button:hover {
+  color: #fff;
+  background-color: #6855e0cc;
+}
+
+.danger-button {
+  background-color: #ca3c3c;
+  border-color: #bd2130;
+  color: #fff;
+  box-shadow: 0 0 5px #bd213066;
+}
+
+.danger-button:hover {
+  background-color: #ca3c3caa;
+}
+
+.confirm-button {
+  color: #fff;
+  background-color: #33b249;
+  box-shadow: 0 0 5px #33b24966;
+}
+
+.confirm-button:hover {
+  color: #fff;
+  background-color: #33b249cc;
+  box-shadow: 0 0 5px #33b24966;
+}
+
+.toggle-button {
+  color: #6855e0;
+  background-color: #fff;
+  border: 1px solid #6855e0;
+  box-shadow: 0 0 5px #6855e066;
+}
+
+.toggle-button[aria-pressed="true"] {
+  border-color: #4d4d4d;
+  color: #fff;
+  background-color: #6855e0cc;
+}
+
+.button-group {
+  display: flex;
+  justify-content: space-between;
+}
+
+.button-group>* {
+  flex: 1 1 49%;
+}
+
+.button-group>*+* {
+  margin-left: 0.8rem;
+}

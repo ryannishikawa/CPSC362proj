@@ -79,15 +79,15 @@ function Todo(props) {
           </div>
         </label>
       </div>
-      <div className="btn-group">
+      <div className="button-group">
         <button
           type="button"
-          className="btn todo-cancel"
+          className="action-button"
           onClick={() => setEditing(false)}>
           Cancel
           <span className="visually-hidden">renaming {props.name}</span>
         </button>
-        <button type="submit" className="btn btn__primary todo-edit">
+        <button type="submit" className="confirm-button">
           Save
           <span className="visually-hidden">new name for {props.name}</span>
         </button>
@@ -108,17 +108,17 @@ function Todo(props) {
           
         </label>
       </div>
-      <div className="btn-group">
+      <div className="button-group">
         <button
           type="button"
-          className="btn"
+          className="action-button"
           onClick={() => setEditing(true)}>
           Edit
           <span className="visually-hidden">{props.name}</span>
         </button>
         <button
           type="button"
-          className="btn btn__danger"
+          className="danger-button"
           onClick={() => props.deleteTask(props.id)}>
           Delete
           <span className="visually-hidden">{props.name}</span>
