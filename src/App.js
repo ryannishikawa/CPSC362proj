@@ -69,7 +69,6 @@ const App = () => {
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<LoginPage />}/>
             <Route path="/register" element={<RegisterPage />}/>
-            <Route path="/auth" element={<AuthEndpoint />} />
             <Route element={<PrivateRoute />}>
               <Route path="/tasks" element={<ToDoListPage />} />
               <Route path="/settings" element={<SettingsPage />} />
