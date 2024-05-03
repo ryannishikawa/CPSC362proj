@@ -54,12 +54,14 @@ import TaskList from "../components/TaskList";
 // Firebase imports
 import { app } from '../firebaseConfig.js';
 import { getFirestore, query, doc, getDocs, setDoc, deleteDoc, collection, Timestamp } from 'firebase/firestore';
+import { getAuth } from "firebase/auth";
 
 function ToDoListPage() {
   const [tasks, setTasks] = useState([]);                         // Set initial state blank
   const [loading, isLoading] = useState(true);                    // Set loading state for database queries to true
 
   const db = getFirestore(app);                                   // The Firestore database.
+  const auth = getAuth(app);                                      // The Firestore auth instance.
   /**
    * This effect handles pulling database information before the page is loaded.
    */
@@ -70,7 +72,7 @@ function ToDoListPage() {
 
       try {
         // Go to the tasks collection associated with the UID of the user.
-        const uid = localStorage.getItem("uid");
+        const uid = auth.currentUser.uid;
 
         // Prepare Firestore query and get the associated documents
         const q = query(collection(db, 'user-data', uid, 'tasks'));
@@ -118,8 +120,8 @@ function ToDoListPage() {
       // Save tasks
       try {
         // Go to the tasks collection associated with the UID of the user.
-        const uid = localStorage.getItem("uid");
-        const currentUserRef = collection(db, 'user-data', uid, 'tasks');
+        const uid = auth.currentUser.uid;
+        // const currentUserRef = collection(db, 'user-data', uid, 'tasks');
 
         // Parse the in-memory task object
         const taskObject = JSON.parse(localStorage.getItem('usertasks'));
@@ -184,7 +186,7 @@ function ToDoListPage() {
         console.log(err);
       }
     }
-  }, [db, tasks]);
+  }, [auth.currentUser.uid, db, tasks]);
 
   /**
    * Prompts user if they really want to leave.
