@@ -20,22 +20,20 @@ export default function RegisterPage() {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [pass, setPassword] = useState('');
-    const [authCheck, setAuthCheck] = useState(false);
 
     const navigate = useNavigate();
     const auth = getAuth(app);
     const db = getFirestore(app);
 
     /**
-     * For this effect, checks if the user is not authenticated. If they are not, navigate home.
+     * For this effect, checks if the user is authenticated. If they are, navigate home.
+     * Authenticated users do not need to be registering for a new account!
      */
     useEffect(() => {
 
         const unsubscribe = auth.onAuthStateChanged(user => {
             if (user) {
                 navigate('/');
-            } else {
-                setAuthCheck(true);
             }
         });
 
@@ -101,11 +99,6 @@ export default function RegisterPage() {
         e.preventDefault();
         navigate("/");
     };
-
-    // Determine the status of authentication (return home if they are logged in).
-    if(!authCheck) {
-        return <div>Loading...</div>
-    }
 
     // Returns the register form component here.
     return (
