@@ -364,22 +364,6 @@ form>input {
   display: flex;
   justify-content: space-between;
 }
-
-.logged-user {
-  /*display: inline-block;*/
-  text-align: left;
-  font-size: 1.6rem;
-  font-weight: 600;
-  flex: 1;
-}
-
-.display-date {
-  /*display: inline-block;*/
-  text-align: right;
-  font-size: 1.6rem;
-  font-weight: 600;
-  flex: 1;
-}
 /* End container styles*/
 
 
@@ -399,15 +383,6 @@ code {
     monospace;
 }
 /* moved from index.css */
-
-/* ========================== */
-/*      CLASSES FOR           */
-/*      NAVBAR STYLES         */
-/* ========================== */
-
-.navbar {
-  display: flex;
-}
 
 /* ========================== */
 /*      CLASSES FOR           */

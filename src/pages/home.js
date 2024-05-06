@@ -16,8 +16,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
 // Component imports
-import { DateTimeFormat } from '../components/Time.jsx';
-import { LoggedUser } from '../components/LoggedUser.jsx';
+import { AuthBar } from '../components/AuthBar.jsx';
 import { NavBar } from '../components/NavBar.jsx';
 
 // Firebase imports
@@ -27,10 +26,10 @@ import { getAuth } from 'firebase/auth';
 export default function Home() {
 
   const auth = getAuth(app);
-  const navigate = useNavigate();
   
   return (
     <div className='todoapp stack-large'>
+      <AuthBar action={auth} />
       <h1>Welcome!</h1>
       <NavBar auth={auth} />
       <p>We're still working on adding content to the homepage in addition to an about and settings page.</p>

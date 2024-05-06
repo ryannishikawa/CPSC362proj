@@ -5,9 +5,12 @@ import { signOut } from "firebase/auth";
  * @file NavBar.jsx
  * @author Matt De Binion <mattdb@csu.fullerton.edu>
  * @description This is a navbar component that is used throughout all pages in the app.
- * 
+ */
+
+/**
+ * The navigation bar shows navigation buttons.
  * @param {import("firebase/auth").Auth} auth The auth instance
- * @returns 
+ * @returns {JSX.Element} A react element for the NavBar.
  */
 export function NavBar({auth}) {
     
@@ -20,7 +23,7 @@ export function NavBar({auth}) {
     }
 
     return (
-        <nav className='navbar'>
+        <nav className='container'>
             <button onClick={() => { navigate('/tasks') }} className='action-button'>Manage Tasks</button>
             <button onClick={() => { navigate('/about') }} className='action-button'>About App</button>
             <button onClick={() => { navigate('/settings') }} className='action-button'>Settings</button>
