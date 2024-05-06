@@ -30,14 +30,14 @@ export function LoggedUser() {
 
     if(user !== null) {
         return (
-            <div className='container-top-item'>
+            <div>
                 <p>Logged in as <br></br>
                 {user.displayName}</p>
             </div>
         );
     } else {
         return (
-            <div className='container-top-item'>
+            <div>
                 <p>Not logged in<br></br></p>
             </div>
         );
