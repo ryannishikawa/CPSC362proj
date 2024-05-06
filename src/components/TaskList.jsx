@@ -2,8 +2,9 @@ import { useEffect, useState } from "react";
 import Todo from "./ToDo";
 import Form from './Form';
 import FilterButton from './FilterButton';
-import { LoggedUser } from './LoggedUser.jsx';
-import { DateTimeFormat } from "./Time";
+import { AuthBar } from '../components/AuthBar.jsx';
+import { NavBar } from '../components/NavBar.jsx';
+import { getAuth } from "firebase/auth";
 
 const FILTER_MAP = {
   // functions to be used for filtering tasks
@@ -15,6 +16,7 @@ const FILTER_NAMES = Object.keys(FILTER_MAP);
 
 function TaskList(props) {
 
+  const auth = getAuth();
   const [filter, setFilter] = useState("All");
   const [tasks, setTasks] = useState(props.tasks.map(task => ({ ...task, dueDate: new Date(task.dueDate) })));
 
@@ -101,11 +103,9 @@ function TaskList(props) {
 
   return (
     <div className="todoapp stack-large">
-      <div className='container'>
-        <div className='logged-user'><LoggedUser /></div>
-        <div className='display-date'><DateTimeFormat /></div>
-      </div>
+      <AuthBar />
       <h1>Task List</h1>
+      <NavBar auth={auth} />
       <Form addTask={addTask} />
       <div className="filters button-group stack-exception">
         {filterList}

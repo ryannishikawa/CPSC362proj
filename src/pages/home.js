@@ -13,7 +13,6 @@
 
 // React imports
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 
 // Component imports
 import { AuthBar } from '../components/AuthBar.jsx';
@@ -29,7 +28,7 @@ export default function Home() {
 
   return (
     <div className='todoapp stack-large'>
-      <AuthBar action={auth} />
+      <AuthBar />
       <h1>Welcome!</h1>
       <NavBar auth={auth} />
       <h3>About</h3>

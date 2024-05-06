@@ -14,6 +14,8 @@ import { useNavigate } from 'react-router-dom';
 import { app } from '../firebaseConfig.js';
 import { getFirestore, doc, getDoc, getDocs, setDoc, collection, deleteDoc } from 'firebase/firestore';
 import { getAuth, updateProfile, updatePassword, reauthenticateWithCredential, EmailAuthProvider, sendEmailVerification, updateEmail, deleteUser } from "firebase/auth";
+import { AuthBar } from '../components/AuthBar.jsx';
+import { NavBar } from '../components/NavBar.jsx';
 
 export default function SettingsPage() {
 
@@ -151,11 +153,6 @@ export default function SettingsPage() {
     };
 
 
-    // Goes home
-    const ToHome = (e) => {
-        e.preventDefault();
-        navigate("/");
-    };
 
     /**
      * This toggles the state of the Email Address field and related components. It can be in two states:
@@ -531,7 +528,9 @@ export default function SettingsPage() {
 
     return (
         <div className='todoapp stack-large'>
+            <AuthBar />
             <h1>Settings</h1>
+            <NavBar auth={auth} />
             <h2>Account</h2>
 
             {/**
@@ -637,8 +636,6 @@ export default function SettingsPage() {
                 {isContemplatingTaskPurge && <button className='action-button' onClick={toggleTaskPurge} disabled={disabledButton}>Cancel</button>}
                 {isContemplatingTaskPurge && <button className='action-button' onClick={confirmTaskPurge} disabled={disabledButton}>Delete</button>}
             </div>
-            <br />
-            <div><button className='action-button' onClick={ToHome}>Go Home</button></div>
         </div>
     );
 }

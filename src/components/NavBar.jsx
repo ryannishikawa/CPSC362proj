@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { signOut } from "firebase/auth";
 
 /**
@@ -14,7 +14,8 @@ import { signOut } from "firebase/auth";
  */
 export function NavBar({auth}) {
     
-    const navigate = useNavigate();
+    const location = useLocation();         // The location of the user
+    const navigate = useNavigate();         // Use navigate feature
 
     // Sign out the user
     const handleLogout = async () => {
@@ -24,7 +25,11 @@ export function NavBar({auth}) {
 
     return (
         <nav className='container'>
-            <button onClick={() => { navigate('/tasks') }} className='action-button'>Manage Tasks</button>
+            {location.pathname !== '/' ? (
+                <button onClick={() => { navigate('/') }} className='action-button'>Go Home</button>
+            ) : (
+                <button onClick={() => { navigate('/tasks') }} className='action-button'>Manage Tasks</button>
+            )}
             <button onClick={() => { navigate('/settings') }} className='action-button'>Settings</button>
             {auth.currentUser ? (
                 <button onClick={(handleLogout)} className='action-button'>Log Out</button>
