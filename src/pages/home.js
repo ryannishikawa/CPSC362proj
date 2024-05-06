@@ -26,13 +26,26 @@ import { getAuth } from 'firebase/auth';
 export default function Home() {
 
   const auth = getAuth(app);
-  
+
   return (
     <div className='todoapp stack-large'>
       <AuthBar action={auth} />
       <h1>Welcome!</h1>
       <NavBar auth={auth} />
-      <p>We're still working on adding content to the homepage in addition to an about and settings page.</p>
+      <h3>About</h3>
+      <div>
+        <p>This is a web application built with React that lets you keep track of basic tasks on your desktop and on a phone. Firebase is used for our backend.</p>
+        <p>This is a project for CPSC 362 at Cal State Fullerton.</p>
+      </div>
+      <h3>Features</h3>
+      <div>
+        <p>This is a simple task management app. Currently, you can</p>
+        <p>* Create, edit, and delete tasks.</p>
+        <p>* Set due dates for your tasks.</p>
+        <p>* Create a free account to store your tasks.</p>
+      </div>
+      <h3>GitHub</h3>
+      <div>The source code can be found <a href='https://github.com/ryannishikawa/CPSC362proj'>here</a>!</div>
     </div>
   );
 };

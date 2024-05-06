@@ -25,7 +25,6 @@ export function NavBar({auth}) {
     return (
         <nav className='container'>
             <button onClick={() => { navigate('/tasks') }} className='action-button'>Manage Tasks</button>
-            <button onClick={() => { navigate('/about') }} className='action-button'>About App</button>
             <button onClick={() => { navigate('/settings') }} className='action-button'>Settings</button>
             {auth.currentUser ? (
                 <button onClick={(handleLogout)} className='action-button'>Log Out</button>
