@@ -85,7 +85,7 @@ export const DateTime = () => {
 export const DateTimeFormat = () => {
     var date = DateTime();
     return (
-        <div className = "display-date">
+        <div>
             <p>{weekday[date.getDay()]}, {month[date.getMonth()]} {date.getDate()} <br></br>
             {date.toLocaleTimeString()}</p>
         </div>
