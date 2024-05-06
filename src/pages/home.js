@@ -10,44 +10,29 @@
  * @see {@link: https://github.com/ryannishikawa/CPSC362proj} for our project repository and the README.md file within the server
  * directory for a less stressful viewing experience.
  */
-import React from 'react';
-import { Link } from 'react-router-dom';
 
+// React imports
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+
+// Component imports
 import { DateTimeFormat } from '../components/Time.jsx';
 import { LoggedUser } from '../components/LoggedUser.jsx';
+import { NavBar } from '../components/NavBar.jsx';
 
 // Firebase imports
 import { app } from '../firebaseConfig.js';
-import { getAuth, signOut } from 'firebase/auth';
+import { getAuth } from 'firebase/auth';
 
 export default function Home() {
 
   const auth = getAuth(app);
-
-  // Sign out the user
-  const handleLogout = async() => {
-    await signOut(auth);
-    window.location.reload();
-  }
-
+  const navigate = useNavigate();
   
   return (
     <div className='todoapp stack-large'>
-      <div className='container'>
-        <div className='logged-user'><LoggedUser /></div>
-        <div className='display-date'><DateTimeFormat /></div>
-      </div>
       <h1>Welcome!</h1>
-      <nav className='navbar'>
-        <Link to='/tasks' className='nav-link'>Manage Tasks</Link>
-        <Link to='/about' className='nav-link'>About</Link>
-        <Link to='/settings' className='nav-link'>Settings</Link>
-        { auth.currentUser ? (
-          <button onClick={handleLogout} className='nav-link'>Log Out</button>
-        ) : (
-          <Link to='/login' className='nav-link'>Log In</Link>
-        )}
-      </nav>
+      <NavBar auth={auth} />
       <p>We're still working on adding content to the homepage in addition to an about and settings page.</p>
     </div>
   );

@@ -25,25 +25,6 @@ ul {
   padding: 0;
 }
 
-button {
-  -moz-osx-font-smoothing: inherit;
-  -webkit-font-smoothing: inherit;
-  appearance: none;
-  background: transparent;
-  border: none;
-  color: inherit;
-  font: inherit;
-  line-height: normal;
-  margin: 0;
-  overflow: visible;
-  padding: 0;
-  width: auto;
-}
-
-button::-moz-focus-inner {
-  border: 0;
-}
-
 button,
 input,
 optgroup,
@@ -84,9 +65,6 @@ body {
 
 /* End resets */
 /* Default global styles */
-* {
-  box-sizing: border-box;
-}
 
 h1 {
   border-radius: 15px;
@@ -112,22 +90,6 @@ input:focus {
 
 input:read-only {
   background-color: #cccccc;
-}
-
-button {
-  cursor: pointer;
-  border: 0;
-  border-radius: 4px;
-  font-weight: 600;
-  margin: 0 10px;
-  width: 200px;
-  padding: 10px 0;
-  transition: 0.3s;
-}
-
-button:disabled {
-  background-color: #cccccc;
-  pointer-events: none;
 }
 
 /* End default global styles*/
@@ -422,26 +384,6 @@ form>input {
 
 
 
-/* Navigation bar class styles!*/
-.navbar {
-  background-color: 333;
-  display: flex;
-}
-
-.nav-link {
-  color: black;
-  text-decoration: none;
-  padding: 10px 20px;
-  transition: background-color 0.3s;
-  flex: 1;
-}
-
-.nav-link:hover {
-  background-color: #555;
-}
-
-/* End navigation bar styles*/
-
 /* moved from index.css */
 body {
   margin: 0;
@@ -458,11 +400,40 @@ code {
 }
 /* moved from index.css */
 
+/* ========================== */
+/*      CLASSES FOR           */
+/*      NAVBAR STYLES         */
+/* ========================== */
+
+.navbar {
+  display: flex;
+}
 
 /* ========================== */
 /*      CLASSES FOR           */
 /*    APP BUTTON STYLES       */
 /* ========================== */
+button {
+  cursor: pointer;
+  display: flex;
+  border: 0;
+  border-radius: 4px;
+  font-weight: 600;
+  flex-direction: none;
+  margin: 0 10px;
+  width: 200px;
+  padding: 10px 0;
+  transition: 0.3s;
+  align-items: center;
+  display: inline-block;
+  justify-content: center;
+}
+
+button:disabled {
+  background-color: #cccccc;
+  pointer-events: none;
+}
+
 .action-button {
   color: #6855e0;
   background-color: #fff;
