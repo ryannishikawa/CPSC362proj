@@ -21,7 +21,7 @@ import SettingsPage from "./pages/settings";
 
 const App = () => {
   return (
-    <div className="App">
+    <div className='center-content'>
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Home />} />
