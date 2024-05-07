@@ -120,10 +120,10 @@ function ToDoListPage() {
           taskObject.forEach(async (task) => {
             let docRef;
             
-            if(task.id === -1) {
+            if(task.status === 'added') {
               docRef = doc(tasksCollectionRef);                         // Create a new document with a Firestore provided ID.
             } else {
-              docRef = doc(db, 'user-data', uid, 'tasks', task.id);     // Point to user-data/UID/tasks document specified in taskObject instead
+              docRef = doc(db, 'user-data', uid, 'tasks', String(task.id));     // Point to user-data/UID/tasks document specified in taskObject instead
             }
 
             // If the task status is not set to deleted, merge.
