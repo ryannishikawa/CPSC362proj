@@ -28,7 +28,7 @@ function TaskList(props) {
 
   function addTask(name, dueDate) {
     // Create task object
-    const newTask = { id: -1, name, dueDate, completed: false, status: 'added' };
+    const newTask = { id: null, name, dueDate, completed: false, status: 'added' };
     //  Add the new task to the list of tasks
     setTasks([...tasks, newTask]);
   }
