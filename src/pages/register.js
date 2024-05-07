@@ -20,6 +20,8 @@ export default function RegisterPage() {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [pass, setPassword] = useState('');
+    const [message, setMessage] = useState('');
+    const [disabled, setDisabled] = useState(false);
 
     const navigate = useNavigate();
     const auth = getAuth(app);
@@ -44,6 +46,7 @@ export default function RegisterPage() {
 
     //sends user to home page on submit
     const handleSubmit = async (e) => {
+        setDisabled(true);
         e.preventDefault();
 
         // Create account with Firebase Authentication
@@ -51,7 +54,6 @@ export default function RegisterPage() {
 
             // Ensure user is not already authenticated.
             if(auth.currentUser) {
-                alert("You're already logged in.");
                 navigate('/');
                 return;
             }
@@ -80,11 +82,12 @@ export default function RegisterPage() {
             });
 
             localStorage.setItem('username', user.displayName);
-            alert(`Welcome to our app ${user.displayName}!`);
+            setMessage(`Welcome to our app ${user.displayName}!`);
             navigate('/');
             
         } catch (err) {
-            alert(err.message);
+            setMessage(err.message);
+            setDisabled(false);
         }
     };
 
@@ -105,15 +108,16 @@ export default function RegisterPage() {
         <div className='todoapp stack-large'>
             <h1>Registration</h1>
             <form onSubmit={handleSubmit}>
-                <input type="text" title="name" value={name} onChange={e => setName(e.target.value)} placeholder='first last' />
-                <input type="text" title="email" value={email} onChange={e => setEmail(e.target.value)} placeholder='you@email.domain' />
-                <input type="password" title="password" value={pass} onChange={e => setPassword(e.target.value)} placeholder='password' />
+                <input type="text" title="name" value={name} disabled={disabled} onChange={e => setName(e.target.value)} placeholder='first last' />
+                <input type="text" title="email" value={email} disabled={disabled} onChange={e => setEmail(e.target.value)} placeholder='you@email.domain' />
+                <input type="password" title="password" value={pass} disabled={disabled} onChange={e => setPassword(e.target.value)} placeholder='password' />
                 <button type='submit' className='confirm-button'>Create Account</button>
             </form>
+            <div>{message}</div>
             <div className='below-forms'>
                 <p>OR</p>
-                <button className='action-button' onClick={ToSignIn}>Log In</button>
-                <button className='action-button' onClick={ToHome}>Go Home</button>
+                <button className='action-button' disabled={disabled} onClick={ToSignIn}>Log In</button>
+                <button className='action-button' disabled={disabled} onClick={ToHome}>Go Home</button>
             </div>
         </div>
     );

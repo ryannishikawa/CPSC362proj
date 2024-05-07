@@ -139,6 +139,7 @@ input:read-only {
 /* End global styles */
 /* General app styles */
 .todoapp {
+  box-sizing: border-box;
   background: #fff;
   box-shadow:
     0 2px 4px 0 rgb(0 0 0 / 20%),
@@ -146,7 +147,8 @@ input:read-only {
   margin: 2rem auto 4rem auto;
   padding: 1rem;
   position: relative;
-  max-width: fit-content;
+  min-width: fit-content;
+  max-width: 40%;
 }
 
 @media screen and (min-width: 550px) {
@@ -170,6 +172,10 @@ input:read-only {
   padding-right: 100px;
   max-width: 100%;
   text-align: center;
+}
+
+.todoapp>p {
+  max-width: 10rem;
 }
 
 .label__lg {
@@ -317,8 +323,8 @@ form {
 
 form>button {
   width: 100%;
-  margin-top: 10%;
-  margin-bottom: 5%;
+  margin-top: 1%;
+  margin-bottom: 1%;
   padding-top: 10px;
   padding-bottom: 10px;
 }
