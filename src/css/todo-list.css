@@ -157,6 +157,13 @@ body {
   text-align: center;
 }
 
+.todoapp button {
+  padding: 2%;
+  width: 100%;
+  margin-top: 1%;
+  margin-bottom: 1%;
+}
+
 
 .label__lg {
   line-height: 1.01567;
@@ -332,10 +339,6 @@ form>input {
   gap: 5%;
 }
 
-.container button {
-  width: 100%;
-  padding: 2%;
-}
 /* End container styles*/
 
 
