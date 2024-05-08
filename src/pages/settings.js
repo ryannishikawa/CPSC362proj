@@ -12,7 +12,7 @@ import { useNavigate } from 'react-router-dom';
 
 // Firebase imports
 import { app } from '../firebaseConfig.js';
-import { getFirestore, doc, getDoc, getDocs, setDoc, collection, deleteDoc, query } from 'firebase/firestore';
+import { getFirestore, doc, getDoc, getDocs, setDoc, collection, deleteDoc } from 'firebase/firestore';
 import { getAuth, updateProfile, updatePassword, reauthenticateWithCredential, EmailAuthProvider, sendEmailVerification, updateEmail, deleteUser } from "firebase/auth";
 import { AuthBar } from '../components/AuthBar.jsx';
 import { NavBar } from '../components/NavBar.jsx';
