@@ -1,6 +1,6 @@
 /* ========================== */
 /*      STYLES FOR            */
-/*    GLOBAL SELECTORS         */
+/*    GLOBAL SELECTORS        */
 /* ========================== */
 *,
 *::before,
@@ -74,14 +74,11 @@ input:read-only {
   background-color: #cccccc;
 }
 
-@media screen and (min-width: 620px) {
-  body {
-    font-size: 1.9rem;
-    line-height: 1.31579;
-  }
+body {
+  font-size: 1.9rem;
+  line-height: 1.31579;
 }
 
-/* End resets */
 
 /* Global styles */
 .form-group>input[type="text"] {
@@ -119,16 +116,6 @@ input:read-only {
   margin-top: 2.5rem;
 }
 
-@media screen and (min-width: 550px) {
-  .stack-small>*+* {
-    margin-top: 1.4rem;
-  }
-
-  .stack-large>*+* {
-    margin-top: 2.8rem;
-  }
-}
-
 .stack-exception {
   margin-top: 1.2rem;
 }
@@ -145,16 +132,13 @@ input:read-only {
     0 2px 4px 0 rgb(0 0 0 / 20%),
     0 2.5rem 5rem 0 rgb(0 0 0 / 10%);
   margin: 2rem auto 4rem auto;
-  padding: 1rem;
+  padding-top: 1%;
+  padding-left: 3%;
+  padding-right: 3%;
+  padding-bottom: 1%;
   position: relative;
   min-width: fit-content;
   max-width: 40%;
-}
-
-@media screen and (min-width: 550px) {
-  .todoapp {
-    padding: 4rem;
-  }
 }
 
 .todoapp>* {
@@ -169,14 +153,10 @@ input:read-only {
 
 .todoapp>h1 {
   margin-bottom: 1rem;
-  padding-right: 100px;
   max-width: 100%;
   text-align: center;
 }
 
-.todoapp>p {
-  max-width: 10rem;
-}
 
 .label__lg {
   line-height: 1.01567;
@@ -206,11 +186,6 @@ input:read-only {
   margin-bottom: 1rem;
 }
 
-@media screen and (min-width: 620px) {
-  [class*="__lg"] {
-    font-size: 2.4rem;
-  }
-}
 
 /* End general app styles */
 /* Todo item styles */
@@ -339,7 +314,7 @@ form>input {
   text-align: center;
 }
 
-.below-forms>button {
+.below-forms button {
   width: 100%;
   margin-top: 1%;
   margin-bottom: 1%;
@@ -354,6 +329,12 @@ form>input {
 .container {
   display: flex;
   justify-content: space-between;
+  gap: 5%;
+}
+
+.container button {
+  width: 100%;
+  padding: 2%;
 }
 /* End container styles*/
 
@@ -395,9 +376,6 @@ button {
   border-radius: 4px;
   font-weight: 600;
   flex-direction: none;
-  margin: 0 10px;
-  width: 200px;
-  padding: 10px 0;
   transition: 0.3s;
   align-items: center;
   display: inline-block;
@@ -468,4 +446,16 @@ button:disabled {
 
 .button-group>*+* {
   margin-left: 0.8rem;
+}
+
+/* ========================== */
+/*     STYLES ADJUSTMENTS     */
+/*        FOR MOBILE          */
+/* ========================== */
+@media screen and (max-width: 550px) {
+  .todoapp {
+    max-width: none;
+    width: 100%;
+    margin: 0;
+  }
 }
