@@ -12,7 +12,7 @@ import { useNavigate } from 'react-router-dom';
 
 // Firebase imports
 import { app } from '../firebaseConfig.js';
-import { getFirestore, doc, getDoc, getDocs, setDoc, collection, deleteDoc } from 'firebase/firestore';
+import { getFirestore, doc, getDoc, getDocs, setDoc, collection, deleteDoc, query } from 'firebase/firestore';
 import { getAuth, updateProfile, updatePassword, reauthenticateWithCredential, EmailAuthProvider, sendEmailVerification, updateEmail, deleteUser } from "firebase/auth";
 import { AuthBar } from '../components/AuthBar.jsx';
 import { NavBar } from '../components/NavBar.jsx';
@@ -70,7 +70,6 @@ export default function SettingsPage() {
                 const userDocRef = doc(db, 'user-data', auth.currentUser.uid); // Pull the user
                 const tasksCollectionRef = collection(userDocRef, 'tasks'); // Pull the tasks subcollection on user.
 
-                console.log(user);
                 setEmailPlaceholder(user.email);
                 setDisplayNamePlaceholder(user.displayName);
 
@@ -99,7 +98,18 @@ export default function SettingsPage() {
                 try {
                     // Retrieve size of the collection of tasks
                     const querySnapshot = await getDocs(tasksCollectionRef);
-                    setNumTasks(querySnapshot.size);
+
+                    // Ensure empty documents are not counted!
+                    let currentTaskCount = querySnapshot.size;
+                    querySnapshot.forEach((doc) => {
+
+                        if(Object.keys(doc.data()).length === 0) {
+                            currentTaskCount--;
+                        }
+                    });
+
+                    setNumTasks(currentTaskCount);
+
                 } catch (error) {
                     console.log('Error retrieving tasks:', error);
                 }
@@ -112,7 +122,7 @@ export default function SettingsPage() {
 
         fetchAndSync();
 
-    }, [auth.currentUser.uid, db, navigate, user]);
+    }, [auth.currentUser.uid, db, navigate, numTasks, user]);
 
     /**
      * For this effect, check if a minute has elapsed for verification email before sending again. 
@@ -626,8 +636,8 @@ export default function SettingsPage() {
             </div>
             <h2>Task Management</h2>
             <h3>Clear Tasks</h3>
-            <p>Currently, you have {numTasks} task(s) associated with your account.</p>
             <div>
+                <p>Currently, you have {numTasks} task(s) associated with your account.</p>
                 {!isContemplatingTaskPurge && <button className='action-button' onClick={toggleTaskPurge}>Clear Tasks</button>}
                 
                 {isContemplatingTaskPurge && <p>You are about to delete {numTasks} task(s) that are associated with your account. This action is IRREVERSIBLE. Are you sure?</p>}
