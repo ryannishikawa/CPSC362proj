@@ -448,6 +448,10 @@ button:disabled {
   margin-left: 0.8rem;
 }
 
+.button-group>button {
+  padding: 2%
+}
+
 /* ========================== */
 /*     STYLES ADJUSTMENTS     */
 /*        FOR MOBILE          */
