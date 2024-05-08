@@ -5,7 +5,6 @@
  * @description This file controls the log in process for a user.
  * 
  * @see {@link: https://www.youtube.com/watch?v=psU13XU1gDY&list=LL&index=3&t=796s&ab_channel=CodeWithViju} used as reference.
- * @see {@link: https://www.npmjs.com/package/reactjs-popup} for more about the popup component.
  * @see {@link: https://github.com/ryannishikawa/CPSC362proj} for our project repository and the README.md file within the server
  * directory for a less stressful viewing experience.
  */
