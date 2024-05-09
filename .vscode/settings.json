@@ -1,5 +1,11 @@
 {
     "files.associations": {
-        "student.h": "c"
+        "student.h": "c",
+        "*.asm": "c",
+        "*.tcc": "c",
+        "functional": "c",
+        "ios": "c",
+        "queue": "c",
+        "__locale": "c"
     }
 }

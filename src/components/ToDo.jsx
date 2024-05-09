@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { HoursDropdown, MinsDropdown, AMPMdropdown, Example, DateTime, showStatus} from "./Time";
+import { HoursDropdown, MinsDropdown, AMPMdropdown, Example, DateTime, showStatus, showDueDate} from "./Time";
 
 function Todo(props) {
 
@@ -105,8 +105,8 @@ function Todo(props) {
           onChange={() => props.toggleTaskCompleted(props.id)}
         />
         <label className="todo-label" htmlFor={props.id}>
-          {props.name} - Due: {props.dueDate}
-          <br /> {showStatus(props.dueDay, props.dueHour, props.dueMins, props.dueAMPM, props.completed)}
+          {showDueDate(props.dueYear, props.dueMonth, props.dueDay, props.dueHour, props.dueMins, props.name)}
+          {showStatus(props.dueYear, props.dueMonth, props.dueDay, props.dueHour, props.dueMins, props.completed)}
         </label>
       </div>
       <div className="btn-group">

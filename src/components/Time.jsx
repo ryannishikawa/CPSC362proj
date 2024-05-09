@@ -43,6 +43,7 @@
 //   https://www.w3schools.com/jsref/jsref_getday.asp
 //   https://react-bootstrap.netlify.app/docs/components/dropdowns/
 //   https://www.npmjs.com/package/react-datepicker
+//   https://stackoverflow.com/questions/3224834/get-difference-between-2-dates-in-javascript
 //=======1=========2=========3=========4=========5=========6=========7=========8=========9=========0=========1=========2**
 //
 //
@@ -182,65 +183,10 @@ export const MonthDropdown = ({setSelectedMonth}) => {
     )
 }
 
-//function that gets month from MonthDropdown to create a dropdown menu to select *date* for dueDate
-// import {DateDropdown} from "./Time"
-export const DateDropdown = ({selectedMonth, selectedYear, setSelectedDate}) => {
-    var date = DateTime().getDate();
-
-    const handleDateChange = (e) => {
-        setSelectedDate(e.target.value);
-    }
-
-    const getDaysInMonth = () => {
-        switch (selectedMonth) {
-            case "April":
-            case "June":
-            case "September":
-            case "November":
-                return 30;
-            case "February":
-                return (selectedYear % 4 === 0 && selectedYear % 100 !== 0) || selectedYear % 400 === 0 ? 29 : 28;
-            default:
-                return 31;
-        }
-    }
-
-    return (
-        <select id="dropdown-button" title="Day" onChange={handleDateChange} defaultValue={date}>
-            <option value="">day</option>
-          {[...Array(getDaysInMonth())].map((_, index) => (
-            <option value={index+1}>
-              {index+1}
-            </option>
-          ))}
-        </select>
-    )
-}
-
-//function that creates a dropdown menu to select *year* for dueDate
-// import {YearDropdown} from "./Time"
-export const YearDropdown = ({setSelectedYear}) => {
-    var thisYear = DateTime().getFullYear();
-
-    const handleYearChange = (e) => {
-        setSelectedYear(e.target.value);
-    }
-
-    return (
-        <select id="dropdown-button" title="Year" onChange={handleYearChange} defaultValue={thisYear}>
-          {[...Array(25)].map((_, index) => (
-            <option value={index + thisYear - 12}>
-                {index + thisYear - 12}
-            </option>
-          ))}
-        </select>
-      );
-}
-
 //*******
 //funtion to return the selected dueDate
 // import {getSelctedDueDate} from "./Time"
-export const getSelctedDueTime = ({selectedHours, selectedMins, selectedAMPM}) => {
+export function getSelctedDueTime(selectedHours, selectedMins, selectedAMPM) {
     if (selectedAMPM === "PM") {
         selectedHours += 12;
     }
@@ -274,16 +220,48 @@ export const Example = ({ setStartDate }, initialDate) => {
     );
   };
 
+
+  //function that gets numDays in each month
+function getDaysInMonth(selectedMonth, selectedYear) {
+    switch(selectedMonth) {
+        case 3: //April
+        case 5: //June
+        case 8: //September
+        case 10: //November
+            return 30;
+        case 1: //February
+            return (selectedYear % 4 === 0 && selectedYear % 100 !== 0) || selectedYear % 400 === 0 ? 29 : 28;
+        default:
+            return 31;
+    }
+}
+
+//function to get the numDays in a year
+function getDaysInYear(selectedYear) {
+    return ((selectedYear % 4 === 0 && selectedYear % 100 !== 0) || selectedYear % 400 === 0 ? 366 : 365);
+}
+
+//function to get the difference between 2 dates in days(wip)
+function getDayDiff(year, month, dueDay) {
+    const currentDate = DateTime();
+    const utc1 = Date.UTC(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
+    const utc2 = Date.UTC(year, month, dueDay);
+
+  return (Math.floor((utc2 - utc1) / (1000 * 60 * 60 * 24)));
+    
+}
+
   //function to set the status of a task
-  export const showStatus = (dueDate, hour, minute, AMPM, complete) => {
+  export const showStatus = (year, month, dueDate, hour, minute, complete) => {
     const currentDate = DateTime();
     const currentHour = currentDate.getHours();
     const currentMinute = currentDate.getMinutes();
     const currentDay = currentDate.getDate();
+    var daysLeft = getDayDiff(year, month, dueDate);
 
     if (!complete) {
     //if dueDateTime is before than currentDateTime returns LATE
-        if (dueDate < currentDay || 
+        if (getDayDiff < 0 || 
             (dueDate === currentDay && hour < currentHour) ||
             (dueDate === currentDay && hour === currentHour && minute < currentMinute)) {
             return <div style={{color: 'red'}}>LATE!!!!!</div>;
@@ -291,42 +269,47 @@ export const Example = ({ setStartDate }, initialDate) => {
         } else if (dueDate === currentDay && hour === currentHour && minute === currentMinute) {
             return <div style={{color: 'red'}}>NOW!!!!!</div>;
     //if dueDate is today
-        } else if (dueDate === currentDay) {
+        } else if (daysLeft === 0) {
     //if dueHour is greater than hourNow+1, returns hours left until due
             if (hour > (currentHour+1)) {
-                return <div>{hour - currentHour} hour(s) left</div>;
+                return <div>...in {hour - currentHour} hour(s)</div>;
     //if dueHour is within 1 hour of hourNow, returns the time difference in minutes
             } else if (hour === (currentHour+1)) {
                 if (currentMinute > minute) {
-                    return <div>{60 + (minute - currentMinute)} minute(s) left</div>;
+                    return <div>...in {60 + (minute - currentMinute)} minute(s)</div>;
                 } else {
-                    return <div>1 hour left</div>;
+                    return <div>...in 1 hour</div>;
                 }
     //if dueHour and hourNow are equal, compare minutes to return mins left
             } else if (hour === currentHour) {
                 if (minute > currentMinute) {
-                    return <div>{minute - currentMinute} minute(s) left</div>;
+                    return <div>...in {minute - currentMinute} minute(s)</div>;
                 } else {
-                    return <div style={{color: 'red'}}>LATE!!!!!</div>;;
+                    return <div style={{color: 'red'}}>LATE!!!!!</div>;
                 }
             } else {
-                return <div style={{color: 'red'}}>LATE!!!!!</div>;;
+                return <div style={{color: 'red'}}>LATE!!!!!</div>;
             }
     //if dueDate is tommorow but still within 24hrs of currentDay, return the time diff in hours
-        } else if (dueDate === (currentDay+1)) {
+        } else if (daysLeft === 1) {
             if (hour < currentHour) {
-                return <div>{24 + hour - currentHour} hour(s) left</div>;
+                return <div>...in {24 + hour - currentHour} hour(s)</div>;
             } else {
-                return <div>1 day left</div>;
+                return <div>...in 1 day</div>;
             }
     //if dueDate is after current date and the time diff is >24hrs, return the difference in days 
         } else {
-            return <div>{dueDate - currentDay} day(s) left</div>;
+            return <div>...in {daysLeft} days</div>;
         }
     //if complete return done
     } else {
         return <div>done</div>;
     }
+};
+
+//function to display the dueDate(WIP)
+export const showDueDate = (year, month, day, hour, minute, name) => {
+    return <div>{name} - on {month+1}/{day}/{year} at {hour >= 12 ? (hour-12):(hour)}:{minute <= 9 ? ('0'+minute) : minute} {hour >= 12 ? "PM" : "AM"}</div>
 };
 
 export default DateTime

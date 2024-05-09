@@ -398,7 +398,8 @@ button {
 /* End checkbox styles */
 /* Form styles throughout the app*/
 form {
-  display: block;
+  display: inline-block;
+  align-self: center;
   width: 100%;
   padding: 2em;
 }
