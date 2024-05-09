@@ -14,6 +14,7 @@ export default function SettingsPage() {
     const [dName, setdName] = useState(null);                       // The display name of the user
     const [email, setEmail] = useState(null);                       // The associated email
     const [pass, setPass] = useState(null);                         // The password to push if changing the password
+    const [topic, setTopic] = useState(null);                       // The user's topic of interest
     const [dNameHold, setdNameHold] = useState(null);               // Holds the previous dname when editing
     const [emailNameHold, setEmailHold] = useState(null);           // Holds the previous email when editing
     const [numTasks, setNumTasks] = useState(null);                 // The number of tasks saved by the user
@@ -40,6 +41,7 @@ export default function SettingsPage() {
         if (userId) {
             const userDocRef = doc(db, 'user-data', userId); // Pull the user
             const tasksCollectionRef = collection(userDocRef, 'tasks'); // Pull the tasks subcollection on user.
+            const settingsCollectionRef = collection(userDocRef, 'settings')
 
             try {
                 // Retrieve and store the username and email from Firebase Authentication
@@ -55,6 +57,20 @@ export default function SettingsPage() {
                 setNumTasks(querySnapshot.size);
             } catch (error) {
                 console.log('Error retrieving tasks:', error);
+            }
+
+            try {
+                // Retrieve and store settings
+                const settingsQuerySnapshot = await getDocs(settingsCollectionRef);
+                let docs = settingsQuerySnapshot.docs;
+                for (let doc in docs) {
+                    if (doc === 'topic') {
+                        setTopic(doc);
+                        break;
+                    }
+                }
+            } catch (error) {
+                console.log('Error retrieving settings: ', error);
             }
         }
 
@@ -82,7 +98,7 @@ export default function SettingsPage() {
     }, []);
 
     /**
-     * For this effect, check if a minute has elapsed for verification email before sending again. 
+     * For this effect, check if a minute has elapsed for verification email before sending again.
      */
     useEffect(() => {
 
@@ -93,7 +109,7 @@ export default function SettingsPage() {
             localStorage.removeItem('lastSentTime');
           }
         }, 1000); // Check every second
-    
+
         return () => {
           clearInterval(timer);
         };
@@ -192,7 +208,7 @@ export default function SettingsPage() {
      * 1) When a verified user requests to change their email, sends them an email to verify and updates the 'save' button to 'verify'
      * 2) When the verified user successfully verifies their new email, pushes new email to their Firebase Authentication and reverts
      *    to the 'Change' button again.
-     * 
+     *
      * WIP!
      */
     const pushNewEmail = async () => {
