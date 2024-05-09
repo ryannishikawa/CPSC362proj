@@ -220,27 +220,6 @@ export const Example = ({ setStartDate }, initialDate) => {
     );
   };
 
-
-  //function that gets numDays in each month
-function getDaysInMonth(selectedMonth, selectedYear) {
-    switch(selectedMonth) {
-        case 3: //April
-        case 5: //June
-        case 8: //September
-        case 10: //November
-            return 30;
-        case 1: //February
-            return (selectedYear % 4 === 0 && selectedYear % 100 !== 0) || selectedYear % 400 === 0 ? 29 : 28;
-        default:
-            return 31;
-    }
-}
-
-//function to get the numDays in a year
-function getDaysInYear(selectedYear) {
-    return ((selectedYear % 4 === 0 && selectedYear % 100 !== 0) || selectedYear % 400 === 0 ? 366 : 365);
-}
-
 //function to get the difference between 2 dates in days(wip)
 function getDayDiff(year, month, dueDay) {
     const currentDate = DateTime();
