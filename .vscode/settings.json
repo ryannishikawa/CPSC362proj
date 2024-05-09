@@ -6,6 +6,7 @@
         "functional": "c",
         "ios": "c",
         "queue": "c",
-        "__locale": "c"
+        "__locale": "c",
+        "cstddef": "c"
     }
 }
