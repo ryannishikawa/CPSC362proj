@@ -32,11 +32,10 @@ export default function SettingsPage() {
     const [isEditingPass, setIsEditingPass] = useState(false);                                  // The state of password editing
     const [isContemplatingAccountDelete, setIsContemplatingAccountDelete] = useState(false);    // The state of account deletion
     const [isContemplatingTaskPurge, setIsContemplatingTaskPurge] = useState(false);            // The state of task deletion.
-
     const [displayNamePlaceholder, setDisplayNamePlaceholder] = useState(null);                 // The state of the display name input box
     const [emailPlaceholder, setEmailPlaceholder] = useState(null);                             // The state of the email address input box
     const [passPlaceholder, setPassPlaceholder] = useState(null);                               // The state of the password input box
-
+    const [message , setMessage] = useState(null);                                                // This visually lets user see if actions are completed or not.
     const [disabledButton, setDisabledButton] = useState(false);                                // The state of buttons when needing to perform async actions.
     const [lastSentTime, setLastSentTime] = useState(localStorage.getItem('lastSentTime') ?     // The delay of verification emails
         parseInt(localStorage.getItem('lastSentTime'), 10)
@@ -152,13 +151,13 @@ export default function SettingsPage() {
         try {
 
             await sendEmailVerification(auth.currentUser);              // Send email verification to the new email
-
+            setMessage('Email sent! You can try again in ' + lastSentTime);
             setLastSentTime(Date.now());
             localStorage.setItem('lastSentTime', Date.now().toString());
 
             console.log('Verification email sent to', emailPlaceholder);
         } catch (error) {
-            console.error('Error sending verification email:', error);
+            setMessage(error.message);
         }
     };
 
@@ -189,6 +188,7 @@ export default function SettingsPage() {
         setIsEditingEmail(!isEditingEmail);     // Invert status
         setEmail('');                           // Clear email state
         setPass('');                            // Clear pass state.
+        setMessage('');                         // Clear message state.
 
         // If editing email, clear the input field. (no idea why it's inverted here but i'm rolling with it)
         if (isEditingEmail) {
@@ -224,6 +224,7 @@ export default function SettingsPage() {
         setPass('');
         setPassRepeat('');
         setPassPlaceholder('');
+        setMessage('');
 
     }
 
@@ -252,6 +253,7 @@ export default function SettingsPage() {
         setIsEditingName(!isEditingName);       // Invert status
         setDisplayNamePlaceholder('');          // Clear display name state
         setPass('');                            // Clear pass state.
+        setMessage('');
 
         // If editing pass, clear the input field
         if (isEditingName) {
@@ -282,6 +284,7 @@ export default function SettingsPage() {
 
         setIsContemplatingAccountDelete(!isContemplatingAccountDelete);
         setPass('');
+        setMessage('');
     }
 
     /**
@@ -305,6 +308,7 @@ export default function SettingsPage() {
 
         setIsContemplatingTaskPurge(!isContemplatingTaskPurge);
         setPass('');
+        setMessage('');
     }
 
 
@@ -316,9 +320,15 @@ export default function SettingsPage() {
 
         setDisabledButton(true);            // Disable all buttons as this is an async action
 
+        if(emailPlaceholder.length <= 0 || email.length <= 0) {
+            setMessage('Please enter your email.');
+            setDisabledButton(false);
+            return;
+        }
+
         console.log('Checking email matches');
         if (emailPlaceholder !== email) {
-            console.log('Emails do not match up on page.')
+            setMessage('Emails do not match up.');
             setDisabledButton(false);
             return;
         }
@@ -329,7 +339,7 @@ export default function SettingsPage() {
             const credential = EmailAuthProvider.credential(user.email, pass);
             await reauthenticateWithCredential(auth.currentUser, credential);
         } catch (err) {
-            console.log('An error occured reauthenticating credentials. ' + err);
+            setMessage(err.message);
             setDisabledButton(false);
             return;
         }
@@ -339,7 +349,7 @@ export default function SettingsPage() {
         try {
             await updateEmail(auth.currentUser, emailPlaceholder);
         } catch (err) {
-            console.log('An error occured updating email. ' + err);
+            setMessage(err.message);
             setDisabledButton(false);
             return;
         }
@@ -349,7 +359,7 @@ export default function SettingsPage() {
         try {
             sendEmailVerificationToEmail()
         } catch (err) {
-            console.log('An error ocurred sending an email. ' + err);
+            setMessage(err.message);
             setDisabledButton(false);
             return;
         }
@@ -366,11 +376,13 @@ export default function SettingsPage() {
 
         } catch (err) {
             console.log('An error occured pushing to Firebase. ' + err);
+            setMessage(err.message);
             setDisabledButton(false);
             return;
         }
 
         console.log('Changes pushed successfully!');
+        setMessage('Email set!');
         setDisabledButton(false);
         toggleEmailEdit();
     }
@@ -381,10 +393,14 @@ export default function SettingsPage() {
     const confirmPaswordEdit = async () => {
 
         setDisabledButton(true);            // Disable all buttons as this is an async action
+        
+        if(pass.length <= 0 || passRepeat.length <= 0) {
+            setMessage('Please enter a new password.');
+        }
 
         console.log('Checking current password matches');
         if (pass !== passRepeat) {
-            console.log('New passwords do not match.')
+            setMessage('New passwords do not match.')
             setDisabledButton(false);
             return;
         }
@@ -395,7 +411,7 @@ export default function SettingsPage() {
             const credential = EmailAuthProvider.credential(user.email, passPlaceholder);
             await reauthenticateWithCredential(auth.currentUser, credential);
         } catch (err) {
-            console.log('An error occured reauthenticating credentials. ' + err);
+            setMessage(err.message);
             setDisabledButton(false);
             return;
         }
@@ -405,12 +421,12 @@ export default function SettingsPage() {
         try {
             await updatePassword(user, pass);
         } catch (err) {
-            console.log('An error occured updating email. ' + err);
+            setMessage(err.message);
             setDisabledButton(false);
             return;
         }
 
-        console.log("Password changed successfully!");
+        setMessage('Updated successfully!');
         setDisabledButton(false);
         togglePasswordEdit();
     }
@@ -420,19 +436,24 @@ export default function SettingsPage() {
      */
     const confirmDisplayNameEdit = async () => {
 
-        console.log('Updating display name to ' + displayNamePlaceholder)
         setDisabledButton(true);
+
+        if(displayNamePlaceholder.length <= 0) {
+            setMessage('Cannot set an empty display name');
+            setDisabledButton(false);
+            return;
+        }
         
         try {
             await updateProfile(user, {displayName: displayNamePlaceholder});
 
         } catch (err) {
-            console.log('An error occured updating the display name ' + err);
+            setMessage(err.message);
             setDisabledButton(false);
             return;
         }
         
-        console.log('Updated display name successfully!');
+        setMessage('Updated display name successfully!');
         setDisabledButton(false);
         toggleDisplayNameEdit();
     }
@@ -450,7 +471,7 @@ export default function SettingsPage() {
         try {
             await reauthenticateWithCredential(user, credential);
         } catch (err) {
-            console.log('Passwords do not match, cannot delete account.');
+            setMessage(err.message);
             setDisabledButton(false);
             return;
         }
@@ -473,16 +494,16 @@ export default function SettingsPage() {
             console.log('Tasks deleted successfully.');
 
         } catch (err) {
-            console.log('Could not delete user collection, ' + err);
+            setMessage(err.message);
             setDisabledButton(false);
             return;
         }
 
-        console.log('Deleting user account...');
+        setMessage('Deleting user account...');
         try {
             await deleteUser(user);
         } catch (err) {
-            console.log('An error occured deleting the user account. ' + err);
+            setMessage(err.message);
             setDisabledButton(false);
             return;
         }
@@ -503,12 +524,12 @@ export default function SettingsPage() {
         try {
             await reauthenticateWithCredential(user, credential);
         } catch (err) {
-            console.log('Passwords do not match, cannot delete account.');
+            setMessage(err.message);
             setDisabledButton(false);
             return;
         }
         
-        console.log('Credentials reauthenticated, deleting Firestored information...');
+        setMessage('Credentials reauthenticated, deleting Firestored information...');
         try {
             const userTasksRef = collection(db, 'user-data', user.uid, 'tasks');
             const querySnapshot = await getDocs(userTasksRef);
@@ -519,12 +540,12 @@ export default function SettingsPage() {
                 });
             }
         } catch (err) {
-            console.log('An error occured deleting tasks, ' + err);
+            setMessage(err.message);
             setDisabledButton(false);
             return;
         }
 
-        console.log('Tasks deleted successfully!');
+        setMessage('Tasks deleted successfully!');
         setNumTasks(0);
         setDisabledButton(false);
         toggleTaskPurge();
@@ -560,6 +581,7 @@ export default function SettingsPage() {
                 {/** Otherwise, clear the display name field, make it editable, prompt for password, and add "Cancel" and "Confirm" button */}
                 {isEditingName && <button className='action-button' onClick={toggleDisplayNameEdit} disabled={disabledButton}>Cancel</button>}
                 {isEditingName && <button className='action-button' onClick={confirmDisplayNameEdit} disabled={disabledButton}>Confirm</button>}
+                {isEditingName && <p>{message}</p>}
             </div>
 
 
@@ -589,9 +611,11 @@ export default function SettingsPage() {
                 {isEditingEmail && <input type="password" value={pass} disabled={disabledButton} onChange={(e) => setPass(e.target.value)} />}
                 {isEditingEmail && <button className='action-button' onClick={toggleEmailEdit} disabled={disabledButton}>Cancel</button>}
                 {isEditingEmail && <button className='action-button' onClick={confirmEmailEdit} disabled={disabledButton}>Confirm</button>}
+                {isEditingEmail && <p>{message}</p>}
 
                 {/** If the current email is unverified, send verification email button is displayed when not editing.*/}
                 {!isEditingEmail && !user.emailVerified && <button className='action-button' onClick={sendEmailVerificationToEmail} disabled={lastSentTime}>Resend Email</button>}
+                {!isEditingEmail && !user.emailVerified && <p>{message}</p>}
             </div>
 
 
@@ -617,7 +641,7 @@ export default function SettingsPage() {
                 {isEditingPass && <input type="password" value={passRepeat} disabled={disabledButton} onChange={(e) => setPassRepeat(e.target.value)} />}
                 {isEditingPass && <button className='action-button' onClick={togglePasswordEdit} disabled={disabledButton}>Cancel</button>}
                 {isEditingPass && <button className='action-button' onClick={confirmPaswordEdit} disabled={disabledButton}>Confirm</button>}
-
+                {isEditingPass && <p>{message}</p>}
             </div>
 
 
@@ -633,6 +657,7 @@ export default function SettingsPage() {
                 {isContemplatingAccountDelete && <input type="password" value={pass} disabled={disabledButton} onChange={(e) => setPass(e.target.value)} />}
                 {isContemplatingAccountDelete && <button className='action-button' onClick={toggleAccountDelete} disabled={disabledButton}>Nevermind</button>}
                 {isContemplatingAccountDelete && <button className='action-button' onClick={confirmAccountDelete} disabled={disabledButton}>Goodbye</button>}
+                {isContemplatingAccountDelete && <p>{message}</p>}
             </div>
             <h2>Task Management</h2>
             <h3>Clear Tasks</h3>
@@ -645,6 +670,7 @@ export default function SettingsPage() {
                 {isContemplatingTaskPurge && <input type="password" value={pass} disabled={disabledButton} onChange={(e) => setPass(e.target.value)} />}
                 {isContemplatingTaskPurge && <button className='action-button' onClick={toggleTaskPurge} disabled={disabledButton}>Cancel</button>}
                 {isContemplatingTaskPurge && <button className='action-button' onClick={confirmTaskPurge} disabled={disabledButton}>Delete</button>}
+                {isContemplatingTaskPurge && <p>{message}</p>}
             </div>
         </div>
     );
