@@ -19,6 +19,9 @@ import { app } from '../firebaseConfig.js';
 import { getFirestore, query, doc, getDocs, setDoc, deleteDoc, collection, Timestamp } from 'firebase/firestore';
 import { getAuth } from "firebase/auth";
 
+// Loading page
+import { LoadingLogo } from '../components/LoadingLogo.jsx';
+
 function ToDoListPage() {
   const [tasks, setTasks] = useState([]);                         // Set initial state blank
   const [loading, isLoading] = useState(true);                    // Set loading state for database queries to true
@@ -161,7 +164,14 @@ function ToDoListPage() {
 
   // Wait until the task list is retrieved from the database.
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className='loading-container'>
+        <div className='loading-content'>
+          <h3>Working...</h3>
+          < LoadingLogo />
+        </div>
+      </div>
+    );
   }
 
   return (

@@ -12,11 +12,12 @@
  */
 
 // React imports
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 // Component imports
 import { AuthBar } from '../components/AuthBar.jsx';
 import { NavBar } from '../components/NavBar.jsx';
+import { LoadingLogo } from '../components/LoadingLogo.jsx';
 
 // Firebase imports
 import { app } from '../firebaseConfig.js';
@@ -25,6 +26,37 @@ import { getAuth } from 'firebase/auth';
 export default function Home() {
 
   const auth = getAuth(app);
+
+  const [loading, setLoading] = useState(true);         // The loading state
+  const [user, setUser] = useState(null);               // The authenticated user to check.
+
+  /**
+     * For this effect, checks if the user is authenticated.
+     */
+  useEffect(() => {
+
+    const unsubscribe = auth.onAuthStateChanged(user => {
+      if (user) {
+        setUser(user);
+      }
+
+      setLoading(false);
+    });
+
+    // Cleanup subscription on unmount
+    return () => unsubscribe();
+  }, [auth, user]);
+
+  if (loading) {
+    return (
+      <div className='loading-container'>
+        <div className='loading-content'>
+          <h3>Working...</h3>
+          < LoadingLogo />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className='todoapp stack-large'>

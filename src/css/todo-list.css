@@ -366,7 +366,20 @@ code {
   margin: 0 auto;
 }
 
+/* ========================== */
+/*      STYLES FOR            */
+/*      LOADING CONTENT       */
+/* ========================== */
+.loading-container{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
 
+.loading-content {
+  text-align: center;
+}
 
 /* ========================== */
 /*      CLASSES FOR           */

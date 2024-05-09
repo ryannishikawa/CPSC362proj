@@ -17,6 +17,9 @@ import { getAuth, updateProfile, updatePassword, reauthenticateWithCredential, E
 import { AuthBar } from '../components/AuthBar.jsx';
 import { NavBar } from '../components/NavBar.jsx';
 
+// Loading page
+import { LoadingLogo } from '../components/LoadingLogo.jsx';
+
 export default function SettingsPage() {
 
     // Firebase essentials for this page
@@ -554,8 +557,15 @@ export default function SettingsPage() {
 
     // Handle page rendering here
     if (loading) {
-        return <div>Loading...</div>
-    }
+        return (
+          <div className='loading-container'>
+            <div className='loading-content'>
+              <h3>Working...</h3>
+              < LoadingLogo />
+            </div>
+          </div>
+        );
+      }
 
     return (
         <div className='todoapp stack-large'>
