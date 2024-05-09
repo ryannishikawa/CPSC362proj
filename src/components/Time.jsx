@@ -54,7 +54,6 @@
 import React, { useState, useEffect } from 'react'
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import {Notifications, addNotification} from "react-push-notification";
 
 
 const month = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -198,25 +197,6 @@ function getDayDiff(year, month, dueDay) {
   return (Math.floor((utc2 - utc1) / (1000 * 60 * 60 * 24)));
 }
 
-//function to send a push notification when due time is near
-function Notify(mins, name) {
-    if (mins === 30 || mins === 15 || mins === 5) {
-        addNotification({
-            title: "Task Manager",
-            subtitle: name,
-            message: "...in " + mins + "minutes",
-            closeButton: "X",
-        });
-    } else if (mins === 0) {
-        addNotification({
-            title: "Task Manager",
-            subtitle: name,
-            message: "...now!",
-            closeButton: "X",
-        });
-    }
-    
-}
   //function to set the status of a task
   export const showStatus = (year, month, dueDate, hour, minute, complete, name) => {
     const currentDate = DateTime();
@@ -242,13 +222,13 @@ function Notify(mins, name) {
     //if dueHour is within 1 hour of hourNow, returns the time difference in minutes
             } else if (hour === (currentHour+1)) {
                 if (currentMinute > minute) {
-                    return <div>{Notify((60 + (minute - currentMinute)), name)}...in {60 + (minute - currentMinute)} minute(s)</div>;
+                    return <div>...in {60 + (minute - currentMinute)} minute(s)</div>;
                 } else {
                     return <div>...in 1 hour</div>;
                 }
     //if dueHour and hourNow are equal, compare minutes to return mins left
             } else if (hour === currentHour) {
-                return <div>{Notify((minute - currentMinute), name)}...in {minute - currentMinute} minute(s)</div>;
+                return <div>...in {minute - currentMinute} minute(s)</div>;
             } else {
                 return <div style={{color: 'red'}}>LATE!!!!!</div>;
             }
