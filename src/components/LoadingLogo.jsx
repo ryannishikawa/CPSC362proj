@@ -4,10 +4,13 @@
  * 
  * @description This shows a spinning logo and says "Loading..." so users know the page is loading.
  * 
+ * @see {@link: https://loading.io/} for the resource used to make the svg of the logo.
+ * @see {@link: https://react-svgr.com/playground/} for the converter used as this export.
+ * 
  */
 
 /**
- * The AuthBar component shows authentication status and the current time.
+ * The LoadingLogo component shows a pretty animated spinner.
  */
 export function LoadingLogo(props) {
     return (
