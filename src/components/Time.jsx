@@ -240,7 +240,7 @@ function getDayDiff(year, month, dueDay) {
 
     if (!complete) {
     //if dueDateTime is before than currentDateTime returns LATE
-        if (getDayDiff < 0 || 
+        if (daysLeft < 0 || 
             (dueDate === currentDay && hour < currentHour) ||
             (dueDate === currentDay && hour === currentHour && minute < currentMinute)) {
             return <div style={{color: 'red'}}>LATE!!!!!</div>;
@@ -251,7 +251,7 @@ function getDayDiff(year, month, dueDay) {
         } else if (daysLeft === 0) {
     //if dueHour is greater than hourNow+1, returns hours left until due
             if (hour > (currentHour+1)) {
-                return <div>...in {hour - currentHour} hour(s)</div>;
+                return <div>...in {hour - currentHour} hours</div>;
     //if dueHour is within 1 hour of hourNow, returns the time difference in minutes
             } else if (hour === (currentHour+1)) {
                 if (currentMinute > minute) {
@@ -261,21 +261,13 @@ function getDayDiff(year, month, dueDay) {
                 }
     //if dueHour and hourNow are equal, compare minutes to return mins left
             } else if (hour === currentHour) {
-                if (minute > currentMinute) {
-                    return <div>...in {minute - currentMinute} minute(s)</div>;
-                } else {
-                    return <div style={{color: 'red'}}>LATE!!!!!</div>;
-                }
+                return <div>...in {minute - currentMinute} minute(s)</div>;
             } else {
                 return <div style={{color: 'red'}}>LATE!!!!!</div>;
             }
     //if dueDate is tommorow but still within 24hrs of currentDay, return the time diff in hours
         } else if (daysLeft === 1) {
-            if (hour < currentHour) {
-                return <div>...in {24 + hour - currentHour} hour(s)</div>;
-            } else {
-                return <div>...in 1 day</div>;
-            }
+            return <div>...in {24 + hour - currentHour} hours</div>;
     //if dueDate is after current date and the time diff is >24hrs, return the difference in days 
         } else {
             return <div>...in {daysLeft} days</div>;
@@ -286,8 +278,19 @@ function getDayDiff(year, month, dueDay) {
     }
 };
 
-//function to display the dueDate(WIP)
+//function to display the dueDate
 export const showDueDate = (year, month, day, hour, minute, name) => {
+//if due today print today instead of date
+    if (getDayDiff(year, month, day) === 0) {
+        return <div>{name} - today at {hour >= 12 ? (hour-12):(hour)}:{minute <= 9 ? ('0'+minute) : minute} {hour >= 12 ? "PM" : "AM"}</div>
+//if due tommorow print tommorow instead of date
+    } else if (getDayDiff(year, month, day) === 1) {
+        return <div>{name} - tommorow at {hour >= 12 ? (hour-12):(hour)}:{minute <= 9 ? ('0'+minute) : minute} {hour >= 12 ? "PM" : "AM"}</div>
+//if due yesterday print yesterday instead of date
+    } else if (getDayDiff(year, month, day) === -1) {
+        return <div>{name} - yesterday at {hour >= 12 ? (hour-12):(hour)}:{minute <= 9 ? ('0'+minute) : minute} {hour >= 12 ? "PM" : "AM"}</div>
+    }
+//print out task info in format [name - on {date} at {time}]
     return <div>{name} - on {month+1}/{day}/{year} at {hour >= 12 ? (hour-12):(hour)}:{minute <= 9 ? ('0'+minute) : minute} {hour >= 12 ? "PM" : "AM"}</div>
 };
 
