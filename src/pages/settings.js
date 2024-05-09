@@ -488,14 +488,16 @@ export default function SettingsPage() {
                 querySnapshot.forEach(async (taskDoc) => {
                     await deleteDoc(taskDoc.ref);
                 });
-
-                await deleteDoc(doc(db, 'user-data', user.uid, 'tasks'));
             }
+        } catch (err) {
+            setMessage(err.message);
+            setDisabledButton(false);
+            return;
+        }
 
+        try {
             await deleteDoc(doc(db, 'user-data', user.uid));
-
             console.log('Tasks deleted successfully.');
-
         } catch (err) {
             setMessage(err.message);
             setDisabledButton(false);

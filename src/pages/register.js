@@ -57,6 +57,13 @@ export default function RegisterPage() {
                 navigate('/');
                 return;
             }
+
+            if(name.length <= 0) {
+                setMessage('Please enter a display name.');
+                setDisabled(false);
+                return;
+            }
+
             const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
             const user = userCredential.user;
 
@@ -70,7 +77,9 @@ export default function RegisterPage() {
             // Also adds their username to the document as well.
             const userDocRef = doc(db, 'user-data', user.uid);
             await setDoc(userDocRef, {
-                displayName: name
+                displayName: name,
+                email: email,
+                verified: false
             });
  
             const taskCollectionRef = collection(userDocRef, 'tasks');
@@ -81,7 +90,6 @@ export default function RegisterPage() {
                 createDate: Timestamp.now()
             });
 
-            localStorage.setItem('username', user.displayName);
             setMessage(`Welcome to our app ${user.displayName}!`);
             navigate('/');
             
