@@ -195,9 +195,7 @@ function ToDoListPage() {
   };
 
   // Wait until the task list is retrieved from the database.
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+ 
 
   return (
     <TaskList tasks={tasks} />

@@ -18,7 +18,7 @@
 //
 //Program information
 //  Program name: Task manager
-//  Date of last update: April 16, 2024
+//  Date of last update: May 8, 2024
 //  Programming language(s): JavaScript, HTML, CSS
 //  Files in this program: App.js, login.js, register.js, home.js, etc...
 //
@@ -162,38 +162,6 @@ export const AMPMdropdown = ({setSelectedAMPM}) => {
     );
 }
 
-//function that creates a dropdown menu to select *month* for dueDate
-// import {MonthDropdown} from "./Time"
-export const MonthDropdown = ({setSelectedMonth}) => {
-    var month12 = DateTime().getMonth();
-
-    const handleMonthChange = (e) => {
-        setSelectedMonth(e.target.value);
-    }
-
-    return (
-        <select id="month-dropdown-button" title="Month" onChange={handleMonthChange} defaultValue={month[month12]}>
-            <option value="">month</option>
-            {[...Array(12)].map((_, index) => (
-                <option value={month[index]}>
-                    {month[index]}
-                </option>
-            ))}
-        </select>
-    )
-}
-
-//*******
-//funtion to return the selected dueDate
-// import {getSelctedDueDate} from "./Time"
-export function getSelctedDueTime(selectedHours, selectedMins, selectedAMPM) {
-    if (selectedAMPM === "PM") {
-        selectedHours += 12;
-    }
-    var dueDate = new Date(selectedHours, selectedMins);
-    
-    return dueDate;
-}
 //**********************************************************************************************************************
 //===== End Dropdown Menu area ================================================================================================
 //**********************************************************************************************************************
@@ -220,7 +188,7 @@ export const Example = ({ setStartDate }, initialDate) => {
     );
   };
 
-//function to get the difference between 2 dates in days(wip)
+//function to get the difference between 2 dates in days
 function getDayDiff(year, month, dueDay) {
     const currentDate = DateTime();
     const utc1 = Date.UTC(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
@@ -241,8 +209,8 @@ function getDayDiff(year, month, dueDay) {
     if (!complete) {
     //if dueDateTime is before than currentDateTime returns LATE
         if (daysLeft < 0 || 
-            (dueDate === currentDay && hour < currentHour) ||
-            (dueDate === currentDay && hour === currentHour && minute < currentMinute)) {
+            (daysLeft === 0 && hour < currentHour) ||
+            (daysLeft === 0 && hour === currentHour && minute < currentMinute)) {
             return <div style={{color: 'red'}}>LATE!!!!!</div>;
     //if it is the dueDateTime right now returns NOW
         } else if (dueDate === currentDay && hour === currentHour && minute === currentMinute) {
